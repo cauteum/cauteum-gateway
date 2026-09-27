@@ -4,6 +4,7 @@ import (
 	"errors"
 	"os"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"testing"
 	"time"
@@ -22,6 +23,9 @@ func openTest(t *testing.T) *Store {
 }
 
 func TestStateAndTokenFilePermissions(t *testing.T) {
+	if runtime.GOOS == "windows" {
+		t.Skip("POSIX permission bits are not enforced on Windows")
+	}
 	st := openTest(t)
 	path, err := st.WriteAuthTokenFile()
 	if err != nil {
