@@ -47,6 +47,9 @@ func handleSandboxProposals(w http.ResponseWriter, r *http.Request, st *store.St
 			return
 		}
 		p.Sandbox = name
+		// Every proposal can expand egress policy. The submitter's risk flag is
+		// untrusted, so require an explicit operator override for bulk approval.
+		p.SecurityFlagged = true
 		if p.CreatedAt.IsZero() {
 			p.CreatedAt = time.Now().UTC()
 		}

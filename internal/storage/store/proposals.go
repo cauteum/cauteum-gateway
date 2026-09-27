@@ -19,6 +19,7 @@ type Proposal struct {
 	Hosts            []string  `json:"hosts,omitempty"`
 	RejectionReason  string    `json:"rejection_reason,omitempty"`
 	ValidationResult string    `json:"validation_result,omitempty"`
+	SecurityFlagged  bool      `json:"security_flagged,omitempty"`
 	CreatedAt        time.Time `json:"created_at"`
 	DecidedAt        time.Time `json:"decided_at,omitempty"`
 }
@@ -66,6 +67,11 @@ func (s *Store) ListProposals(sandbox, status string) []Proposal {
 		}
 		if status != "" && p.Status != status {
 			continue
+		}
+		// Older persisted proposals predate trusted risk classification. Treat
+		// pending entries conservatively, even when their stored flag is false.
+		if p.Status == "pending" {
+			p.SecurityFlagged = true
 		}
 		out = append(out, p)
 	}
