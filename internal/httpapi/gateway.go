@@ -185,11 +185,31 @@ func Serve(ctx context.Context, opt Options) error {
 	if opt.Listen == "" {
 		opt.Listen = defaults.GatewayListen
 	}
+	if err := validateUnauthenticatedListen(opt.Listen, opt.AllowUnauthenticated); err != nil {
+		return err
+	}
 	handler, err := NewHandler(ctx, opt)
 	if err != nil {
 		return err
 	}
 	return listenAndServe(ctx, opt, handler)
+}
+
+func validateUnauthenticatedListen(listen string, allowed bool) error {
+	if !allowed {
+		return nil
+	}
+	host, _, err := net.SplitHostPort(listen)
+	if err != nil {
+		return fmt.Errorf("gateway listen %q: %w", listen, err)
+	}
+	if host == "localhost" {
+		return nil
+	}
+	if ip := net.ParseIP(host); ip != nil && ip.IsLoopback() {
+		return nil
+	}
+	return fmt.Errorf("refusing allow_unauthenticated on non-loopback %q (use whaleshell gateway login)", listen)
 }
 
 // NewHandler builds the authenticated gateway HTTP handler and starts the SSH
@@ -263,20 +283,23 @@ func NewHandler(ctx context.Context, opt Options) (http.Handler, error) {
 		}
 		w.Header().Set("Content-Type", "application/json")
 		_ = json.NewEncoder(w).Encode(map[string]any{
-			"gateway_id":        s.GatewayID,
-			"sandbox_count":     len(s.Sandboxes),
-			"updated_at":        s.UpdatedAt,
-			"data_dir":          opt.DataDir,
-			"auth_mode":         authMode,
-			"oidc_issuer":       opt.OIDC.Issuer,
-			"host_osg_internal": "host.whaleshell.internal → host-gateway (Docker)",
-			"relay":             "supervisor relay: " + relayproto.PathSupervisorConnect + " + " + relayproto.PathSSHConnect,
-			"ssh_session_ttl_s": int64(ttl / time.Second),
+			"gateway_id":            s.GatewayID,
+			"sandbox_count":         len(s.Sandboxes),
+			"updated_at":            s.UpdatedAt,
+			"data_dir":              opt.DataDir,
+			"auth_mode":             authMode,
+			"allow_unauthenticated": opt.AllowUnauthenticated,
+			"oidc_issuer":           opt.OIDC.Issuer,
+			"host_osg_internal":     "host.whaleshell.internal → host-gateway (Docker)",
+			"relay":                 "supervisor relay: " + relayproto.PathSupervisorConnect + " + " + relayproto.PathSSHConnect,
+			"ssh_session_ttl_s":     int64(ttl / time.Second),
 			"secrets_kek": map[string]any{
-				"source":  string(kek.Source),
-				"pinned":  kek.Pinned,
-				"env":     secrets.EnvKEK,
-				"warning": kek.Warning(),
+				"source":           string(kek.Source),
+				"pinned":           kek.Pinned,
+				"env":              secrets.EnvKEK,
+				"warning":          kek.Warning(),
+				"format":           kek.Format,
+				"migration_needed": kek.MigrationNeeded,
 			},
 		})
 	})
@@ -514,6 +537,10 @@ func listenAndServe(ctx context.Context, opt Options, handler http.Handler) erro
 	ln, err := net.Listen("tcp", opt.Listen)
 	if err != nil {
 		return fmt.Errorf("gateway listen %s: %w", opt.Listen, err)
+	}
+	if opt.AllowUnauthenticated && !ln.Addr().(*net.TCPAddr).IP.IsLoopback() {
+		_ = ln.Close()
+		return fmt.Errorf("refusing allow_unauthenticated on non-loopback %q (use whaleshell gateway login)", ln.Addr())
 	}
 	log.Info("listening", slog.String("op", "gateway.serve"), slog.String("addr", opt.Listen))
 	if opt.TLSCert != "" && opt.TLSKey != "" {
