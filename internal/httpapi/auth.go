@@ -32,6 +32,7 @@ type Principal struct {
 	Subject string
 	IDP     string
 	Sandbox string // PrincipalSandbox only
+	Roles   []string
 }
 
 type principalKey struct{}
@@ -81,7 +82,7 @@ func resolvePrincipal(r *http.Request, st *store.Store, validator *idp.OIDC) (Pr
 			if sub == "" {
 				sub = "oidc-user"
 			}
-			return Principal{Kind: PrincipalUser, Subject: sub, IDP: "oidc"}, true
+			return Principal{Kind: PrincipalUser, Subject: sub, IDP: "oidc", Roles: claimRoles(claims.Raw)}, true
 		}
 	}
 	if local := st.AuthToken(); local != "" && subtle.ConstantTimeCompare([]byte(tok), []byte(local)) == 1 {
@@ -91,6 +92,25 @@ func resolvePrincipal(r *http.Request, st *store.Store, validator *idp.OIDC) (Pr
 		return Principal{Kind: PrincipalSandbox, Subject: "sandbox:" + name, IDP: "sandbox", Sandbox: name}, true
 	}
 	return Principal{}, false
+}
+
+func claimRoles(raw map[string]any) []string {
+	var out []string
+	for _, key := range []string{"roles", "groups"} {
+		switch values := raw[key].(type) {
+		case []string:
+			out = append(out, values...)
+		case []any:
+			for _, value := range values {
+				if role, ok := value.(string); ok {
+					out = append(out, role)
+				}
+			}
+		case string:
+			out = append(out, values)
+		}
+	}
+	return out
 }
 
 // withAuth enforces authentication on every route except isPublicRoute and
