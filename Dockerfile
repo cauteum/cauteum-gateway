@@ -28,13 +28,21 @@ use (
 )
 replace (
 	github.com/whaleshell/whaleshell-gateway v0.1.0-alpha.1 => ./whaleshell-gateway
+	github.com/whaleshell/whaleshell-gateway v0.1.0-alpha.2 => ./whaleshell-gateway
 	github.com/whaleshell/whaleshell-core v0.1.0-alpha.1 => ./whaleshell-core
+	github.com/whaleshell/whaleshell-core v0.1.0-alpha.2 => ./whaleshell-core
 	github.com/whaleshell/whaleshell-providers v0.1.0-alpha.1 => ./whaleshell-providers
+	github.com/whaleshell/whaleshell-providers v0.1.0-alpha.2 => ./whaleshell-providers
 	github.com/whaleshell/whaleshell-runtime v0.1.0-alpha.1 => ./whaleshell-runtime
+	github.com/whaleshell/whaleshell-runtime v0.1.0-alpha.2 => ./whaleshell-runtime
 	github.com/whaleshell/whaleshell-proxy v0.1.0-alpha.1 => ./whaleshell-proxy
+	github.com/whaleshell/whaleshell-proxy v0.1.0-alpha.2 => ./whaleshell-proxy
 	github.com/whaleshell/whaleshell-driver v0.1.0-alpha.1 => ./whaleshell-driver
+	github.com/whaleshell/whaleshell-driver v0.1.0-alpha.2 => ./whaleshell-driver
 	github.com/whaleshell/whaleshell-sdk v0.1.0-alpha.1 => ./whaleshell-sdk
+	github.com/whaleshell/whaleshell-sdk v0.1.0-alpha.2 => ./whaleshell-sdk
 	github.com/whaleshell/slogx v0.1.0-alpha.1 => ./slogx
+	github.com/whaleshell/slogx v0.1.0-alpha.2 => ./slogx
 )
 WORK
 ENV GOWORK=/src/go.work
