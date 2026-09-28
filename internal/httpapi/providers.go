@@ -23,14 +23,15 @@ import (
 
 // providerWriteBody is the PUT payload: metadata + optional write-only credential values.
 type providerWriteBody struct {
-	Name                  string            `json:"name"`
-	Type                  string            `json:"type"`
-	Workspace             string            `json:"workspace,omitempty"`
-	EnvVars               []string          `json:"env_vars,omitempty"`
-	Credentials           map[string]string `json:"credentials,omitempty"` // write-only; never returned
-	CredentialExpiresAtMS map[string]int64  `json:"credential_expires_at_ms,omitempty"`
-	RuntimeCredentials    bool              `json:"runtime_credentials,omitempty"`
-	Config                map[string]string `json:"config,omitempty"`
+	Name                  string                                 `json:"name"`
+	Type                  string                                 `json:"type"`
+	Workspace             string                                 `json:"workspace,omitempty"`
+	EnvVars               []string                               `json:"env_vars,omitempty"`
+	Credentials           map[string]string                      `json:"credentials,omitempty"` // write-only; never returned
+	CredentialExpiresAtMS map[string]int64                       `json:"credential_expires_at_ms,omitempty"`
+	RuntimeCredentials    bool                                   `json:"runtime_credentials,omitempty"`
+	Config                map[string]string                      `json:"config,omitempty"`
+	Refresh               map[string]store.ProviderRefreshConfig `json:"refresh,omitempty"`
 }
 
 func mountProviderAPI(mux *http.ServeMux, st *store.Store, sec *secrets.LocalEncrypted, builtinDir string) {
@@ -192,6 +193,9 @@ func mountProviderAPI(mux *http.ServeMux, st *store.Store, sec *secrets.LocalEnc
 				return
 			}
 			w.Header().Set("Content-Type", "application/json")
+			// Material values may contain OAuth secrets. The refresh service owns
+			// them; provider metadata reads expose only whether a value is set.
+			p.Refresh = redactProviderRefresh(p.Refresh)
 			_ = json.NewEncoder(w).Encode(p) // never includes credential values
 		case http.MethodPut:
 			var body providerWriteBody
@@ -221,6 +225,15 @@ func mountProviderAPI(mux *http.ServeMux, st *store.Store, sec *secrets.LocalEnc
 					envVars = append(envVars, k)
 				}
 			}
+			for key, cfg := range body.Refresh {
+				cfg.CredentialKey = key
+				protected, protectErr := protectProviderRefreshMaterial(r.Context(), sec, name, cfg)
+				if protectErr != nil {
+					http.Error(w, protectErr.Error(), http.StatusServiceUnavailable)
+					return
+				}
+				body.Refresh[key] = protected
+			}
 			rec := store.ProviderRecord{
 				Name:                  name,
 				Type:                  body.Type,
@@ -229,6 +242,7 @@ func mountProviderAPI(mux *http.ServeMux, st *store.Store, sec *secrets.LocalEnc
 				CredentialExpiresAtMS: body.CredentialExpiresAtMS,
 				RuntimeCredentials:    body.RuntimeCredentials,
 				Config:                body.Config,
+				Refresh:               body.Refresh,
 			}
 			if err := st.UpsertProvider(rec); err != nil {
 				http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -502,6 +516,21 @@ func resolveSandboxSecrets(ctx context.Context, st *store.Store, sec *secrets.Lo
 		inst, ok := st.GetProvider(pname)
 		if !ok {
 			continue
+		}
+		for key, cfg := range inst.Refresh {
+			expiresAt := cfg.ExpiresAtMS
+			if expiresAt == 0 {
+				expiresAt = inst.CredentialExpiresAtMS[key]
+			}
+			if expiresAt == 0 {
+				continue // no known expiry; first rotation remains an explicit operation
+			}
+			refreshAt := time.Now().Add(time.Duration(cfg.RefreshBeforeSeconds) * time.Second).UnixMilli()
+			if refreshAt >= expiresAt {
+				if err := refreshStoredProviderCredential(ctx, st, sec, pname, key); err != nil {
+					return nil, fmt.Errorf("provider %s credential %s refresh: %w", pname, key, err)
+				}
+			}
 		}
 		keys := inst.EnvVars
 		if len(keys) == 0 {

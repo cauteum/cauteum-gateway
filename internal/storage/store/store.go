@@ -114,10 +114,15 @@ type ProviderRecord struct {
 
 // ProviderRefreshConfig is gateway-managed credential refresh metadata (OpenShell).
 type ProviderRefreshConfig struct {
-	CredentialKey string            `json:"credential_key"`
-	Strategy      string            `json:"strategy"` // env | oauth2-refresh-token | oauth2-client-credentials | aws-sts-assume-role
-	Material      map[string]string `json:"material,omitempty"`
-	ExpiresAtMS   int64             `json:"expires_at_ms,omitempty"`
+	CredentialKey          string            `json:"credential_key"`
+	Strategy               string            `json:"strategy"` // env | oauth2-refresh-token | oauth2-client-credentials | aws-sts-assume-role
+	Material               map[string]string `json:"material,omitempty"`
+	MaterialSecretKeys     []string          `json:"material_secret_keys,omitempty"`
+	MaterialCredentialKeys map[string]string `json:"material_credential_keys,omitempty"`
+	Outputs                map[string]string `json:"outputs,omitempty"` // response field -> provider env key
+	RefreshBeforeSeconds   int64             `json:"refresh_before_seconds,omitempty"`
+	MaxLifetimeSeconds     int64             `json:"max_lifetime_seconds,omitempty"`
+	ExpiresAtMS            int64             `json:"expires_at_ms,omitempty"`
 }
 
 // Store persists State under DataDir/state.json.

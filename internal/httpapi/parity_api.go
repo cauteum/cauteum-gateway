@@ -394,7 +394,7 @@ func handleProviderRefreshPath(w http.ResponseWriter, r *http.Request, st *store
 	switch {
 	case len(parts) == 1 && parts[0] == "refresh" && r.Method == http.MethodGet:
 		w.Header().Set("Content-Type", "application/json")
-		_ = json.NewEncoder(w).Encode(map[string]any{"refresh": rec.Refresh})
+		_ = json.NewEncoder(w).Encode(map[string]any{"refresh": redactProviderRefresh(rec.Refresh)})
 	case len(parts) == 2 && parts[0] == "refresh" && r.Method == http.MethodPut:
 		var body store.ProviderRefreshConfig
 		if err := json.NewDecoder(io.LimitReader(r.Body, 1<<20)).Decode(&body); err != nil {
@@ -404,6 +404,23 @@ func handleProviderRefreshPath(w http.ResponseWriter, r *http.Request, st *store
 		body.CredentialKey = parts[1]
 		if body.Strategy == "" {
 			body.Strategy = "env"
+		}
+		protected, err := protectProviderRefreshMaterial(r.Context(), sec, name, body)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusServiceUnavailable)
+			return true
+		}
+		body = protected
+		if previous, exists := rec.Refresh[body.CredentialKey]; exists && sec != nil {
+			keep := make(map[string]struct{}, len(body.MaterialSecretKeys))
+			for _, key := range body.MaterialSecretKeys {
+				keep[key] = struct{}{}
+			}
+			for _, key := range previous.MaterialSecretKeys {
+				if _, ok := keep[key]; !ok {
+					_ = sec.Delete(r.Context(), refreshMaterialKey(name, body.CredentialKey, key))
+				}
+			}
 		}
 		if rec.Refresh == nil {
 			rec.Refresh = map[string]store.ProviderRefreshConfig{}
@@ -422,6 +439,11 @@ func handleProviderRefreshPath(w http.ResponseWriter, r *http.Request, st *store
 		w.WriteHeader(http.StatusNoContent)
 	case len(parts) == 2 && parts[0] == "refresh" && r.Method == http.MethodDelete:
 		if rec.Refresh != nil {
+			if previous, exists := rec.Refresh[parts[1]]; exists && sec != nil {
+				for _, key := range previous.MaterialSecretKeys {
+					_ = sec.Delete(r.Context(), refreshMaterialKey(name, parts[1], key))
+				}
+			}
 			delete(rec.Refresh, parts[1])
 		}
 		if err := st.UpsertProvider(rec); err != nil {
@@ -431,30 +453,9 @@ func handleProviderRefreshPath(w http.ResponseWriter, r *http.Request, st *store
 		w.WriteHeader(http.StatusNoContent)
 	case len(parts) == 3 && parts[0] == "refresh" && parts[2] == "rotate" && r.Method == http.MethodPost:
 		key := parts[1]
-		cfg, ok := rec.Refresh[key]
-		if !ok {
-			cfg = store.ProviderRefreshConfig{CredentialKey: key, Strategy: "env"}
-		}
-		v, expMS, err := rotateCredential(cfg, key)
-		if err != nil {
+		if err := refreshStoredProviderCredential(r.Context(), st, sec, name, key); err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return true
-		}
-		if err := sec.PutProviderCredentials(r.Context(), name, map[string]string{key: v}); err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return true
-		}
-		if expMS > 0 {
-			if rec.CredentialExpiresAtMS == nil {
-				rec.CredentialExpiresAtMS = map[string]int64{}
-			}
-			rec.CredentialExpiresAtMS[key] = expMS
-			cfg.ExpiresAtMS = expMS
-			if rec.Refresh == nil {
-				rec.Refresh = map[string]store.ProviderRefreshConfig{}
-			}
-			rec.Refresh[key] = cfg
-			_ = st.UpsertProvider(rec)
 		}
 		w.WriteHeader(http.StatusNoContent)
 	default:
