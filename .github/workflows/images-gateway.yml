@@ -86,11 +86,11 @@ jobs:
             echo 'replace ('
             for d in whaleshell-*; do
               if [[ -d "$d" ]]; then
-                echo "  github.com/whaleshell/${d} v0.1.0-alpha.1 => ./$d"
+                echo "  github.com/whaleshell/${d} => ./$d"
               fi
             done
             if [[ -d slogx ]]; then
-              echo '  github.com/whaleshell/slogx v0.1.0-alpha.1 => ./slogx'
+              echo '  github.com/whaleshell/slogx => ./slogx'
             fi
             echo ')'
           } > "${{ github.workspace }}/go.work"

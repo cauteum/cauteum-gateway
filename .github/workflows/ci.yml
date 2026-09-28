@@ -89,11 +89,11 @@ jobs:
             echo 'replace ('
             for d in whaleshell-*; do
               if [[ -d "$d" ]]; then
-                echo "  github.com/whaleshell/${d} v0.1.0-alpha.1 => ./$d"
+                echo "  github.com/whaleshell/${d} => ./$d"
               fi
             done
             if [[ -d slogx ]]; then
-              echo '  github.com/whaleshell/slogx v0.1.0-alpha.1 => ./slogx'
+              echo '  github.com/whaleshell/slogx => ./slogx'
             fi
             echo ')'
           } > "${{ github.workspace }}/go.work"
@@ -187,11 +187,11 @@ jobs:
             echo 'replace ('
             for d in whaleshell-*; do
               if [[ -d "$d" ]]; then
-                echo "  github.com/whaleshell/${d} v0.1.0-alpha.1 => ./$d"
+                echo "  github.com/whaleshell/${d} => ./$d"
               fi
             done
             if [[ -d slogx ]]; then
-              echo '  github.com/whaleshell/slogx v0.1.0-alpha.1 => ./slogx'
+              echo '  github.com/whaleshell/slogx => ./slogx'
             fi
             echo ')'
           } > "${{ github.workspace }}/go.work"
@@ -207,7 +207,7 @@ jobs:
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v8
         with:
-          version: latest
+          version: v2.12.2
           working-directory: whaleshell-gateway
           args: --timeout=5m
 
@@ -285,11 +285,11 @@ jobs:
             echo 'replace ('
             for d in whaleshell-*; do
               if [[ -d "$d" ]]; then
-                echo "  github.com/whaleshell/${d} v0.1.0-alpha.1 => ./$d"
+                echo "  github.com/whaleshell/${d} => ./$d"
               fi
             done
             if [[ -d slogx ]]; then
-              echo '  github.com/whaleshell/slogx v0.1.0-alpha.1 => ./slogx'
+              echo '  github.com/whaleshell/slogx => ./slogx'
             fi
             echo ')'
           } > "${{ github.workspace }}/go.work"
@@ -381,11 +381,11 @@ jobs:
             echo 'replace ('
             for d in whaleshell-*; do
               if [[ -d "$d" ]]; then
-                echo "  github.com/whaleshell/${d} v0.1.0-alpha.1 => ./$d"
+                echo "  github.com/whaleshell/${d} => ./$d"
               fi
             done
             if [[ -d slogx ]]; then
-              echo '  github.com/whaleshell/slogx v0.1.0-alpha.1 => ./slogx'
+              echo '  github.com/whaleshell/slogx => ./slogx'
             fi
             echo ')'
           } > "${{ github.workspace }}/go.work"
