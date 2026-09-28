@@ -8,6 +8,8 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"sort"
+	"strconv"
 	"strings"
 	"time"
 
@@ -21,13 +23,15 @@ import (
 
 // providerWriteBody is the PUT payload: metadata + optional write-only credential values.
 type providerWriteBody struct {
-	Name                  string            `json:"name"`
-	Type                  string            `json:"type"`
-	EnvVars               []string          `json:"env_vars,omitempty"`
-	Credentials           map[string]string `json:"credentials,omitempty"` // write-only; never returned
-	CredentialExpiresAtMS map[string]int64  `json:"credential_expires_at_ms,omitempty"`
-	RuntimeCredentials    bool              `json:"runtime_credentials,omitempty"`
-	Config                map[string]string `json:"config,omitempty"`
+	Name                  string                                 `json:"name"`
+	Type                  string                                 `json:"type"`
+	Workspace             string                                 `json:"workspace,omitempty"`
+	EnvVars               []string                               `json:"env_vars,omitempty"`
+	Credentials           map[string]string                      `json:"credentials,omitempty"` // write-only; never returned
+	CredentialExpiresAtMS map[string]int64                       `json:"credential_expires_at_ms,omitempty"`
+	RuntimeCredentials    bool                                   `json:"runtime_credentials,omitempty"`
+	Config                map[string]string                      `json:"config,omitempty"`
+	Refresh               map[string]store.ProviderRefreshConfig `json:"refresh,omitempty"`
 }
 
 func mountProviderAPI(mux *http.ServeMux, st *store.Store, sec *secrets.LocalEncrypted, builtinDir string) {
@@ -36,7 +40,15 @@ func mountProviderAPI(mux *http.ServeMux, st *store.Store, sec *secrets.LocalEnc
 			http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
 			return
 		}
-		list := listProfiles(st, builtinDir)
+		scope, workspace, err := profileRequestScope(r)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+		if !authorizeProfileScope(w, r, st, scope, workspace, false) {
+			return
+		}
+		list := listProfiles(st, builtinDir, workspace)
 		w.Header().Set("Content-Type", "application/json")
 		_ = json.NewEncoder(w).Encode(map[string]any{"profiles": list})
 	})
@@ -46,16 +58,39 @@ func mountProviderAPI(mux *http.ServeMux, st *store.Store, sec *secrets.LocalEnc
 			http.Error(w, "bad id", http.StatusBadRequest)
 			return
 		}
+		scope, workspace, err := profileRequestScope(r)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+		if !authorizeProfileScope(w, r, st, scope, workspace, r.Method != http.MethodGet) {
+			return
+		}
 		switch r.Method {
 		case http.MethodGet:
-			p, src, err := resolveProfile(st, builtinDir, id)
+			p, src, err := resolveProfileForWorkspace(st, builtinDir, id, workspace)
 			if err != nil {
 				http.Error(w, err.Error(), http.StatusNotFound)
 				return
 			}
+			if src == "custom" {
+				rec, ok := st.GetProfileInScope(scope, workspace, id)
+				if !ok && workspace != "" {
+					rec, ok = st.GetProfileInScope("global", "", id)
+				}
+				if ok {
+					p.ResourceVersion = rec.Version
+					w.Header().Set("ETag", `"`+rec.ResourceVersion+`"`)
+				}
+			}
 			w.Header().Set("Content-Type", "application/json")
 			_ = json.NewEncoder(w).Encode(map[string]any{"profile": p, "source": src})
 		case http.MethodPut:
+			expected := strings.Trim(r.Header.Get("If-Match"), `"`)
+			if expected == "" {
+				http.Error(w, "If-Match resource version required", http.StatusPreconditionRequired)
+				return
+			}
 			body, err := io.ReadAll(io.LimitReader(r.Body, 1<<20))
 			if err != nil {
 				http.Error(w, err.Error(), http.StatusBadRequest)
@@ -70,13 +105,45 @@ func mountProviderAPI(mux *http.ServeMux, st *store.Store, sec *secrets.LocalEnc
 				http.Error(w, "id mismatch", http.StatusBadRequest)
 				return
 			}
-			if err := st.UpsertProfile(id, string(body)); err != nil {
-				http.Error(w, err.Error(), http.StatusInternalServerError)
+			if p.ResourceVersion == 0 {
+				http.Error(w, "resource_version required; export the current profile before updating", http.StatusPreconditionRequired)
+				return
+			}
+			if strconv.FormatUint(p.ResourceVersion, 10) != expected {
+				http.Error(w, "resource_version does not match If-Match", http.StatusConflict)
+				return
+			}
+			if err := st.ReplaceProfileIfVersionScoped(scope, workspace, id, string(body), expected); err != nil {
+				status := http.StatusConflict
+				if strings.Contains(err.Error(), "not found") {
+					status = http.StatusNotFound
+				}
+				http.Error(w, err.Error(), status)
 				return
 			}
 			w.WriteHeader(http.StatusNoContent)
+		case http.MethodPost:
+			body, err := io.ReadAll(io.LimitReader(r.Body, 1<<20))
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusBadRequest)
+				return
+			}
+			p, err := provider.ParseYAML(body)
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusBadRequest)
+				return
+			}
+			if p.ID != id {
+				http.Error(w, "id mismatch", http.StatusBadRequest)
+				return
+			}
+			if err := st.CreateProfileScoped(scope, workspace, id, string(body)); err != nil {
+				http.Error(w, err.Error(), http.StatusConflict)
+				return
+			}
+			w.WriteHeader(http.StatusCreated)
 		case http.MethodDelete:
-			if err := st.DeleteProfile(id); err != nil {
+			if err := st.DeleteProfileScoped(scope, workspace, id); err != nil {
 				http.Error(w, err.Error(), http.StatusInternalServerError)
 				return
 			}
@@ -126,6 +193,9 @@ func mountProviderAPI(mux *http.ServeMux, st *store.Store, sec *secrets.LocalEnc
 				return
 			}
 			w.Header().Set("Content-Type", "application/json")
+			// Material values may contain OAuth secrets. The refresh service owns
+			// them; provider metadata reads expose only whether a value is set.
+			p.Refresh = redactProviderRefresh(p.Refresh)
 			_ = json.NewEncoder(w).Encode(p) // never includes credential values
 		case http.MethodPut:
 			var body providerWriteBody
@@ -138,7 +208,14 @@ func mountProviderAPI(mux *http.ServeMux, st *store.Store, sec *secrets.LocalEnc
 				http.Error(w, "type (profile id) required", http.StatusBadRequest)
 				return
 			}
-			if _, _, err := resolveProfile(st, builtinDir, body.Type); err != nil {
+			profileScope, profileWorkspace := "global", ""
+			if strings.TrimSpace(body.Workspace) != "" {
+				profileScope, profileWorkspace = "workspace", strings.TrimSpace(body.Workspace)
+			}
+			if !authorizeProfileScope(w, r, st, profileScope, profileWorkspace, true) {
+				return
+			}
+			if _, _, err := resolveProfileForWorkspace(st, builtinDir, body.Type, profileWorkspace); err != nil {
 				http.Error(w, "unknown profile type: "+err.Error(), http.StatusBadRequest)
 				return
 			}
@@ -148,13 +225,24 @@ func mountProviderAPI(mux *http.ServeMux, st *store.Store, sec *secrets.LocalEnc
 					envVars = append(envVars, k)
 				}
 			}
+			for key, cfg := range body.Refresh {
+				cfg.CredentialKey = key
+				protected, protectErr := protectProviderRefreshMaterial(r.Context(), sec, name, cfg)
+				if protectErr != nil {
+					http.Error(w, protectErr.Error(), http.StatusServiceUnavailable)
+					return
+				}
+				body.Refresh[key] = protected
+			}
 			rec := store.ProviderRecord{
 				Name:                  name,
 				Type:                  body.Type,
+				Workspace:             body.Workspace,
 				EnvVars:               envVars,
 				CredentialExpiresAtMS: body.CredentialExpiresAtMS,
 				RuntimeCredentials:    body.RuntimeCredentials,
 				Config:                body.Config,
+				Refresh:               body.Refresh,
 			}
 			if err := st.UpsertProvider(rec); err != nil {
 				http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -279,8 +367,18 @@ func handleSandboxSubpath(w http.ResponseWriter, r *http.Request, st *store.Stor
 		prov := parts[1]
 		switch r.Method {
 		case http.MethodPut, http.MethodPost:
-			if _, ok := st.GetProvider(prov); !ok {
+			inst, ok := st.GetProvider(prov)
+			if !ok {
 				http.Error(w, "provider not found", http.StatusNotFound)
+				return
+			}
+			sb, ok := st.GetSandbox(name)
+			if !ok {
+				http.Error(w, "sandbox not found", http.StatusNotFound)
+				return
+			}
+			if inst.Workspace != "" && inst.Workspace != sb.Workspace {
+				http.Error(w, "provider belongs to a different workspace", http.StatusForbidden)
 				return
 			}
 			if err := st.AttachProvider(name, prov); err != nil {
@@ -419,9 +517,24 @@ func resolveSandboxSecrets(ctx context.Context, st *store.Store, sec *secrets.Lo
 		if !ok {
 			continue
 		}
+		for key, cfg := range inst.Refresh {
+			expiresAt := cfg.ExpiresAtMS
+			if expiresAt == 0 {
+				expiresAt = inst.CredentialExpiresAtMS[key]
+			}
+			if expiresAt == 0 {
+				continue // no known expiry; first rotation remains an explicit operation
+			}
+			refreshAt := time.Now().Add(time.Duration(cfg.RefreshBeforeSeconds) * time.Second).UnixMilli()
+			if refreshAt >= expiresAt {
+				if err := refreshStoredProviderCredential(ctx, st, sec, pname, key); err != nil {
+					return nil, fmt.Errorf("provider %s credential %s refresh: %w", pname, key, err)
+				}
+			}
+		}
 		keys := inst.EnvVars
 		if len(keys) == 0 {
-			if prof, _, err := resolveProfile(st, builtinDir, inst.Type); err == nil {
+			if prof, _, err := resolveProfileForWorkspace(st, builtinDir, inst.Type, sb.Workspace); err == nil {
 				keys = prof.EnvKeys()
 			}
 		}
@@ -529,28 +642,112 @@ func formatLogLine(ln logbuf.Line) string {
 	return fmt.Sprintf("[%s] %s", src, ln.Text)
 }
 
-func listProfiles(st *store.Store, builtinDir string) []map[string]string {
-	var out []map[string]string
-	seen := map[string]struct{}{}
+func profileRequestScope(r *http.Request) (scope, workspace string, err error) {
+	scope = strings.TrimSpace(r.URL.Query().Get("scope"))
+	workspace = strings.TrimSpace(r.URL.Query().Get("workspace"))
+	if scope == "" {
+		if workspace != "" {
+			scope = "workspace"
+		} else {
+			scope = "global"
+		}
+	}
+	switch scope {
+	case "global":
+		if workspace != "" {
+			return "", "", fmt.Errorf("workspace cannot be set with global scope")
+		}
+	case "workspace":
+		if workspace == "" {
+			return "", "", fmt.Errorf("workspace name required for workspace scope")
+		}
+	default:
+		return "", "", fmt.Errorf("scope must be global or workspace")
+	}
+	return scope, workspace, nil
+}
+
+func authorizeProfileScope(w http.ResponseWriter, r *http.Request, st *store.Store, scope, workspace string, write bool) bool {
+	principal := PrincipalFrom(r.Context())
+	if principal.Kind == PrincipalNone || principal.IDP == "local" {
+		return true // direct handler tests and the local operator token
+	}
+	if scope == "global" {
+		for _, role := range principal.Roles {
+			if role == "platform-admin" || role == "whaleshell:platform-admin" {
+				return true
+			}
+		}
+		http.Error(w, "platform-admin role required for global provider profiles", http.StatusForbidden)
+		return false
+	}
+	ws, ok := st.GetWorkspace(workspace)
+	if !ok {
+		http.Error(w, "workspace not found", http.StatusNotFound)
+		return false
+	}
+	for _, member := range ws.Members {
+		if member.Subject != principal.Subject {
+			continue
+		}
+		role := strings.ToLower(strings.TrimSpace(member.Role))
+		if role == "owner" || role == "admin" || !write && (role == "user" || role == "member" || role == "reader" || role == "viewer") {
+			return true
+		}
+	}
+	http.Error(w, "workspace membership with profile access required", http.StatusForbidden)
+	return false
+}
+
+func listProfiles(st *store.Store, builtinDir, workspace string) []map[string]string {
+	catalog := map[string]map[string]string{}
+	workspaceOverrides := map[string]bool{}
 	if builtinDir != "" {
 		if m, err := provider.LoadDir(builtinDir); err == nil {
-			for id := range m {
-				seen[id] = struct{}{}
-				out = append(out, map[string]string{"id": id, "source": "builtin"})
+			for id, prof := range m {
+				catalog[id] = map[string]string{"id": id, "category": prof.Category, "source": "builtin", "scope": "builtin"}
 			}
 		}
 	}
-	for id := range st.Snapshot().Profiles {
-		if _, ok := seen[id]; ok {
+	for key, rec := range st.Snapshot().Profiles {
+		isWorkspace := rec.Scope == "workspace" || strings.HasPrefix(key, "workspace/")
+		if isWorkspace && (workspace == "" || rec.Workspace != workspace) {
 			continue
 		}
-		out = append(out, map[string]string{"id": id, "source": "custom"})
+		if !isWorkspace && workspace == "" && rec.Workspace != "" {
+			continue
+		}
+		id := rec.ID
+		if !isWorkspace && workspaceOverrides[id] {
+			continue
+		}
+		category := ""
+		if prof, err := provider.ParseYAML([]byte(rec.YAML)); err == nil {
+			category = prof.Category
+		}
+		scope := "global"
+		if isWorkspace {
+			scope = "workspace"
+		}
+		catalog[id] = map[string]string{"id": id, "category": category, "source": "custom", "scope": scope}
+		if isWorkspace {
+			workspaceOverrides[id] = true
+		}
+	}
+	ids := make([]string, 0, len(catalog))
+	for id := range catalog {
+		ids = append(ids, id)
+	}
+	sort.Strings(ids)
+	out := make([]map[string]string, 0, len(ids))
+	for _, id := range ids {
+		out = append(out, catalog[id])
 	}
 	return out
 }
 
-func resolveProfile(st *store.Store, builtinDir, id string) (provider.Profile, string, error) {
-	if rec, ok := st.GetProfile(id); ok {
+func resolveProfileForWorkspace(st *store.Store, builtinDir, id, workspace string) (provider.Profile, string, error) {
+	if rec, ok := st.GetProfileScoped(id, workspace); ok {
 		p, err := provider.ParseYAML([]byte(rec.YAML))
 		return p, "custom", err
 	}
@@ -605,7 +802,7 @@ func effectivePolicy(st *store.Store, builtinDir, sandbox string) (policy.Docume
 		if !ok {
 			continue
 		}
-		prof, _, err := resolveProfile(st, builtinDir, inst.Type)
+		prof, _, err := resolveProfileForWorkspace(st, builtinDir, inst.Type, sb.Workspace)
 		if err != nil {
 			return policy.Document{}, err
 		}

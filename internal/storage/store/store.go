@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strconv"
 	"sync"
 	"time"
 )
@@ -62,6 +63,7 @@ type Sandbox struct {
 	Name              string            `json:"name"`
 	ID                string            `json:"id,omitempty"`
 	Image             string            `json:"image,omitempty"`
+	Workspace         string            `json:"workspace,omitempty"`
 	Network           string            `json:"network,omitempty"`
 	Status            string            `json:"status,omitempty"`
 	Labels            map[string]string `json:"labels,omitempty"`
@@ -89,8 +91,12 @@ const PolicyStatusLoaded = "loaded"
 
 // ProfileRecord is a custom (imported) provider profile stored as YAML.
 type ProfileRecord struct {
-	ID   string `json:"id"`
-	YAML string `json:"yaml"`
+	ID              string `json:"id"`
+	Scope           string `json:"scope,omitempty"`
+	Workspace       string `json:"workspace,omitempty"`
+	YAML            string `json:"yaml"`
+	ResourceVersion string `json:"resource_version,omitempty"`
+	Version         uint64 `json:"version,omitempty"`
 }
 
 // ProviderRecord is a named instance referencing a profile.
@@ -98,6 +104,7 @@ type ProfileRecord struct {
 type ProviderRecord struct {
 	Name                  string                           `json:"name"`
 	Type                  string                           `json:"type"`
+	Workspace             string                           `json:"workspace,omitempty"`
 	EnvVars               []string                         `json:"env_vars,omitempty"`
 	CredentialExpiresAtMS map[string]int64                 `json:"credential_expires_at_ms,omitempty"`
 	RuntimeCredentials    bool                             `json:"runtime_credentials,omitempty"`
@@ -107,10 +114,15 @@ type ProviderRecord struct {
 
 // ProviderRefreshConfig is gateway-managed credential refresh metadata (OpenShell).
 type ProviderRefreshConfig struct {
-	CredentialKey string            `json:"credential_key"`
-	Strategy      string            `json:"strategy"` // env | oauth2-refresh-token | oauth2-client-credentials | aws-sts-assume-role
-	Material      map[string]string `json:"material,omitempty"`
-	ExpiresAtMS   int64             `json:"expires_at_ms,omitempty"`
+	CredentialKey          string            `json:"credential_key"`
+	Strategy               string            `json:"strategy"` // env | oauth2-refresh-token | oauth2-client-credentials | aws-sts-assume-role
+	Material               map[string]string `json:"material,omitempty"`
+	MaterialSecretKeys     []string          `json:"material_secret_keys,omitempty"`
+	MaterialCredentialKeys map[string]string `json:"material_credential_keys,omitempty"`
+	Outputs                map[string]string `json:"outputs,omitempty"` // response field -> provider env key
+	RefreshBeforeSeconds   int64             `json:"refresh_before_seconds,omitempty"`
+	MaxLifetimeSeconds     int64             `json:"max_lifetime_seconds,omitempty"`
+	ExpiresAtMS            int64             `json:"expires_at_ms,omitempty"`
 }
 
 // Store persists State under DataDir/state.json.
@@ -256,6 +268,9 @@ func (s *Store) UpsertSandbox(sb Sandbox) error {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	if prev, ok := s.state.Sandboxes[sb.Name]; ok {
+		if sb.Workspace == "" {
+			sb.Workspace = prev.Workspace
+		}
 		if len(sb.AttachedProviders) == 0 && len(prev.AttachedProviders) > 0 {
 			sb.AttachedProviders = prev.AttachedProviders
 		}
@@ -370,29 +385,126 @@ func (s *Store) SetGlobalPolicy(yaml string) error {
 
 // UpsertProfile stores a custom profile YAML.
 func (s *Store) UpsertProfile(id, yaml string) error {
+	return s.UpsertProfileScoped("global", "", id, yaml)
+}
+
+func (s *Store) UpsertProfileScoped(scope, workspace, id, yaml string) error {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	if s.state.Profiles == nil {
 		s.state.Profiles = map[string]ProfileRecord{}
 	}
-	s.state.Profiles[id] = ProfileRecord{ID: id, YAML: yaml}
+	key := profileStorageKey(scope, workspace, id)
+	version := s.state.Profiles[key].Version + 1
+	s.state.Profiles[key] = ProfileRecord{ID: id, Scope: scope, Workspace: workspace, YAML: yaml, ResourceVersion: strconv.FormatUint(version, 10), Version: version}
+	return s.flushLocked()
+}
+
+// CreateProfile stores a custom profile only when its ID is not already imported.
+func (s *Store) CreateProfile(id, yaml string) error {
+	return s.CreateProfileScoped("global", "", id, yaml)
+}
+
+func (s *Store) CreateProfileScoped(scope, workspace, id, yaml string) error {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	if s.state.Profiles == nil {
+		s.state.Profiles = map[string]ProfileRecord{}
+	}
+	key := profileStorageKey(scope, workspace, id)
+	if _, exists := s.state.Profiles[key]; exists {
+		return fmt.Errorf("provider profile %q already exists; use profile update", id)
+	}
+	s.state.Profiles[key] = ProfileRecord{ID: id, Scope: scope, Workspace: workspace, YAML: yaml, ResourceVersion: "1", Version: 1}
+	return s.flushLocked()
+}
+
+// ReplaceProfile updates an existing imported profile without silently creating it.
+func (s *Store) ReplaceProfile(id, yaml string) error {
+	return s.ReplaceProfileIfVersion(id, yaml, "")
+}
+
+// ReplaceProfileIfVersion atomically updates a profile when its current version
+// matches expected. An empty expected value is retained for internal callers.
+func (s *Store) ReplaceProfileIfVersion(id, yaml, expected string) error {
+	return s.ReplaceProfileIfVersionScoped("global", "", id, yaml, expected)
+}
+
+func (s *Store) ReplaceProfileIfVersionScoped(scope, workspace, id, yaml, expected string) error {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	key := profileStorageKey(scope, workspace, id)
+	current, exists := s.state.Profiles[key]
+	if !exists {
+		return fmt.Errorf("provider profile %q not found; use profile import", id)
+	}
+	currentVersion := strconv.FormatUint(current.Version, 10)
+	if current.Version == 0 {
+		currentVersion = "1" // legacy profile records start at the first numeric version
+	}
+	if expected != "" && currentVersion != expected {
+		return fmt.Errorf("provider profile %q changed since it was read", id)
+	}
+	version := current.Version + 1
+	if version == 1 {
+		version = 2 // migrate records written before numeric profile versions
+	}
+	s.state.Profiles[key] = ProfileRecord{ID: id, Scope: scope, Workspace: workspace, YAML: yaml, ResourceVersion: strconv.FormatUint(version, 10), Version: version}
 	return s.flushLocked()
 }
 
 // DeleteProfile removes a custom profile.
 func (s *Store) DeleteProfile(id string) error {
+	return s.DeleteProfileScoped("global", "", id)
+}
+
+func (s *Store) DeleteProfileScoped(scope, workspace, id string) error {
 	s.mu.Lock()
 	defer s.mu.Unlock()
-	delete(s.state.Profiles, id)
+	delete(s.state.Profiles, profileStorageKey(scope, workspace, id))
 	return s.flushLocked()
 }
 
 // GetProfile returns a custom profile if present.
 func (s *Store) GetProfile(id string) (ProfileRecord, bool) {
+	return s.GetProfileInScope("global", "", id)
+}
+
+// GetProfileScoped resolves a workspace override before the global catalog.
+func (s *Store) GetProfileScoped(id, workspace string) (ProfileRecord, bool) {
+	if workspace != "" {
+		if p, ok := s.GetProfileInScope("workspace", workspace, id); ok {
+			return p, true
+		}
+	}
+	return s.GetProfileInScope("global", "", id)
+}
+
+// GetProfileInScope reads one exact catalog scope without applying fallback.
+func (s *Store) GetProfileInScope(scope, workspace, id string) (ProfileRecord, bool) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
-	p, ok := s.state.Profiles[id]
+	key := profileStorageKey(scope, workspace, id)
+	p, ok := s.state.Profiles[key]
+	if !ok && scope == "global" {
+		p, ok = s.state.Profiles[id] // legacy records were keyed directly by ID
+	}
+	if ok {
+		if p.Version > 0 {
+			p.ResourceVersion = strconv.FormatUint(p.Version, 10)
+		} else {
+			p.Version = 1
+			p.ResourceVersion = "1"
+		}
+	}
 	return p, ok
+}
+
+func profileStorageKey(scope, workspace, id string) string {
+	if scope == "workspace" {
+		return "workspace/" + workspace + "/" + id
+	}
+	return id
 }
 
 // UpsertProvider stores a provider instance (env refs only).
