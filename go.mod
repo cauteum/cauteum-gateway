@@ -3,8 +3,8 @@ module github.com/whaleshell/whaleshell-gateway
 go 1.27.0
 
 require (
-	github.com/whaleshell/whaleshell-core v0.1.0-alpha.1
-	github.com/whaleshell/whaleshell-providers v0.1.0-alpha.1
+	github.com/whaleshell/whaleshell-core v0.1.0-alpha.2
+	github.com/whaleshell/whaleshell-providers v0.1.0-alpha.2
 	github.com/whaleshell/whaleshell-runtime v0.1.0-alpha.1
 	github.com/whaleshell/slogx v0.1.0-alpha.1
 	golang.org/x/crypto v0.56.0

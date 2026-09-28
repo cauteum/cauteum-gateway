@@ -1,6 +1,6 @@
 # Roadmap — whaleshell-gateway
 
-Status: **v0.1.0-alpha.1** (alpha) · Depends on whaleshell-core / whaleshell-providers / whaleshell-runtime `v0.1.0-alpha.1`
+Status: **v0.1.0-alpha.2** (alpha) · Depends on whaleshell-core / whaleshell-providers `v0.1.0-alpha.2` and whaleshell-runtime `v0.1.0-alpha.1`
 
 ## This module
 

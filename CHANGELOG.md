@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [v0.1.0-alpha.2] - 2026-09-28
+
 ### Added
 
 - Workspace/global provider profile catalog APIs with authorization and resource-version conflict checks.
