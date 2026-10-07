@@ -7,7 +7,6 @@ import (
 	"encoding/hex"
 	"errors"
 	"fmt"
-	"os"
 	"path/filepath"
 	"time"
 )
@@ -74,14 +73,7 @@ func (s *Store) WriteAuthTokenFile() (string, error) {
 		return "", err
 	}
 	path := filepath.Join(s.DataDir, AuthTokenFile)
-	tmp := path + ".tmp"
-	if err := os.WriteFile(tmp, []byte(tok+"\n"), 0o600); err != nil {
-		return "", err
-	}
-	if err := os.Chmod(tmp, 0o600); err != nil {
-		return "", err
-	}
-	if err := os.Rename(tmp, path); err != nil {
+	if err := writeOwnerOnlyAtomic(path, []byte(tok+"\n")); err != nil {
 		return "", err
 	}
 	return path, nil
