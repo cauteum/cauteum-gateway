@@ -481,7 +481,7 @@ func Open(dataDir, gatewayID string) (*Store, error) {
 	if err := os.MkdirAll(dataDir, 0o700); err != nil {
 		return nil, err
 	}
-	if err := os.Chmod(dataDir, 0o700); err != nil {
+	if err := restrictOwnerAccess(dataDir, true); err != nil {
 		return nil, err
 	}
 	s := &Store{
@@ -574,14 +574,7 @@ func (s *Store) flushLocked() error {
 	if err != nil {
 		return err
 	}
-	tmp := s.path + ".tmp"
-	if err := os.WriteFile(tmp, b, 0o600); err != nil {
-		return err
-	}
-	if err := os.Chmod(tmp, 0o600); err != nil {
-		return err
-	}
-	return os.Rename(tmp, s.path)
+	return writeOwnerOnlyAtomic(s.path, b)
 }
 
 // Snapshot returns an independent copy of registry state without authentication secrets.
