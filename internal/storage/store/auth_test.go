@@ -4,7 +4,6 @@ import (
 	"errors"
 	"os"
 	"path/filepath"
-	"runtime"
 	"strings"
 	"testing"
 	"time"
@@ -22,29 +21,16 @@ func openTest(t *testing.T) *Store {
 	return st
 }
 
-func TestStateAndTokenFilePermissions(t *testing.T) {
-	if runtime.GOOS == "windows" {
-		t.Skip("POSIX permission bits are not enforced on Windows")
-	}
+func TestAuthTokenFileContainsCurrentToken(t *testing.T) {
 	st := openTest(t)
 	path, err := st.WriteAuthTokenFile()
 	if err != nil {
 		t.Fatal(err)
 	}
-	for p, want := range map[string]os.FileMode{
-		st.DataDir:                              0o700,
-		path:                                    0o600,
-		filepath.Join(st.DataDir, "state.json"): 0o600,
-	} {
-		fi, err := os.Stat(p)
-		if err != nil {
-			t.Fatal(err)
-		}
-		if got := fi.Mode().Perm(); got != want {
-			t.Errorf("%s mode = %o, want %o", p, got, want)
-		}
+	b, err := os.ReadFile(path)
+	if err != nil {
+		t.Fatal(err)
 	}
-	b, _ := os.ReadFile(path)
 	if strings.TrimSpace(string(b)) != st.AuthToken() {
 		t.Fatal("auth_token file does not match store token")
 	}

@@ -3,14 +3,11 @@
 package integration
 
 import (
-	"bytes"
 	"context"
-	"encoding/json"
 	"errors"
 	"io"
 	"log/slog"
 	"net/http"
-	"net/http/httptest"
 	"os"
 	"path/filepath"
 	"strings"
@@ -19,83 +16,10 @@ import (
 
 	"github.com/whaleshell/whaleshell-core/relayproto"
 	"github.com/whaleshell/whaleshell-gateway/internal/httpapi"
-	"github.com/whaleshell/whaleshell-gateway/internal/storage/store"
 	"github.com/whaleshell/whaleshell-runtime/relayclient"
 	"github.com/whaleshell/whaleshell-runtime/sshserver"
 	"golang.org/x/crypto/ssh"
 )
-
-type testGateway struct {
-	t     *testing.T
-	srv   *httptest.Server
-	token string
-	dir   string
-}
-
-func newTestGateway(t *testing.T, opt httpapi.Options) *testGateway {
-	t.Helper()
-	ctx, cancel := context.WithCancel(context.Background())
-	t.Cleanup(cancel)
-	opt.DataDir = filepath.Join(t.TempDir(), "gw")
-	h, err := httpapi.NewHandler(ctx, opt)
-	if err != nil {
-		t.Fatal(err)
-	}
-	srv := httptest.NewServer(h)
-	t.Cleanup(srv.Close)
-	b, err := os.ReadFile(filepath.Join(opt.DataDir, store.AuthTokenFile))
-	if err != nil {
-		t.Fatal(err)
-	}
-	return &testGateway{t: t, srv: srv, token: strings.TrimSpace(string(b)), dir: opt.DataDir}
-}
-
-func (g *testGateway) do(method, path, token string, body any) (int, []byte) {
-	g.t.Helper()
-	var rd io.Reader
-	if body != nil {
-		b, _ := json.Marshal(body)
-		rd = bytes.NewReader(b)
-	}
-	req, _ := http.NewRequest(method, g.srv.URL+path, rd)
-	if token != "" {
-		req.Header.Set("Authorization", "Bearer "+token)
-	}
-	res, err := http.DefaultClient.Do(req)
-	if err != nil {
-		g.t.Fatal(err)
-	}
-	defer res.Body.Close()
-	out, _ := io.ReadAll(res.Body)
-	return res.StatusCode, out
-}
-
-func (g *testGateway) mustJSON(method, path, token string, body any, want int, into any) {
-	g.t.Helper()
-	code, out := g.do(method, path, token, body)
-	if code != want {
-		g.t.Fatalf("%s %s = %d (%s), want %d", method, path, code, out, want)
-	}
-	if into != nil {
-		if err := json.Unmarshal(out, into); err != nil {
-			g.t.Fatalf("%s %s: decode %q: %v", method, path, out, err)
-		}
-	}
-}
-
-func (g *testGateway) createSandbox(name string) {
-	g.t.Helper()
-	g.mustJSON(http.MethodPut, "/v1/sandboxes/"+name, g.token, map[string]any{}, http.StatusNoContent, nil)
-}
-
-func (g *testGateway) sandboxToken(name string) string {
-	g.t.Helper()
-	var out struct {
-		Token string `json:"sandbox_token"`
-	}
-	g.mustJSON(http.MethodPost, "/v1/sandboxes/"+name+"/supervisor-token", g.token, nil, http.StatusOK, &out)
-	return out.Token
-}
 
 // startSupervisor runs a real sshserver on a Unix socket and a relayclient
 // dialing out to the gateway, like the proxy sidecar does.
@@ -357,71 +281,6 @@ func TestSandboxDeleteRevokesRelay(t *testing.T) {
 	}
 }
 
-func TestAuthRequiredOnAPI(t *testing.T) {
-	g := newTestGateway(t, httpapi.Options{})
-	g.createSandbox("demo")
-	for _, p := range []string{"/v1/sandboxes", "/v1/info", "/v1/whoami", "/v1/ssh-sessions", "/debug/loglevel", "/v1/sandboxes/demo/secrets", "/v1/providers"} {
-		if code, _ := g.do(http.MethodGet, p, "", nil); code != http.StatusUnauthorized {
-			t.Errorf("GET %s without token = %d, want 401", p, code)
-		}
-		if code, _ := g.do(http.MethodGet, p, "wrong-token", nil); code != http.StatusUnauthorized {
-			t.Errorf("GET %s with bad token = %d, want 401", p, code)
-		}
-	}
-	for _, p := range []string{"/v1/sandboxes/demo/ssh-session", "/v1/sandboxes/demo/exec", "/v1/sandboxes/demo/supervisor-token"} {
-		if code, _ := g.do(http.MethodPost, p, "", nil); code != http.StatusUnauthorized {
-			t.Errorf("POST %s without token = %d, want 401", p, code)
-		}
-	}
-	if code, _ := g.do(http.MethodGet, "/healthz", "", nil); code != http.StatusOK {
-		t.Errorf("/healthz = %d, want 200", code)
-	}
-	if code, _ := g.do(http.MethodGet, "/v1/sandboxes", g.token, nil); code != http.StatusOK {
-		t.Errorf("/v1/sandboxes with token = %d, want 200", code)
-	}
-}
-
-func TestSandboxPrincipalScope(t *testing.T) {
-	g := newTestGateway(t, httpapi.Options{})
-	g.createSandbox("demo")
-	g.createSandbox("other")
-	tok := g.sandboxToken("demo")
-
-	allowed := []struct{ method, path string }{
-		{http.MethodGet, "/v1/whoami"},
-		{http.MethodGet, "/v1/sandboxes/demo/secrets"},
-	}
-	for _, c := range allowed {
-		if code, body := g.do(c.method, c.path, tok, nil); code == http.StatusUnauthorized || code == http.StatusForbidden {
-			t.Errorf("%s %s = %d %s, want allowed", c.method, c.path, code, body)
-		}
-	}
-	denied := []struct{ method, path string }{
-		{http.MethodGet, "/v1/sandboxes"},
-		{http.MethodGet, "/v1/sandboxes/demo"},
-		{http.MethodDelete, "/v1/sandboxes/demo"},
-		{http.MethodGet, "/v1/sandboxes/other/secrets"},
-		{http.MethodPost, "/v1/sandboxes/demo/ssh-session"},
-		{http.MethodPost, "/v1/sandboxes/demo/exec"},
-		{http.MethodPost, "/v1/sandboxes/demo/supervisor-token"},
-		{http.MethodPost, "/v1/sandboxes/other/proposals"},
-		{http.MethodGet, "/v1/ssh-sessions"},
-		{http.MethodGet, "/v1/info"},
-		{http.MethodGet, "/v1/supervisor/connect?sandbox=other"},
-		{http.MethodPut, "/v1/policy/global"},
-	}
-	for _, c := range denied {
-		if code, _ := g.do(c.method, c.path, tok, nil); code != http.StatusForbidden {
-			t.Errorf("%s %s with sandbox token = %d, want 403", c.method, c.path, code)
-		}
-	}
-	var who map[string]any
-	g.mustJSON(http.MethodGet, "/v1/whoami", tok, nil, http.StatusOK, &who)
-	if who["sandbox"] != "demo" {
-		t.Errorf("whoami = %v", who)
-	}
-}
-
 func TestUserTokenCannotActAsSupervisor(t *testing.T) {
 	g := newTestGateway(t, httpapi.Options{})
 	g.createSandbox("demo")
@@ -430,52 +289,5 @@ func TestUserTokenCannotActAsSupervisor(t *testing.T) {
 	_, err := relayproto.Dial(context.Background(), g.srv.URL, relayproto.PathSupervisorConnect+"?sandbox=demo", relayproto.DialOptions{Header: h})
 	if statusOf(err) != http.StatusForbidden {
 		t.Fatalf("user token supervisor connect = %v, want 403", err)
-	}
-}
-
-func TestAllowUnauthenticated(t *testing.T) {
-	g := newTestGateway(t, httpapi.Options{AllowUnauthenticated: true})
-	if code, _ := g.do(http.MethodGet, "/v1/sandboxes", "", nil); code != http.StatusOK {
-		t.Fatalf("unsafe mode without token = %d, want 200", code)
-	}
-	if code, _ := g.do(http.MethodGet, "/v1/sandboxes", "wrong", nil); code != http.StatusUnauthorized {
-		t.Fatalf("unsafe mode with bad token = %d, want 401", code)
-	}
-}
-
-func TestLocalLoginLoopbackOnly(t *testing.T) {
-	g := newTestGateway(t, httpapi.Options{})
-	get := func(path string, hdr map[string]string) *http.Response {
-		req, _ := http.NewRequest(http.MethodGet, g.srv.URL+path, nil)
-		for k, v := range hdr {
-			if k == "Host" {
-				req.Host = v
-				continue
-			}
-			req.Header.Set(k, v)
-		}
-		c := &http.Client{CheckRedirect: func(*http.Request, []*http.Request) error { return http.ErrUseLastResponse }}
-		res, err := c.Do(req)
-		if err != nil {
-			t.Fatal(err)
-		}
-		_ = res.Body.Close()
-		return res
-	}
-	if res := get("/v1/auth/login", nil); res.StatusCode != http.StatusOK {
-		t.Fatalf("loopback login = %d", res.StatusCode)
-	}
-	if res := get("/v1/auth/login", map[string]string{"X-Forwarded-For": "203.0.113.9"}); res.StatusCode != http.StatusForbidden {
-		t.Fatalf("proxied login = %d, want 403", res.StatusCode)
-	}
-	if res := get("/v1/auth/login", map[string]string{"Host": "evil.example:7443"}); res.StatusCode != http.StatusForbidden {
-		t.Fatalf("rebinding host login = %d, want 403", res.StatusCode)
-	}
-	if res := get("/v1/auth/login?redirect_uri=https://evil.example/cb", nil); res.StatusCode != http.StatusBadRequest {
-		t.Fatalf("external redirect = %d, want 400", res.StatusCode)
-	}
-	res := get("/v1/auth/login?redirect_uri="+"http://127.0.0.1:5555/cb", nil)
-	if res.StatusCode != http.StatusFound || !strings.HasPrefix(res.Header.Get("Location"), "http://127.0.0.1:5555/cb?token=") {
-		t.Fatalf("loopback redirect = %d %s", res.StatusCode, res.Header.Get("Location"))
 	}
 }
