@@ -7,7 +7,7 @@
 <p align="center">
   <a href="https://github.com/whaleshell/whaleshell-gateway/actions/workflows/ci.yml"><img src="https://github.com/whaleshell/whaleshell-gateway/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
   <a href="https://pkg.go.dev/github.com/whaleshell/whaleshell-gateway"><img src="https://pkg.go.dev/badge/github.com/whaleshell/whaleshell-gateway.svg" alt="Go Reference"></a>
-  <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License"></a>
+  <a href="https://www.apache.org/licenses/LICENSE-2.0"><img src="https://img.shields.io/badge/License-Apache--2.0-blue.svg" alt="License"></a>
   <a href="https://github.com/whaleshell/whaleshell-gateway"><img src="https://img.shields.io/badge/Go-1.27+-00ADD8?logo=go" alt="Go Version"></a>
 
   <a href="https://github.com/whaleshell/whaleshell-gateway/actions/workflows/images-gateway.yml"><img src="https://github.com/whaleshell/whaleshell-gateway/actions/workflows/images-gateway.yml/badge.svg" alt="images-gateway"></a>
@@ -19,6 +19,8 @@
 ---
 
 ## Overview
+
+Use the [gateway guide](https://whaleshell.github.io/guides/gateway/) for setup and the [OpenShell compatibility page](https://whaleshell.github.io/reference/openshell-compatibility/) for the current supported scope.
 
 **whaleshell-gateway** is the optional control-plane daemon. Sandboxes register here; the CLI and SDKs talk HTTP for inventory, effective policy, provider attach, policy proposals, logs, and relayed exec.
 
@@ -37,8 +39,6 @@
 ## Installation
 
 ```bash
-go install github.com/whaleshell/whaleshell-gateway/cmd/whaleshell-gateway@latest
-# or:
 go build -o whaleshell-gateway ./cmd/whaleshell-gateway
 ./whaleshell-gateway --listen 127.0.0.1:7443
 ```
@@ -94,4 +94,23 @@ Durable state: `$XDG_STATE_HOME/whaleshell/gateway/state.json`.
 
 ## License
 
-[MIT](./LICENSE) © whaleshell
+[Apache-2.0](./LICENSE) © whaleshell
+
+## OpenShell gateway TOML
+
+The daemon reads `--config gateway.toml`, then `OPENSHELL_GATEWAY_CONFIG`,
+then an optional `$XDG_CONFIG_HOME/openshell/gateway.toml`
+(`~/.config/openshell/gateway.toml` fallback). Explicit missing files fail.
+Supported values follow flag > environment > file precedence.
+
+Current startup applies the main bind address, installation name in logs,
+simple log levels, SSH session TTL, the local auth switch, TLS certificate/key
+paths, and `disable_tls`. Referenced paths remain literal and relative to the
+process working directory. `disable_tls=true` ignores the TLS table at runtime.
+
+This support is partial. Full OpenShell deployment files still require missing
+driver, storage, identity, middleware, interceptor, telemetry, and auxiliary
+listener consumers. Supplied unsupported settings fail before the daemon
+creates state or opens listeners. The loader also rejects unknown/duplicate
+keys, invalid required fields/enums, and a database URL embedded in TOML.
+Without an OpenShell file, the existing whaleshell defaults still apply.

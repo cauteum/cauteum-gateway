@@ -4,11 +4,51 @@ import (
 	"context"
 	"net/http"
 	"net/http/httptest"
+	"os"
+	"path/filepath"
 	"strings"
 	"testing"
 
 	"github.com/whaleshell/whaleshell-gateway/internal/storage/store"
 )
+
+func TestConfiguredProfileSourcesSelectBuiltinAndUserCatalogs(t *testing.T) {
+	st, err := store.Open(t.TempDir(), "test")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := st.CreateProfileScoped("global", "", "user-profile", "id: user-profile\ndisplay_name: User\n"); err != nil {
+		t.Fatal(err)
+	}
+	builtinDir := t.TempDir()
+	if err := os.WriteFile(filepath.Join(builtinDir, "builtin-profile.yaml"), []byte("id: builtin-profile\ndisplay_name: Builtin\n"), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	for _, tc := range []struct {
+		name, source, included, excluded string
+	}{
+		{"builtin only", "builtin", "builtin-profile", "user-profile"},
+		{"user only", "user", "user-profile", "builtin-profile"},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			profiles := listProfilesWithSources(st, builtinDir, "", []string{tc.source})
+			if ids := profilesToIDs(profiles); !strings.Contains(ids, tc.included) || strings.Contains(ids, tc.excluded) {
+				t.Fatalf("source %s catalog=%v", tc.source, profiles)
+			}
+			if _, _, err := resolveProfileForWorkspaceWithSources(st, builtinDir, tc.excluded, "", []string{tc.source}); err == nil {
+				t.Fatalf("excluded profile %q resolved for source %q", tc.excluded, tc.source)
+			}
+		})
+	}
+}
+
+func profilesToIDs(profiles []map[string]string) string {
+	var ids []string
+	for _, profile := range profiles {
+		ids = append(ids, profile["id"])
+	}
+	return strings.Join(ids, ",")
+}
 
 func TestProfileCatalogImportUpdateAndRead(t *testing.T) {
 	st, err := store.Open(t.TempDir(), "test")
@@ -26,7 +66,7 @@ func TestProfileCatalogImportUpdateAndRead(t *testing.T) {
 		mux.ServeHTTP(res, req)
 		return res
 	}
-	profile := "id: openai\ndisplay_name: OpenAI\n"
+	profile := "id: openai\ndisplay_name: OpenAI\nsource: builtin\nscope: workspace\n"
 	if got := request(http.MethodPost, profile, ""); got.Code != http.StatusCreated {
 		t.Fatalf("import status=%d body=%s", got.Code, got.Body.String())
 	}
@@ -40,6 +80,9 @@ func TestProfileCatalogImportUpdateAndRead(t *testing.T) {
 	current := request(http.MethodGet, "", "")
 	if current.Code != http.StatusOK || !strings.Contains(current.Body.String(), `"resource_version":1`) {
 		t.Fatalf("read status=%d body=%s", current.Code, current.Body.String())
+	}
+	if !strings.Contains(current.Body.String(), `"source":"user"`) || !strings.Contains(current.Body.String(), `"scope":"platform"`) {
+		t.Fatalf("imported metadata must not override catalog provenance/visibility: %s", current.Body.String())
 	}
 	version := current.Header().Get("ETag")
 	staleBody := "resource_version: 7\nid: openai\ndisplay_name: Stale\n"
@@ -89,7 +132,7 @@ func TestProfileWorkspaceScopeAndAuthorization(t *testing.T) {
 	if got := serve(http.MethodGet, wsPath, "", Principal{Kind: PrincipalUser, Subject: "alice", IDP: "oidc"}); got.Code != http.StatusOK {
 		t.Fatalf("workspace member read status=%d body=%s", got.Code, got.Body.String())
 	}
-	profile := "id: openai\ndescription: workspace profile\n"
+	profile := "id: openai\ndescription: workspace profile\nsource: builtin\nscope: platform\n"
 	if got := serve(http.MethodPost, "/v1/profiles/openai?scope=workspace&workspace=team-ml", profile, Principal{Kind: PrincipalUser, Subject: "alice", IDP: "oidc"}); got.Code != http.StatusForbidden {
 		t.Fatalf("workspace user should not write catalog; status=%d", got.Code)
 	}
@@ -108,5 +151,7 @@ func TestProfileWorkspaceScopeAndAuthorization(t *testing.T) {
 	}
 	if got := serve(http.MethodGet, "/v1/profiles/openai?scope=workspace&workspace=team-ml", "", Principal{Kind: PrincipalUser, Subject: "alice", IDP: "oidc"}); got.Code != http.StatusOK || !strings.Contains(got.Body.String(), "workspace profile") {
 		t.Fatalf("workspace catalog resolution status=%d body=%s", got.Code, got.Body.String())
+	} else if !strings.Contains(got.Body.String(), `"source":"user"`) || !strings.Contains(got.Body.String(), `"scope":"workspace"`) {
+		t.Fatalf("workspace metadata must come from storage: %s", got.Body.String())
 	}
 }

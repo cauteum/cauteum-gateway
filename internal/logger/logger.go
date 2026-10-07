@@ -19,11 +19,12 @@ const (
 
 // Options tweak Setup.
 type Options struct {
-	Service string
-	Output  io.Writer
-	Level   slog.Level
-	Format  string
-	Dev     bool
+	Service  string
+	Output   io.Writer
+	Level    slog.Level
+	LevelSet bool // prevents an explicit CLI/TOML filter being replaced by env
+	Format   string
+	Dev      bool
 }
 
 // Setup builds a corporate-masked slogx logger.
@@ -40,7 +41,7 @@ func Setup(ctx context.Context, opt Options) *slogx.Logger {
 		format = slogx.ParseFormat(envOr(EnvLogFormat, "json"))
 	}
 	level := opt.Level
-	if raw := os.Getenv(EnvLogLevel); raw != "" {
+	if raw := os.Getenv(EnvLogLevel); raw != "" && !opt.LevelSet {
 		if lvl, err := slogx.ParseLevel(raw); err == nil {
 			level = lvl
 		}
@@ -61,7 +62,9 @@ func Setup(ctx context.Context, opt Options) *slogx.Logger {
 		log = log.With("service", opt.Service)
 		slog.SetDefault(log.Logger)
 	}
-	go log.WatchLevelEnv(ctx, EnvLogLevel, 0)
+	if !opt.LevelSet {
+		go log.WatchLevelEnv(ctx, EnvLogLevel, 0)
+	}
 	if addr := strings.TrimSpace(os.Getenv(EnvLogLevelAddr)); addr != "" {
 		go func() {
 			_, _, _ = log.ListenLevelHTTP(ctx, addr)

@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"maps"
 	"net/http"
 	"net/url"
 	"os"
@@ -71,30 +72,35 @@ func protectProviderRefreshMaterial(ctx context.Context, sec *secrets.LocalEncry
 	return cfg, nil
 }
 
-func loadProviderRefreshMaterial(ctx context.Context, sec *secrets.LocalEncrypted, providerName string, cfg store.ProviderRefreshConfig) (map[string]string, error) {
+func loadProviderRefreshMaterialForRecord(ctx context.Context, sec *secrets.LocalEncrypted, drivers *driverRegistry, record store.ProviderRecord, cfg store.ProviderRefreshConfig) (map[string]string, error) {
 	material := make(map[string]string, len(cfg.Material)+len(cfg.MaterialSecretKeys)+len(cfg.MaterialCredentialKeys))
-	for key, value := range cfg.Material {
-		material[key] = value // legacy plaintext metadata is migrated below on writes
-	}
+	// legacy plaintext metadata is migrated below on writes
+	maps.Copy(material, cfg.Material)
 	for _, key := range cfg.MaterialSecretKeys {
 		if sec == nil {
 			return nil, fmt.Errorf("encrypted credential store unavailable")
 		}
-		value, err := sec.Get(ctx, refreshMaterialKey(providerName, cfg.CredentialKey, key))
+		value, err := sec.Get(ctx, refreshMaterialKey(record.Name, cfg.CredentialKey, key))
 		if err != nil || strings.TrimSpace(value) == "" {
 			return nil, fmt.Errorf("refresh material %q is missing from encrypted storage", key)
 		}
 		material[key] = value
 	}
 	if len(cfg.MaterialCredentialKeys) > 0 {
-		if sec == nil {
+		if sec == nil && drivers == nil {
 			return nil, fmt.Errorf("encrypted credential store unavailable")
 		}
 		keys := make([]string, 0, len(cfg.MaterialCredentialKeys))
 		for _, credentialKey := range cfg.MaterialCredentialKeys {
 			keys = append(keys, credentialKey)
 		}
-		stored, err := sec.GetProviderCredentials(ctx, providerName, keys)
+		var stored map[string]string
+		var err error
+		if drivers != nil {
+			stored, err = drivers.resolveProviderCredentials(ctx, record, keys, sec)
+		} else {
+			stored, err = sec.GetProviderCredentials(ctx, record.Name, keys)
+		}
 		if err != nil {
 			return nil, err
 		}
@@ -110,9 +116,13 @@ func loadProviderRefreshMaterial(ctx context.Context, sec *secrets.LocalEncrypte
 }
 
 func refreshStoredProviderCredential(ctx context.Context, st *store.Store, sec *secrets.LocalEncrypted, providerName, credentialKey string) error {
+	return refreshStoredProviderCredentialWithDrivers(ctx, st, sec, nil, Options{}, providerName, credentialKey)
+}
+
+func refreshStoredProviderCredentialWithDrivers(ctx context.Context, st *store.Store, sec *secrets.LocalEncrypted, drivers *driverRegistry, opt Options, providerName, credentialKey string) error {
 	providerCredentialRefreshMu.Lock()
 	defer providerCredentialRefreshMu.Unlock()
-	if sec == nil {
+	if sec == nil && drivers == nil {
 		return fmt.Errorf("encrypted credential store unavailable")
 	}
 	rec, ok := st.GetProvider(providerName)
@@ -128,12 +138,12 @@ func refreshStoredProviderCredential(ctx context.Context, st *store.Store, sec *
 	if err != nil {
 		return err
 	}
-	material, err := loadProviderRefreshMaterial(ctx, sec, providerName, cfg)
+	material, err := loadProviderRefreshMaterialForRecord(ctx, sec, drivers, rec, cfg)
 	if err != nil {
 		return err
 	}
 	cfg.Material = material
-	values, expiresAtMS, err := rotateCredential(cfg, credentialKey)
+	values, expiresAtMS, err := rotateCredential(ctx, cfg, credentialKey)
 	if err != nil {
 		return err
 	}
@@ -146,7 +156,20 @@ func refreshStoredProviderCredential(ctx context.Context, st *store.Store, sec *
 	if len(values) == 0 {
 		return fmt.Errorf("refresh strategy returned no credentials")
 	}
-	if err := sec.PutProviderCredentials(ctx, providerName, values); err != nil {
+	if drivers != nil {
+		driverName, handles, storeErr := drivers.storeProviderCredentials(ctx, opt, sec, providerName, rec.Workspace, values, rec.CredentialHandles)
+		if storeErr != nil {
+			return fmt.Errorf("store refreshed credential: %w", storeErr)
+		}
+		mergedHandles := cloneCredentialHandles(rec.CredentialHandles)
+		if mergedHandles == nil {
+			mergedHandles = map[string]store.CredentialHandle{}
+		}
+		for key, handle := range handles {
+			mergedHandles[key] = handle
+		}
+		rec.CredentialDriver, rec.CredentialHandles = driverName, mergedHandles
+	} else if err := sec.PutProviderCredentials(ctx, providerName, values); err != nil {
 		return fmt.Errorf("store refreshed credential: %w", err)
 	}
 	if rec.Refresh == nil {
@@ -175,7 +198,7 @@ func refreshStoredProviderCredential(ctx context.Context, st *store.Store, sec *
 
 // rotateCredential performs strategy-specific credential refresh and returns
 // the new secret value plus optional expiry (unix ms).
-func rotateCredential(cfg store.ProviderRefreshConfig, key string) (values map[string]string, expiresAtMS int64, err error) {
+func rotateCredential(ctx context.Context, cfg store.ProviderRefreshConfig, key string) (values map[string]string, expiresAtMS int64, err error) {
 	strategy := strings.TrimSpace(cfg.Strategy)
 	if strategy == "" {
 		strategy = "env"
@@ -195,27 +218,12 @@ func rotateCredential(cfg store.ProviderRefreshConfig, key string) (values map[s
 		return oauth2CredentialOutputs(cfg.Material, "client_credentials", cfg.Outputs)
 	case "oauth2_client_credentials":
 		return oauth2CredentialOutputs(cfg.Material, "client_credentials", cfg.Outputs)
+	case "google_service_account_jwt":
+		return googleServiceAccountCredential(cfg.Material, cfg.Outputs)
 	case "aws-sts-assume-role":
-		// MVP: read pre-fetched session token from material or host env.
-		if v := strings.TrimSpace(cfg.Material["access_key_id"]); v != "" {
-			secret := strings.TrimSpace(cfg.Material["secret_access_key"])
-			token := strings.TrimSpace(cfg.Material["session_token"])
-			if secret == "" {
-				return nil, 0, fmt.Errorf("aws-sts-assume-role: material secret_access_key required")
-			}
-			// Store as JSON blob under the credential key for sidecar rewrite.
-			blob, _ := json.Marshal(map[string]string{
-				"access_key_id":     v,
-				"secret_access_key": secret,
-				"session_token":     token,
-			})
-			return map[string]string{key: string(blob)}, cfg.ExpiresAtMS, nil
-		}
-		v, ok := lookupEnv(key)
-		if !ok {
-			return nil, 0, fmt.Errorf("aws-sts-assume-role: set material access_key_id/secret_access_key or host env %s", key)
-		}
-		return map[string]string{key: v}, 0, nil
+		return awsSTSAssumeRole(ctx, cfg.Material, cfg.Outputs)
+	case "aws_sts_assume_role":
+		return awsSTSAssumeRole(ctx, cfg.Material, cfg.Outputs)
 	default:
 		return nil, 0, fmt.Errorf("unsupported refresh strategy %q", strategy)
 	}
@@ -256,6 +264,12 @@ func oauth2CredentialOutputs(material map[string]string, grant string, outputs m
 		form.Set("refresh_token", rt)
 	case "client_credentials":
 		// client_id/secret in body or Basic auth below
+	case "urn:ietf:params:oauth:grant-type:jwt-bearer":
+		assertion := strings.TrimSpace(material["assertion"])
+		if assertion == "" {
+			return nil, 0, fmt.Errorf("oauth2: assertion required")
+		}
+		form.Set("assertion", assertion)
 	default:
 		return nil, 0, fmt.Errorf("oauth2: unsupported grant %q", grant)
 	}
@@ -271,7 +285,7 @@ func oauth2CredentialOutputs(material map[string]string, grant string, outputs m
 
 	req, err := http.NewRequest(http.MethodPost, tokenURL, strings.NewReader(form.Encode()))
 	if err != nil {
-		return nil, 0, err
+		return nil, 0, fmt.Errorf("oauth2 token request could not be created")
 	}
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	req.Header.Set("Accept", "application/json")
@@ -279,15 +293,22 @@ func oauth2CredentialOutputs(material map[string]string, grant string, outputs m
 		req.SetBasicAuth(clientID, clientSecret)
 	}
 
-	client := &http.Client{Timeout: 20 * time.Second}
+	client := &http.Client{
+		Timeout: oauthRequestTimeout,
+		CheckRedirect: func(_ *http.Request, _ []*http.Request) error {
+			// A token endpoint must not redirect a POST containing credentials to
+			// another origin (307/308 would preserve the body).
+			return http.ErrUseLastResponse
+		},
+	}
 	res, err := client.Do(req)
 	if err != nil {
-		return nil, 0, fmt.Errorf("oauth2 token request: %w", err)
+		return nil, 0, fmt.Errorf("oauth2 token request failed")
 	}
 	defer res.Body.Close()
 	body, _ := io.ReadAll(io.LimitReader(res.Body, 1<<20))
 	if res.StatusCode >= 300 {
-		return nil, 0, fmt.Errorf("oauth2 token endpoint: %s: %s", res.Status, strings.TrimSpace(string(body)))
+		return nil, 0, fmt.Errorf("oauth2 token endpoint returned HTTP status %d", res.StatusCode)
 	}
 	var tok struct {
 		AccessToken  string `json:"access_token"`

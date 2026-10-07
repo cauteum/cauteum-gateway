@@ -6,29 +6,35 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
+	"maps"
 	"os"
 	"path/filepath"
+	"slices"
 	"strconv"
+	"strings"
 	"sync"
 	"time"
 )
 
 // State is durable gateway registry state (JSON on disk).
 type State struct {
-	GatewayID        string                     `json:"gateway_id"`
-	UpdatedAt        time.Time                  `json:"updated_at"`
-	Sandboxes        map[string]Sandbox         `json:"sandboxes"`
-	Labels           map[string]string          `json:"labels,omitempty"`
-	GlobalPolicyYAML string                     `json:"global_policy_yaml,omitempty"`
-	Profiles         map[string]ProfileRecord   `json:"profiles,omitempty"`
-	Providers        map[string]ProviderRecord  `json:"providers,omitempty"`
-	Inference        *InferenceRoute            `json:"inference,omitempty"`
-	Settings         map[string]string          `json:"settings,omitempty"`
-	AuthToken        string                     `json:"auth_token,omitempty"` // local-dev bearer
-	Templates        map[string]TemplateRecord  `json:"templates,omitempty"`
-	Services         map[string]ServiceRecord   `json:"services,omitempty"`
-	Workspaces       map[string]WorkspaceRecord `json:"workspaces,omitempty"`
-	Proposals        map[string]Proposal        `json:"proposals,omitempty"`
+	GatewayID             string                     `json:"gateway_id"`
+	UpdatedAt             time.Time                  `json:"updated_at"`
+	Sandboxes             map[string]Sandbox         `json:"sandboxes"`
+	Labels                map[string]string          `json:"labels,omitempty"`
+	GlobalPolicyYAML      string                     `json:"global_policy_yaml,omitempty"`
+	GlobalPolicyRevision  uint64                     `json:"global_policy_revision,omitempty"`
+	GlobalPolicyRevisions []PolicyRevision           `json:"global_policy_revisions,omitempty"`
+	Profiles              map[string]ProfileRecord   `json:"profiles,omitempty"`
+	Providers             map[string]ProviderRecord  `json:"providers,omitempty"`
+	Inference             *InferenceRoute            `json:"inference,omitempty"`
+	Settings              map[string]string          `json:"settings,omitempty"`
+	SettingsRevision      uint64                     `json:"settings_revision,omitempty"`
+	AuthToken             string                     `json:"auth_token,omitempty"` // local-dev bearer
+	Templates             map[string]TemplateRecord  `json:"templates,omitempty"`
+	Services              map[string]ServiceRecord   `json:"services,omitempty"`
+	Workspaces            map[string]WorkspaceRecord `json:"workspaces,omitempty"`
+	Proposals             map[string]Proposal        `json:"proposals,omitempty"`
 	// SandboxTokens holds sha256(supervisor token) per sandbox name.
 	SandboxTokens map[string]SandboxToken `json:"sandbox_tokens,omitempty"`
 	// SSHSessions is keyed by session id; tokens are stored as sha256 only.
@@ -45,42 +51,322 @@ type InferenceRoute struct {
 
 // TemplateRecord is a gateway-stored workload template.
 type TemplateRecord struct {
-	Name      string            `json:"name"`
-	Image     string            `json:"image,omitempty"`
-	From      string            `json:"from,omitempty"`
-	Policy    string            `json:"policy,omitempty"`
-	CPU       float64           `json:"cpu,omitempty"`
-	Memory    string            `json:"memory,omitempty"`
-	Env       map[string]string `json:"env,omitempty"`
-	Providers []string          `json:"providers,omitempty"`
-	Forwards  []int             `json:"forwards,omitempty"`
-	Labels    map[string]string `json:"labels,omitempty"`
-	YAML      string            `json:"yaml,omitempty"` // optional raw
+	Name            string            `json:"name"`
+	Workspace       string            `json:"workspace,omitempty"`
+	ID              string            `json:"id,omitempty"`
+	SpecJSON        string            `json:"spec_json,omitempty"`
+	CreatedAt       time.Time         `json:"created_at,omitempty"`
+	ResourceVersion uint64            `json:"resource_version,omitempty"`
+	Image           string            `json:"image,omitempty"`
+	From            string            `json:"from,omitempty"`
+	Policy          string            `json:"policy,omitempty"`
+	CPU             float64           `json:"cpu,omitempty"`
+	Memory          string            `json:"memory,omitempty"`
+	Env             map[string]string `json:"env,omitempty"`
+	Providers       []string          `json:"providers,omitempty"`
+	Forwards        []int             `json:"forwards,omitempty"`
+	Labels          map[string]string `json:"labels,omitempty"`
+	YAML            string            `json:"yaml,omitempty"` // optional raw
+}
+
+// CreateScopedTemplate atomically creates a workspace-owned template.
+func (s *Store) CreateScopedTemplate(t TemplateRecord) (bool, error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	if s.state.Templates == nil {
+		s.state.Templates = map[string]TemplateRecord{}
+	}
+	key := scopedTemplateKey(t.Workspace, t.Name)
+	if _, exists := s.state.Templates[key]; exists {
+		return false, nil
+	}
+	count := 0
+	for _, existing := range s.state.Templates {
+		if existing.Workspace == t.Workspace {
+			count++
+		}
+	}
+	if count >= 1000 {
+		return false, ErrTemplateWorkspaceLimit
+	}
+	if t.ResourceVersion == 0 {
+		t.ResourceVersion = 1
+	}
+	s.state.Templates[key] = cloneTemplate(t)
+	return true, s.flushLocked()
+}
+
+func scopedTemplateKey(workspace, name string) string { return workspace + "\x00" + name }
+
+// GetScopedTemplate reads a workspace-owned template.
+func (s *Store) GetScopedTemplate(workspace, name string) (TemplateRecord, bool) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	t, ok := s.state.Templates[scopedTemplateKey(workspace, name)]
+	return cloneTemplate(t), ok
+}
+
+// DeleteScopedTemplate removes only a template in the given workspace.
+func (s *Store) DeleteScopedTemplate(workspace, name string) (bool, error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	key := scopedTemplateKey(workspace, name)
+	if _, ok := s.state.Templates[key]; !ok {
+		return false, nil
+	}
+	delete(s.state.Templates, key)
+	return true, s.flushLocked()
+}
+
+// ListScopedTemplates returns templates in deterministic name order.
+func (s *Store) ListScopedTemplates(workspace string) []TemplateRecord {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	out := make([]TemplateRecord, 0)
+	for _, t := range s.state.Templates {
+		if workspace == "" || t.Workspace == workspace {
+			out = append(out, cloneTemplate(t))
+		}
+	}
+	slices.SortFunc(out, func(a, b TemplateRecord) int {
+		if byName := strings.Compare(a.Name, b.Name); byName != 0 {
+			return byName
+		}
+		return strings.Compare(a.Workspace, b.Workspace)
+	})
+	return out
 }
 
 // Sandbox is one registered sandbox record.
 type Sandbox struct {
-	Name              string            `json:"name"`
-	ID                string            `json:"id,omitempty"`
-	Image             string            `json:"image,omitempty"`
-	Workspace         string            `json:"workspace,omitempty"`
-	Network           string            `json:"network,omitempty"`
-	Status            string            `json:"status,omitempty"`
-	Labels            map[string]string `json:"labels,omitempty"`
-	BasePolicyYAML    string            `json:"base_policy_yaml,omitempty"`
-	AttachedProviders []string          `json:"attached_providers,omitempty"`
-	PolicyRev         int               `json:"policy_rev,omitempty"`
-	PolicyRevisions   []PolicyRevision  `json:"policy_revisions,omitempty"`
-	UpdatedAt         time.Time         `json:"updated_at"`
+	Name                  string            `json:"name"`
+	ID                    string            `json:"id,omitempty"`
+	RuntimeID             string            `json:"runtime_id,omitempty"`
+	ComputeDriver         string            `json:"compute_driver,omitempty"`
+	Image                 string            `json:"image,omitempty"`
+	Workspace             string            `json:"workspace,omitempty"`
+	Network               string            `json:"network,omitempty"`
+	Status                string            `json:"status,omitempty"`
+	SupervisorInstanceID  string            `json:"supervisor_instance_id,omitempty"`
+	MainProcessInstanceID string            `json:"main_process_instance_id,omitempty"`
+	MainProcessExitCode   *int32            `json:"main_process_exit_code,omitempty"`
+	MainProcessFinalized  bool              `json:"main_process_finalized,omitempty"`
+	SpecJSON              string            `json:"spec_json,omitempty"`
+	Labels                map[string]string `json:"labels,omitempty"`
+	Settings              map[string]string `json:"settings,omitempty"`
+	SettingsRevision      uint64            `json:"settings_revision,omitempty"`
+	ResourceVersion       uint64            `json:"resource_version,omitempty"`
+	Annotations           map[string]string `json:"annotations,omitempty"`
+	CreatedAt             time.Time         `json:"created_at,omitempty"`
+	BasePolicyYAML        string            `json:"base_policy_yaml,omitempty"`
+	AttachedProviders     []string          `json:"attached_providers,omitempty"`
+	PolicyRev             int               `json:"policy_rev,omitempty"`
+	ActivePolicyVersion   uint32            `json:"active_policy_version,omitempty"`
+	PolicyRevisions       []PolicyRevision  `json:"policy_revisions,omitempty"`
+	UpdatedAt             time.Time         `json:"updated_at"`
 }
 
 // PolicyRevision is one loaded base-policy generation (OpenShell policy list).
 type PolicyRevision struct {
-	Rev       int       `json:"rev"`
-	UpdatedAt time.Time `json:"updated_at"`
-	Bytes     int       `json:"bytes"`
-	Status    string    `json:"status"`
-	YAML      string    `json:"yaml,omitempty"`
+	Rev         int               `json:"rev"`
+	UpdatedAt   time.Time         `json:"updated_at"`
+	LoadedAt    time.Time         `json:"loaded_at,omitempty"`
+	Bytes       int               `json:"bytes"`
+	Status      string            `json:"status"`
+	LoadError   string            `json:"load_error,omitempty"`
+	YAML        string            `json:"yaml,omitempty"`
+	Annotations map[string]string `json:"annotations,omitempty"`
+}
+
+// ErrResourceVersionConflict indicates that a config mutation used a stale resource version.
+var ErrResourceVersionConflict = fmt.Errorf("sandbox resource version conflict")
+
+// ErrSandboxProviderLimit indicates a sandbox exceeds OpenShell's provider cap.
+var ErrSandboxProviderLimit = fmt.Errorf("sandbox provider limit reached")
+
+// ErrTemplateWorkspaceLimit is returned when a workspace already owns 1000 templates.
+var ErrTemplateWorkspaceLimit = fmt.Errorf("workspace sandbox template limit reached")
+
+// ApplySandboxConfig atomically applies a sandbox setting or base-policy update,
+// annotation projection, and optimistic resource-version check.
+func (s *Store) ApplySandboxConfig(name string, expectedResourceVersion uint64, annotations map[string]string, settingKey, settingValue string, deleteSetting bool, policyYAML *string) (Sandbox, bool, error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	sb, ok := s.state.Sandboxes[name]
+	if !ok {
+		return Sandbox{}, false, fmt.Errorf("sandbox %q not found", name)
+	}
+	if expectedResourceVersion != 0 && expectedResourceVersion != sb.ResourceVersion {
+		return Sandbox{}, false, ErrResourceVersionConflict
+	}
+	previous := cloneSandbox(sb)
+	sb = cloneSandbox(sb)
+	changed := false
+	policyChanged := false
+	deleted := false
+	if policyYAML != nil {
+		provenanceChanged := false
+		if len(annotations) > 0 && len(sb.PolicyRevisions) > 0 {
+			latest := sb.PolicyRevisions[len(sb.PolicyRevisions)-1].Annotations
+			for key, value := range annotations {
+				if latest[key] != value {
+					provenanceChanged = true
+					break
+				}
+			}
+		}
+		if sb.BasePolicyYAML != *policyYAML || sb.PolicyRev == 0 || len(sb.PolicyRevisions) == 0 || provenanceChanged {
+			if sb.PolicyRev == int(^uint(0)>>1) {
+				return Sandbox{}, false, fmt.Errorf("sandbox policy revision overflow")
+			}
+			sb.BasePolicyYAML = *policyYAML
+			sb.PolicyRev++
+			changed, policyChanged = true, true
+		}
+	} else if settingKey != "" {
+		if deleteSetting {
+			_, deleted = sb.Settings[settingKey]
+			if deleted {
+				delete(sb.Settings, settingKey)
+				if sb.SettingsRevision == ^uint64(0) {
+					return Sandbox{}, false, fmt.Errorf("sandbox settings revision overflow")
+				}
+				sb.SettingsRevision++
+				changed = true
+			}
+		} else {
+			if sb.Settings == nil {
+				sb.Settings = map[string]string{}
+			}
+			if current, exists := sb.Settings[settingKey]; !exists || current != settingValue {
+				if sb.SettingsRevision == ^uint64(0) {
+					return Sandbox{}, false, fmt.Errorf("sandbox settings revision overflow")
+				}
+				sb.Settings[settingKey] = settingValue
+				sb.SettingsRevision++
+				changed = true
+			}
+		}
+	}
+	annotationChanged := false
+	if len(annotations) > 0 {
+		if sb.Annotations == nil {
+			sb.Annotations = map[string]string{}
+		}
+		for key, value := range annotations {
+			if old, exists := sb.Annotations[key]; !exists || old != value {
+				sb.Annotations[key] = value
+				annotationChanged = true
+			}
+		}
+	}
+	changed = changed || annotationChanged
+	if changed {
+		if sb.ResourceVersion == ^uint64(0) {
+			return Sandbox{}, false, fmt.Errorf("sandbox resource version overflow")
+		}
+		sb.ResourceVersion++
+		sb.UpdatedAt = time.Now().UTC()
+		if policyChanged {
+			rev := PolicyRevision{Rev: sb.PolicyRev, UpdatedAt: sb.UpdatedAt, Bytes: len(sb.BasePolicyYAML), Status: PolicyStatusPending, YAML: sb.BasePolicyYAML, Annotations: maps.Clone(annotations)}
+			sb.PolicyRevisions = append(sb.PolicyRevisions, rev)
+			if len(sb.PolicyRevisions) > MaxPolicyRevisions {
+				sb.PolicyRevisions = sb.PolicyRevisions[len(sb.PolicyRevisions)-MaxPolicyRevisions:]
+			}
+		}
+		s.state.Sandboxes[name] = sb
+		if err := s.flushLocked(); err != nil {
+			s.state.Sandboxes[name] = previous
+			return Sandbox{}, false, err
+		}
+	}
+	return cloneSandbox(sb), deleted, nil
+}
+
+// ApplySandboxProvider atomically updates the provider attachment list and its
+// serialized sandbox spec under an optional resource-version precondition.
+func (s *Store) ApplySandboxProvider(name string, expectedResourceVersion uint64, provider string, attach bool) (Sandbox, bool, error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	sb, ok := s.state.Sandboxes[name]
+	if !ok {
+		return Sandbox{}, false, fmt.Errorf("sandbox %q not found", name)
+	}
+	if expectedResourceVersion != 0 && expectedResourceVersion != sb.ResourceVersion {
+		return Sandbox{}, false, ErrResourceVersionConflict
+	}
+	previous := cloneSandbox(sb)
+	sb = cloneSandbox(sb)
+	var spec map[string]json.RawMessage
+	if strings.TrimSpace(sb.SpecJSON) != "" {
+		if err := json.Unmarshal([]byte(sb.SpecJSON), &spec); err != nil {
+			return Sandbox{}, false, fmt.Errorf("decode stored sandbox spec: %w", err)
+		}
+	}
+	baseProviders := sb.AttachedProviders
+	if baseProviders == nil && spec != nil {
+		if encoded, exists := spec["providers"]; exists {
+			if err := json.Unmarshal(encoded, &baseProviders); err != nil {
+				return Sandbox{}, false, fmt.Errorf("decode stored sandbox providers: %w", err)
+			}
+		}
+	}
+	providers := make([]string, 0, len(baseProviders)+1)
+	for _, current := range baseProviders {
+		if !slices.Contains(providers, current) {
+			providers = append(providers, current)
+		}
+	}
+	changed := len(providers) != len(baseProviders)
+	if attach {
+		if !slices.Contains(providers, provider) {
+			if len(providers) >= 32 {
+				return Sandbox{}, false, ErrSandboxProviderLimit
+			}
+			providers = append(providers, provider)
+			changed = true
+		}
+	} else {
+		filtered := make([]string, 0, len(providers))
+		for _, current := range providers {
+			if current == provider {
+				changed = true
+				continue
+			}
+			if !slices.Contains(filtered, current) {
+				filtered = append(filtered, current)
+			}
+		}
+		providers = filtered
+	}
+	if !changed {
+		return cloneSandbox(sb), false, nil
+	}
+	if sb.ResourceVersion == ^uint64(0) {
+		return Sandbox{}, false, fmt.Errorf("sandbox resource version overflow")
+	}
+	sb.AttachedProviders = providers
+	if spec == nil {
+		spec = make(map[string]json.RawMessage)
+	}
+	providerJSON, err := json.Marshal(providers)
+	if err != nil {
+		return Sandbox{}, false, err
+	}
+	spec["providers"] = providerJSON
+	updatedSpec, err := json.Marshal(spec)
+	if err != nil {
+		return Sandbox{}, false, err
+	}
+	sb.SpecJSON = string(updatedSpec)
+	sb.ResourceVersion++
+	sb.UpdatedAt = time.Now().UTC()
+	s.state.Sandboxes[name] = sb
+	if err := s.flushLocked(); err != nil {
+		s.state.Sandboxes[name] = previous
+		return Sandbox{}, false, err
+	}
+	return cloneSandbox(sb), true, nil
 }
 
 // MaxPolicyRevisions caps retained revision history per sandbox.
@@ -88,6 +374,52 @@ const MaxPolicyRevisions = 32
 
 // PolicyStatusLoaded is recorded after a successful base policy store.
 const PolicyStatusLoaded = "loaded"
+const PolicyStatusPending = "pending"
+const PolicyStatusFailed = "failed"
+const PolicyStatusSuperseded = "superseded"
+
+// ReportPolicyStatus records the supervisor's load result for a stored policy revision.
+func (s *Store) ReportPolicyStatus(sandboxID string, revision int, status, loadError string, loadedAt time.Time) error {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	name := sandboxID
+	if _, ok := s.state.Sandboxes[name]; !ok {
+		for key, sandbox := range s.state.Sandboxes {
+			if sandbox.ID == sandboxID {
+				name = key
+				break
+			}
+		}
+	}
+	sb, ok := s.state.Sandboxes[name]
+	if !ok {
+		return fmt.Errorf("sandbox %q not found", sandboxID)
+	}
+	found := false
+	for i := range sb.PolicyRevisions {
+		if sb.PolicyRevisions[i].Rev == revision {
+			sb.PolicyRevisions[i].Status = status
+			sb.PolicyRevisions[i].LoadError = loadError
+			sb.PolicyRevisions[i].LoadedAt = loadedAt
+			found = true
+		} else if status == PolicyStatusLoaded && sb.PolicyRevisions[i].Rev < revision && sb.PolicyRevisions[i].Status != PolicyStatusSuperseded {
+			sb.PolicyRevisions[i].Status = PolicyStatusSuperseded
+		}
+	}
+	if !found {
+		return fmt.Errorf("sandbox %q policy revision %d not found", sandboxID, revision)
+	}
+	if status == PolicyStatusLoaded {
+		sb.ActivePolicyVersion = uint32(revision)
+	}
+	if sb.ResourceVersion == ^uint64(0) {
+		return fmt.Errorf("sandbox resource version overflow")
+	}
+	sb.ResourceVersion++
+	sb.UpdatedAt = time.Now().UTC()
+	s.state.Sandboxes[name] = sb
+	return s.flushLocked()
+}
 
 // ProfileRecord is a custom (imported) provider profile stored as YAML.
 type ProfileRecord struct {
@@ -106,10 +438,20 @@ type ProviderRecord struct {
 	Type                  string                           `json:"type"`
 	Workspace             string                           `json:"workspace,omitempty"`
 	EnvVars               []string                         `json:"env_vars,omitempty"`
+	CredentialDriver      string                           `json:"credential_driver,omitempty"`
+	CredentialHandles     map[string]CredentialHandle      `json:"credential_handles,omitempty"`
 	CredentialExpiresAtMS map[string]int64                 `json:"credential_expires_at_ms,omitempty"`
 	RuntimeCredentials    bool                             `json:"runtime_credentials,omitempty"`
 	Config                map[string]string                `json:"config,omitempty"`
 	Refresh               map[string]ProviderRefreshConfig `json:"refresh,omitempty"`
+}
+
+// CredentialHandle is the durable non-secret reference owned by a configured
+// CredentialDriver. Values are never persisted here.
+type CredentialHandle struct {
+	Driver   string            `json:"driver"`
+	Handle   string            `json:"handle"`
+	Metadata map[string]string `json:"metadata,omitempty"`
 }
 
 // ProviderRefreshConfig is gateway-managed credential refresh metadata (OpenShell).
@@ -169,6 +511,16 @@ func Open(dataDir, gatewayID string) (*Store, error) {
 		if s.state.Sandboxes == nil {
 			s.state.Sandboxes = map[string]Sandbox{}
 		}
+		for name, sandbox := range s.state.Sandboxes {
+			if sandbox.ResourceVersion == 0 {
+				sandbox.ResourceVersion = 1
+				s.state.Sandboxes[name] = sandbox
+			}
+			if sandbox.SettingsRevision == 0 && len(sandbox.Settings) > 0 {
+				sandbox.SettingsRevision = 1
+				s.state.Sandboxes[name] = sandbox
+			}
+		}
 		if s.state.Profiles == nil {
 			s.state.Profiles = map[string]ProfileRecord{}
 		}
@@ -177,6 +529,17 @@ func Open(dataDir, gatewayID string) (*Store, error) {
 		}
 		if s.state.Settings == nil {
 			s.state.Settings = map[string]string{}
+		}
+		// Older store files predate revision tracking. Treat their non-empty
+		// settings snapshot as the first revision.
+		if s.state.SettingsRevision == 0 && len(s.state.Settings) > 0 {
+			s.state.SettingsRevision = 1
+		}
+		if s.state.GlobalPolicyRevision == 0 && strings.TrimSpace(s.state.GlobalPolicyYAML) != "" {
+			s.state.GlobalPolicyRevision = 1
+		}
+		if len(s.state.GlobalPolicyRevisions) == 0 && strings.TrimSpace(s.state.GlobalPolicyYAML) != "" {
+			s.state.GlobalPolicyRevisions = []PolicyRevision{{Rev: int(s.state.GlobalPolicyRevision), UpdatedAt: time.Now().UTC(), Bytes: len(s.state.GlobalPolicyYAML), Status: PolicyStatusLoaded, YAML: s.state.GlobalPolicyYAML}}
 		}
 		if s.state.Templates == nil {
 			s.state.Templates = map[string]TemplateRecord{}
@@ -221,43 +584,44 @@ func (s *Store) flushLocked() error {
 	return os.Rename(tmp, s.path)
 }
 
-// Snapshot returns a copy of current state.
+// Snapshot returns an independent copy of registry state without authentication secrets.
 func (s *Store) Snapshot() State {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	out := s.state
 	out.Sandboxes = map[string]Sandbox{}
-	for k, v := range s.state.Sandboxes {
-		out.Sandboxes[k] = v
+	for name, sb := range s.state.Sandboxes {
+		out.Sandboxes[name] = cloneSandbox(sb)
 	}
 	out.Profiles = map[string]ProfileRecord{}
-	for k, v := range s.state.Profiles {
-		out.Profiles[k] = v
-	}
+	maps.Copy(out.Profiles, s.state.Profiles)
 	out.Providers = map[string]ProviderRecord{}
-	for k, v := range s.state.Providers {
-		out.Providers[k] = v
+	for name, rec := range s.state.Providers {
+		out.Providers[name] = cloneProvider(rec)
 	}
 	out.Settings = map[string]string{}
-	for k, v := range s.state.Settings {
-		out.Settings[k] = v
-	}
+	maps.Copy(out.Settings, s.state.Settings)
 	out.Templates = map[string]TemplateRecord{}
-	for k, v := range s.state.Templates {
-		out.Templates[k] = v
+	for name, record := range s.state.Templates {
+		out.Templates[name] = cloneTemplate(record)
 	}
 	out.Services = map[string]ServiceRecord{}
-	for k, v := range s.state.Services {
-		out.Services[k] = v
-	}
+	maps.Copy(out.Services, s.state.Services)
 	out.Workspaces = map[string]WorkspaceRecord{}
-	for k, v := range s.state.Workspaces {
-		out.Workspaces[k] = v
+	for name, ws := range s.state.Workspaces {
+		out.Workspaces[name] = cloneWorkspace(ws)
 	}
 	if s.state.Inference != nil {
 		inf := *s.state.Inference
 		out.Inference = &inf
 	}
+	out.Labels = maps.Clone(s.state.Labels)
+	out.GlobalPolicyRevisions = clonePolicyRevisions(s.state.GlobalPolicyRevisions)
+	out.Proposals = maps.Clone(s.state.Proposals)
+	for id, proposal := range out.Proposals {
+		out.Proposals[id] = cloneProposal(proposal)
+	}
+	out.AuthToken = ""
 	out.SandboxTokens = nil
 	out.SSHSessions = nil
 	return out
@@ -268,8 +632,20 @@ func (s *Store) UpsertSandbox(sb Sandbox) error {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	if prev, ok := s.state.Sandboxes[sb.Name]; ok {
+		if sb.ResourceVersion == 0 {
+			sb.ResourceVersion = prev.ResourceVersion
+		}
+		if sb.Annotations == nil && prev.Annotations != nil {
+			sb.Annotations = prev.Annotations
+		}
 		if sb.Workspace == "" {
 			sb.Workspace = prev.Workspace
+		}
+		if sb.Settings == nil && prev.Settings != nil {
+			sb.Settings = prev.Settings
+		}
+		if sb.SettingsRevision == 0 && prev.SettingsRevision > 0 {
+			sb.SettingsRevision = prev.SettingsRevision
 		}
 		if len(sb.AttachedProviders) == 0 && len(prev.AttachedProviders) > 0 {
 			sb.AttachedProviders = prev.AttachedProviders
@@ -283,10 +659,193 @@ func (s *Store) UpsertSandbox(sb Sandbox) error {
 		if len(sb.PolicyRevisions) == 0 && len(prev.PolicyRevisions) > 0 {
 			sb.PolicyRevisions = prev.PolicyRevisions
 		}
+		if sb.MainProcessInstanceID == "" {
+			sb.MainProcessInstanceID = prev.MainProcessInstanceID
+		}
+		if sb.SupervisorInstanceID == "" {
+			sb.SupervisorInstanceID = prev.SupervisorInstanceID
+		}
+		if sb.MainProcessExitCode == nil && prev.MainProcessExitCode != nil {
+			code := *prev.MainProcessExitCode
+			sb.MainProcessExitCode = &code
+		}
+		if prev.MainProcessFinalized {
+			sb.MainProcessFinalized = true
+		}
+	} else if sb.ResourceVersion == 0 {
+		sb.ResourceVersion = 1
+	}
+	if sb.CreatedAt.IsZero() {
+		sb.CreatedAt = sb.UpdatedAt
 	}
 	sb.UpdatedAt = time.Now().UTC()
-	s.state.Sandboxes[sb.Name] = sb
+	s.state.Sandboxes[sb.Name] = cloneSandbox(sb)
 	return s.flushLocked()
+}
+
+// RecordMainProcessExit durably stores the canonical process result. Repeated
+// reports are idempotent; the first result wins if duplicate reports conflict.
+func (s *Store) RecordMainProcessExit(name, instanceID string, exitCode int32) (Sandbox, error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	sb, ok := s.state.Sandboxes[name]
+	if !ok {
+		return Sandbox{}, fmt.Errorf("sandbox %q not found", name)
+	}
+	if sb.MainProcessExitCode != nil {
+		return cloneSandbox(sb), nil
+	}
+	code := exitCode
+	sb.MainProcessInstanceID = instanceID
+	sb.MainProcessExitCode = &code
+	sb.MainProcessFinalized = false
+	if !strings.EqualFold(sb.Status, "error") && !strings.EqualFold(sb.Status, "failed") {
+		if exitCode == 0 {
+			sb.Status = "completed"
+		} else {
+			sb.Status = "error"
+		}
+	}
+	sb.ResourceVersion++
+	sb.UpdatedAt = time.Now().UTC()
+	s.state.Sandboxes[name] = cloneSandbox(sb)
+	if err := s.flushLocked(); err != nil {
+		return Sandbox{}, err
+	}
+	return cloneSandbox(sb), nil
+}
+
+// BeginSandboxStart clears the previous process result before a restarted
+// runtime can report an early exit under its new supervisor instance.
+func (s *Store) BeginSandboxStart(name string) (Sandbox, error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	sb, ok := s.state.Sandboxes[name]
+	if !ok {
+		return Sandbox{}, fmt.Errorf("sandbox %q not found", name)
+	}
+	sb.Status = "starting"
+	sb.SupervisorInstanceID = ""
+	sb.MainProcessInstanceID = ""
+	sb.MainProcessExitCode = nil
+	sb.MainProcessFinalized = false
+	sb.ResourceVersion++
+	sb.UpdatedAt = time.Now().UTC()
+	s.state.Sandboxes[name] = cloneSandbox(sb)
+	if err := s.flushLocked(); err != nil {
+		return Sandbox{}, err
+	}
+	return cloneSandbox(sb), nil
+}
+
+// SetSupervisorInstance records the latest accepted control-session instance
+// so reports from a disconnected, superseded supervisor cannot become canonical.
+func (s *Store) SetSupervisorInstance(name, instanceID string) (Sandbox, error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	sb, ok := s.state.Sandboxes[name]
+	if !ok {
+		return Sandbox{}, fmt.Errorf("sandbox %q not found", name)
+	}
+	if sb.SupervisorInstanceID != instanceID {
+		sb.SupervisorInstanceID = instanceID
+		sb.ResourceVersion++
+		sb.UpdatedAt = time.Now().UTC()
+		s.state.Sandboxes[name] = cloneSandbox(sb)
+		if err := s.flushLocked(); err != nil {
+			return Sandbox{}, err
+		}
+	}
+	return cloneSandbox(sb), nil
+}
+
+// MarkSandboxRunning avoids overwriting a main-process exit reported while
+// the runtime's supervisor readiness handshake was in progress.
+func (s *Store) MarkSandboxRunning(name string) (Sandbox, error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	sb, ok := s.state.Sandboxes[name]
+	if !ok {
+		return Sandbox{}, fmt.Errorf("sandbox %q not found", name)
+	}
+	if sb.MainProcessExitCode == nil {
+		sb.Status = "running"
+		sb.ResourceVersion++
+		sb.UpdatedAt = time.Now().UTC()
+		s.state.Sandboxes[name] = cloneSandbox(sb)
+		if err := s.flushLocked(); err != nil {
+			return Sandbox{}, err
+		}
+	}
+	return cloneSandbox(sb), nil
+}
+
+// BeginSandboxStop records the stopping transition before a backend stop call.
+// Persisting the intermediate state lets recovery/watchers distinguish an
+// intentional stop from a daemon outage or an unexpected process exit.
+func (s *Store) BeginSandboxStop(name string) (Sandbox, error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	sb, ok := s.state.Sandboxes[name]
+	if !ok {
+		return Sandbox{}, fmt.Errorf("sandbox %q not found", name)
+	}
+	if strings.EqualFold(sb.Status, "stopping") {
+		return Sandbox{}, fmt.Errorf("sandbox %q is already stopping", name)
+	}
+	sb.Status = "stopping"
+	sb.ResourceVersion++
+	sb.UpdatedAt = time.Now().UTC()
+	s.state.Sandboxes[name] = cloneSandbox(sb)
+	if err := s.flushLocked(); err != nil {
+		return Sandbox{}, err
+	}
+	return cloneSandbox(sb), nil
+}
+
+// MarkSandboxStopped records a completed backend stop.
+func (s *Store) MarkSandboxStopped(name string) (Sandbox, error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	sb, ok := s.state.Sandboxes[name]
+	if !ok {
+		return Sandbox{}, fmt.Errorf("sandbox %q not found", name)
+	}
+	sb.Status = "stopped"
+	sb.ResourceVersion++
+	sb.UpdatedAt = time.Now().UTC()
+	s.state.Sandboxes[name] = cloneSandbox(sb)
+	if err := s.flushLocked(); err != nil {
+		return Sandbox{}, err
+	}
+	return cloneSandbox(sb), nil
+}
+
+// FinalizeMainProcessExit marks terminal delivery complete after the result
+// was recorded. Repeated finalization for the same instance is harmless.
+func (s *Store) FinalizeMainProcessExit(name, instanceID string) (Sandbox, error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	sb, ok := s.state.Sandboxes[name]
+	if !ok {
+		return Sandbox{}, fmt.Errorf("sandbox %q not found", name)
+	}
+	if sb.MainProcessExitCode == nil {
+		return Sandbox{}, fmt.Errorf("main-process exit has not been reported")
+	}
+	if sb.MainProcessInstanceID != "" && sb.MainProcessInstanceID != instanceID {
+		return Sandbox{}, fmt.Errorf("main-process instance does not match the terminal result")
+	}
+	if !sb.MainProcessFinalized {
+		sb.MainProcessFinalized = true
+		sb.ResourceVersion++
+		sb.UpdatedAt = time.Now().UTC()
+		s.state.Sandboxes[name] = cloneSandbox(sb)
+		if err := s.flushLocked(); err != nil {
+			return Sandbox{}, err
+		}
+	}
+	return cloneSandbox(sb), nil
 }
 
 // DeleteSandbox removes a sandbox by name.
@@ -308,7 +867,36 @@ func (s *Store) GetSandbox(name string) (Sandbox, bool) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	sb, ok := s.state.Sandboxes[name]
-	return sb, ok
+	return cloneSandbox(sb), ok
+}
+
+// GetSandboxByID resolves the gateway's durable sandbox ID while retaining
+// GetSandbox's name-keyed storage contract.
+func (s *Store) GetSandboxByID(id string) (Sandbox, bool) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	for _, sb := range s.state.Sandboxes {
+		if sb.ID == id {
+			return cloneSandbox(sb), true
+		}
+	}
+	return Sandbox{}, false
+}
+
+// ListSandboxes returns sandbox records in stable name order.
+func (s *Store) ListSandboxes() []Sandbox {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	names := make([]string, 0, len(s.state.Sandboxes))
+	for name := range s.state.Sandboxes {
+		names = append(names, name)
+	}
+	slices.Sort(names)
+	out := make([]Sandbox, 0, len(names))
+	for _, name := range names {
+		out = append(out, cloneSandbox(s.state.Sandboxes[name]))
+	}
+	return out
 }
 
 // SetBasePolicy stores sandbox base policy YAML (OpenShell-style editable layer).
@@ -321,6 +909,13 @@ func (s *Store) SetBasePolicy(sandbox, yaml string) error {
 	if !ok {
 		return fmt.Errorf("sandbox %q not found", sandbox)
 	}
+	if sb.BasePolicyYAML == yaml && sb.PolicyRev > 0 && len(sb.PolicyRevisions) > 0 {
+		return nil
+	}
+	if sb.ResourceVersion == ^uint64(0) {
+		return fmt.Errorf("sandbox resource version overflow")
+	}
+	sb.ResourceVersion++
 	sb.BasePolicyYAML = yaml
 	sb.UpdatedAt = time.Now().UTC()
 	sb.PolicyRev++
@@ -328,7 +923,7 @@ func (s *Store) SetBasePolicy(sandbox, yaml string) error {
 		Rev:       sb.PolicyRev,
 		UpdatedAt: sb.UpdatedAt,
 		Bytes:     len(yaml),
-		Status:    PolicyStatusLoaded,
+		Status:    PolicyStatusPending,
 		YAML:      yaml,
 	}
 	sb.PolicyRevisions = append(sb.PolicyRevisions, rev)
@@ -375,12 +970,53 @@ func (s *Store) GetGlobalPolicy() string {
 	return s.state.GlobalPolicyYAML
 }
 
+// GlobalPolicySnapshot returns the global policy and its monotonic revision.
+func (s *Store) GlobalPolicySnapshot() (string, uint64) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	return s.state.GlobalPolicyYAML, s.state.GlobalPolicyRevision
+}
+
 // SetGlobalPolicy stores global policy YAML bytes as a string.
 func (s *Store) SetGlobalPolicy(yaml string) error {
 	s.mu.Lock()
 	defer s.mu.Unlock()
+	if s.state.GlobalPolicyYAML == yaml {
+		return nil
+	}
+	if s.state.GlobalPolicyRevision == ^uint64(0) {
+		return fmt.Errorf("global policy revision overflow")
+	}
+	if s.state.GlobalPolicyRevision >= uint64(int(^uint(0)>>1)) {
+		return fmt.Errorf("global policy revision overflow")
+	}
 	s.state.GlobalPolicyYAML = yaml
+	s.state.GlobalPolicyRevision++
+	updatedAt := time.Now().UTC()
+	s.state.GlobalPolicyRevisions = append(s.state.GlobalPolicyRevisions, PolicyRevision{Rev: int(s.state.GlobalPolicyRevision), UpdatedAt: updatedAt, Bytes: len(yaml), Status: PolicyStatusLoaded, YAML: yaml})
+	if len(s.state.GlobalPolicyRevisions) > MaxPolicyRevisions {
+		s.state.GlobalPolicyRevisions = s.state.GlobalPolicyRevisions[len(s.state.GlobalPolicyRevisions)-MaxPolicyRevisions:]
+	}
 	return s.flushLocked()
+}
+
+// GlobalPolicyHistory returns a detached oldest-first snapshot of retained global revisions.
+func (s *Store) GlobalPolicyHistory() []PolicyRevision {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	return clonePolicyRevisions(s.state.GlobalPolicyRevisions)
+}
+
+// GetGlobalPolicyRevision returns one retained global policy revision.
+func (s *Store) GetGlobalPolicyRevision(revision int) (PolicyRevision, error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	for _, item := range s.state.GlobalPolicyRevisions {
+		if item.Rev == revision {
+			return clonePolicyRevisions([]PolicyRevision{item})[0], nil
+		}
+	}
+	return PolicyRevision{}, fmt.Errorf("global policy revision %d not found", revision)
 }
 
 // UpsertProfile stores a custom profile YAML.
@@ -522,7 +1158,7 @@ func (s *Store) UpsertProvider(rec ProviderRecord) error {
 			rec.CredentialExpiresAtMS = prev.CredentialExpiresAtMS
 		}
 	}
-	s.state.Providers[rec.Name] = rec
+	s.state.Providers[rec.Name] = cloneProvider(rec)
 	return s.flushLocked()
 }
 
@@ -539,7 +1175,7 @@ func (s *Store) GetProvider(name string) (ProviderRecord, bool) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	p, ok := s.state.Providers[name]
-	return p, ok
+	return cloneProvider(p), ok
 }
 
 // SetInferenceRoute stores the gateway inference.local route.
@@ -551,7 +1187,7 @@ func (s *Store) SetInferenceRoute(r InferenceRoute) error {
 		r.Version = s.state.Inference.Version + 1
 	}
 	if r.TimeoutSec <= 0 {
-		r.TimeoutSec = 60
+		r.TimeoutSec = defaultInferenceTimeoutSeconds
 	}
 	s.state.Inference = &r
 	return s.flushLocked()
@@ -582,7 +1218,14 @@ func (s *Store) SetSetting(key, value string) error {
 	if s.state.Settings == nil {
 		s.state.Settings = map[string]string{}
 	}
+	if current, exists := s.state.Settings[key]; exists && current == value {
+		return nil
+	}
+	if s.state.SettingsRevision == ^uint64(0) {
+		return fmt.Errorf("settings revision overflow")
+	}
 	s.state.Settings[key] = value
+	s.state.SettingsRevision++
 	return s.flushLocked()
 }
 
@@ -598,7 +1241,14 @@ func (s *Store) GetSetting(key string) (string, bool) {
 func (s *Store) DeleteSetting(key string) error {
 	s.mu.Lock()
 	defer s.mu.Unlock()
+	if _, exists := s.state.Settings[key]; !exists {
+		return nil
+	}
+	if s.state.SettingsRevision == ^uint64(0) {
+		return fmt.Errorf("settings revision overflow")
+	}
 	delete(s.state.Settings, key)
+	s.state.SettingsRevision++
 	return s.flushLocked()
 }
 
@@ -607,10 +1257,57 @@ func (s *Store) AllSettings() map[string]string {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	out := map[string]string{}
-	for k, v := range s.state.Settings {
-		out[k] = v
-	}
+	maps.Copy(out, s.state.Settings)
 	return out
+}
+
+// SettingsSnapshot returns global settings and their monotonic revision from
+// one consistent store snapshot.
+func (s *Store) SettingsSnapshot() (map[string]string, uint64) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	out := map[string]string{}
+	maps.Copy(out, s.state.Settings)
+	return out, s.state.SettingsRevision
+}
+
+// SandboxSettingsSnapshot returns one sandbox's scoped settings and revision.
+func (s *Store) SandboxSettingsSnapshot(name string) (map[string]string, uint64, bool) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	sb, ok := s.state.Sandboxes[name]
+	if !ok {
+		return nil, 0, false
+	}
+	return maps.Clone(sb.Settings), sb.SettingsRevision, true
+}
+
+// SetSandboxSetting writes one setting and increments its sandbox revision only
+// when the value changes.
+func (s *Store) SetSandboxSetting(name, key, value string) (uint64, error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	sb, ok := s.state.Sandboxes[name]
+	if !ok {
+		return 0, fmt.Errorf("sandbox %q not found", name)
+	}
+	if sb.Settings == nil {
+		sb.Settings = map[string]string{}
+	}
+	if current, exists := sb.Settings[key]; exists && current == value {
+		return sb.SettingsRevision, nil
+	}
+	if sb.SettingsRevision == ^uint64(0) {
+		return sb.SettingsRevision, fmt.Errorf("sandbox settings revision overflow")
+	}
+	if sb.ResourceVersion == ^uint64(0) {
+		return sb.SettingsRevision, fmt.Errorf("sandbox resource version overflow")
+	}
+	sb.Settings[key] = value
+	sb.SettingsRevision++
+	sb.ResourceVersion++
+	s.state.Sandboxes[name] = sb
+	return sb.SettingsRevision, s.flushLocked()
 }
 
 // UpsertTemplate stores a workload template.
@@ -620,7 +1317,7 @@ func (s *Store) UpsertTemplate(t TemplateRecord) error {
 	if s.state.Templates == nil {
 		s.state.Templates = map[string]TemplateRecord{}
 	}
-	s.state.Templates[t.Name] = t
+	s.state.Templates[t.Name] = cloneTemplate(t)
 	return s.flushLocked()
 }
 
@@ -629,7 +1326,7 @@ func (s *Store) GetTemplate(name string) (TemplateRecord, bool) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	t, ok := s.state.Templates[name]
-	return t, ok
+	return cloneTemplate(t), ok
 }
 
 // DeleteTemplate removes a template.
@@ -646,7 +1343,7 @@ func (s *Store) ListTemplates() []TemplateRecord {
 	defer s.mu.Unlock()
 	out := make([]TemplateRecord, 0, len(s.state.Templates))
 	for _, t := range s.state.Templates {
-		out = append(out, t)
+		out = append(out, cloneTemplate(t))
 	}
 	return out
 }
@@ -683,10 +1380,8 @@ func (s *Store) AttachProvider(sandbox, provider string) error {
 	if !ok {
 		return fmt.Errorf("sandbox %q not found", sandbox)
 	}
-	for _, p := range sb.AttachedProviders {
-		if p == provider {
-			return nil
-		}
+	if slices.Contains(sb.AttachedProviders, provider) {
+		return nil
 	}
 	sb.AttachedProviders = append(sb.AttachedProviders, provider)
 	sb.UpdatedAt = time.Now().UTC()
@@ -713,3 +1408,6 @@ func (s *Store) DetachProvider(sandbox, provider string) error {
 	s.state.Sandboxes[sandbox] = sb
 	return s.flushLocked()
 }
+
+// defaultInferenceTimeoutSeconds is the default provider request deadline.
+const defaultInferenceTimeoutSeconds = 60

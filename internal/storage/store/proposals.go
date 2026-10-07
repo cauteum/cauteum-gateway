@@ -1,5 +1,5 @@
 // SPDX-FileCopyrightText: Copyright (c) 2026 whaleshell
-// SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: Apache-2.0
 
 package store
 
@@ -16,12 +16,26 @@ type Proposal struct {
 	IntentSummary    string    `json:"intent_summary,omitempty"`
 	RuleName         string    `json:"rule_name,omitempty"`
 	RuleYAML         string    `json:"rule_yaml,omitempty"`
+	RuleProtoJSON    string    `json:"rule_proto_json,omitempty"`
+	Rationale        string    `json:"rationale,omitempty"`
+	SecurityNotes    string    `json:"security_notes,omitempty"`
+	Confidence       float32   `json:"confidence,omitempty"`
+	ReviewToken      string    `json:"review_token,omitempty"`
 	Hosts            []string  `json:"hosts,omitempty"`
 	RejectionReason  string    `json:"rejection_reason,omitempty"`
 	ValidationResult string    `json:"validation_result,omitempty"`
 	SecurityFlagged  bool      `json:"security_flagged,omitempty"`
 	CreatedAt        time.Time `json:"created_at"`
-	DecidedAt        time.Time `json:"decided_at,omitempty"`
+	DecidedAt        time.Time `json:"decided_at"`
+}
+
+// DeleteProposal removes one draft chunk.
+func (s *Store) DeleteProposal(id string) error {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	delete(s.state.Proposals, id)
+	s.state.UpdatedAt = time.Now().UTC()
+	return s.flushLocked()
 }
 
 // PutProposal inserts or replaces a proposal for a sandbox.
@@ -43,7 +57,7 @@ func (s *Store) PutProposal(p Proposal) error {
 	if p.CreatedAt.IsZero() {
 		p.CreatedAt = time.Now().UTC()
 	}
-	s.state.Proposals[p.ID] = p
+	s.state.Proposals[p.ID] = cloneProposal(p)
 	s.state.UpdatedAt = time.Now().UTC()
 	return s.flushLocked()
 }
@@ -53,7 +67,7 @@ func (s *Store) GetProposal(id string) (Proposal, bool) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	p, ok := s.state.Proposals[id]
-	return p, ok
+	return cloneProposal(p), ok
 }
 
 // ListProposals returns proposals, optionally filtered by sandbox/status.
@@ -73,7 +87,7 @@ func (s *Store) ListProposals(sandbox, status string) []Proposal {
 		if p.Status == "pending" {
 			p.SecurityFlagged = true
 		}
-		out = append(out, p)
+		out = append(out, cloneProposal(p))
 	}
 	return out
 }
@@ -97,5 +111,5 @@ func (s *Store) DecideProposal(id, status, reason string) (Proposal, error) {
 	if err := s.flushLocked(); err != nil {
 		return Proposal{}, err
 	}
-	return p, nil
+	return cloneProposal(p), nil
 }

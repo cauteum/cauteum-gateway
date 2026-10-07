@@ -1,6 +1,7 @@
 package httpapi
 
 import (
+	"bufio"
 	"fmt"
 	"io"
 	"net"
@@ -8,7 +9,9 @@ import (
 	"net/http/httptest"
 	"strconv"
 	"testing"
+	"time"
 
+	"github.com/whaleshell/whaleshell-gateway/internal/sshrelay"
 	"github.com/whaleshell/whaleshell-gateway/internal/storage/store"
 )
 
@@ -77,6 +80,50 @@ func TestEdgeRouterProxies(t *testing.T) {
 	h.ServeHTTP(rec2, req2)
 	if rec2.Code != 200 {
 		t.Fatalf("control plane status %d", rec2.Code)
+	}
+}
+
+func TestEdgeRouterRelaysExposedService(t *testing.T) {
+	done := make(chan struct{})
+	t.Cleanup(func() { close(done) })
+	relay := sshrelay.NewHub()
+	relay.OpenTimeout = time.Second
+	remove := relay.RegisterOpenShellSupervisor("sb", "instance", func(channel, target string) error {
+		if target != "tcp://127.0.0.1:8080" {
+			t.Fatalf("relay target %q", target)
+		}
+		conn, err := relay.AcceptOpenShellRelay("sb", channel)
+		if err != nil {
+			return err
+		}
+		go func() {
+			defer conn.Close()
+			req, err := http.ReadRequest(bufio.NewReader(conn))
+			if err != nil {
+				return
+			}
+			body := "relay:" + req.URL.Path
+			_, _ = fmt.Fprintf(conn, "HTTP/1.1 200 OK\r\nContent-Length: %d\r\n\r\n%s", len(body), body)
+		}()
+		return nil
+	}, done, nil)
+	t.Cleanup(remove)
+
+	st, err := store.Open(t.TempDir(), "test-gw")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := st.UpsertService(store.ServiceRecord{Name: "web", Sandbox: "sb", Port: 8080}); err != nil {
+		t.Fatal(err)
+	}
+
+	h := withEdgeRouter(http.NotFoundHandler(), st, relay)
+	req := httptest.NewRequest(http.MethodGet, "http://web.openshell.localhost/relay", nil)
+	req.Host = "web.openshell.localhost"
+	rec := httptest.NewRecorder()
+	h.ServeHTTP(rec, req)
+	if rec.Code != http.StatusOK || rec.Body.String() != "relay:/relay" {
+		t.Fatalf("status=%d body=%q", rec.Code, rec.Body.String())
 	}
 }
 

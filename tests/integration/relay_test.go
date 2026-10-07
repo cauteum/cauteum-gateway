@@ -1,6 +1,6 @@
 //go:build linux
 
-package httpapi
+package integration
 
 import (
 	"bytes"
@@ -18,6 +18,7 @@ import (
 	"time"
 
 	"github.com/whaleshell/whaleshell-core/relayproto"
+	"github.com/whaleshell/whaleshell-gateway/internal/httpapi"
 	"github.com/whaleshell/whaleshell-gateway/internal/storage/store"
 	"github.com/whaleshell/whaleshell-runtime/relayclient"
 	"github.com/whaleshell/whaleshell-runtime/sshserver"
@@ -31,12 +32,12 @@ type testGateway struct {
 	dir   string
 }
 
-func newTestGateway(t *testing.T, opt Options) *testGateway {
+func newTestGateway(t *testing.T, opt httpapi.Options) *testGateway {
 	t.Helper()
 	ctx, cancel := context.WithCancel(context.Background())
 	t.Cleanup(cancel)
 	opt.DataDir = filepath.Join(t.TempDir(), "gw")
-	h, err := NewHandler(ctx, opt)
+	h, err := httpapi.NewHandler(ctx, opt)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -199,7 +200,7 @@ func statusOf(err error) int {
 }
 
 func TestRelaySSHSessionEndToEnd(t *testing.T) {
-	g := newTestGateway(t, Options{})
+	g := newTestGateway(t, httpapi.Options{})
 	g.createSandbox("demo")
 	g.startSupervisor("demo", g.sandboxToken("demo"))
 
@@ -249,7 +250,7 @@ func TestRelaySSHSessionEndToEnd(t *testing.T) {
 }
 
 func TestRelaySSHConnectRejections(t *testing.T) {
-	g := newTestGateway(t, Options{})
+	g := newTestGateway(t, httpapi.Options{})
 	g.createSandbox("demo")
 	g.createSandbox("other")
 	g.startSupervisor("demo", g.sandboxToken("demo"))
@@ -270,7 +271,7 @@ func TestRelaySSHConnectRejections(t *testing.T) {
 }
 
 func TestRelaySessionExpires(t *testing.T) {
-	g := newTestGateway(t, Options{SSHSessionTTL: 300 * time.Millisecond})
+	g := newTestGateway(t, httpapi.Options{SSHSessionTTL: 300 * time.Millisecond})
 	g.createSandbox("demo")
 	g.startSupervisor("demo", g.sandboxToken("demo"))
 	s := g.sshSession("demo")
@@ -281,7 +282,7 @@ func TestRelaySessionExpires(t *testing.T) {
 }
 
 func TestRelayNotReady(t *testing.T) {
-	g := newTestGateway(t, Options{})
+	g := newTestGateway(t, httpapi.Options{})
 	g.createSandbox("cold")
 	if code, body := g.do(http.MethodPost, "/v1/sandboxes/cold/ssh-session", g.token, nil); code != http.StatusPreconditionFailed {
 		t.Fatalf("ssh-session without supervisor = %d %s, want 412", code, body)
@@ -295,7 +296,7 @@ func TestRelayNotReady(t *testing.T) {
 }
 
 func TestRelayExec(t *testing.T) {
-	g := newTestGateway(t, Options{})
+	g := newTestGateway(t, httpapi.Options{})
 	g.createSandbox("demo")
 	g.startSupervisor("demo", g.sandboxToken("demo"))
 
@@ -321,7 +322,7 @@ func TestRelayExec(t *testing.T) {
 }
 
 func TestSupervisorTokenRotationKicksOldSupervisor(t *testing.T) {
-	g := newTestGateway(t, Options{})
+	g := newTestGateway(t, httpapi.Options{})
 	g.createSandbox("demo")
 	old := g.sandboxToken("demo")
 	g.sandboxToken("demo")
@@ -337,7 +338,7 @@ func TestSupervisorTokenRotationKicksOldSupervisor(t *testing.T) {
 }
 
 func TestSandboxDeleteRevokesRelay(t *testing.T) {
-	g := newTestGateway(t, Options{})
+	g := newTestGateway(t, httpapi.Options{})
 	g.createSandbox("demo")
 	sbTok := g.sandboxToken("demo")
 	g.startSupervisor("demo", sbTok)
@@ -352,7 +353,7 @@ func TestSandboxDeleteRevokesRelay(t *testing.T) {
 }
 
 func TestAuthRequiredOnAPI(t *testing.T) {
-	g := newTestGateway(t, Options{})
+	g := newTestGateway(t, httpapi.Options{})
 	g.createSandbox("demo")
 	for _, p := range []string{"/v1/sandboxes", "/v1/info", "/v1/whoami", "/v1/ssh-sessions", "/debug/loglevel", "/v1/sandboxes/demo/secrets", "/v1/providers"} {
 		if code, _ := g.do(http.MethodGet, p, "", nil); code != http.StatusUnauthorized {
@@ -376,7 +377,7 @@ func TestAuthRequiredOnAPI(t *testing.T) {
 }
 
 func TestSandboxPrincipalScope(t *testing.T) {
-	g := newTestGateway(t, Options{})
+	g := newTestGateway(t, httpapi.Options{})
 	g.createSandbox("demo")
 	g.createSandbox("other")
 	tok := g.sandboxToken("demo")
@@ -417,7 +418,7 @@ func TestSandboxPrincipalScope(t *testing.T) {
 }
 
 func TestUserTokenCannotActAsSupervisor(t *testing.T) {
-	g := newTestGateway(t, Options{})
+	g := newTestGateway(t, httpapi.Options{})
 	g.createSandbox("demo")
 	h := http.Header{}
 	h.Set("Authorization", "Bearer "+g.token)
@@ -428,7 +429,7 @@ func TestUserTokenCannotActAsSupervisor(t *testing.T) {
 }
 
 func TestAllowUnauthenticated(t *testing.T) {
-	g := newTestGateway(t, Options{AllowUnauthenticated: true})
+	g := newTestGateway(t, httpapi.Options{AllowUnauthenticated: true})
 	if code, _ := g.do(http.MethodGet, "/v1/sandboxes", "", nil); code != http.StatusOK {
 		t.Fatalf("unsafe mode without token = %d, want 200", code)
 	}
@@ -438,7 +439,7 @@ func TestAllowUnauthenticated(t *testing.T) {
 }
 
 func TestLocalLoginLoopbackOnly(t *testing.T) {
-	g := newTestGateway(t, Options{})
+	g := newTestGateway(t, httpapi.Options{})
 	get := func(path string, hdr map[string]string) *http.Response {
 		req, _ := http.NewRequest(http.MethodGet, g.srv.URL+path, nil)
 		for k, v := range hdr {

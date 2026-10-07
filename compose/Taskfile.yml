@@ -1,0 +1,22 @@
+version: "3"
+
+tasks:
+  up:
+    desc: Build and start whaleshell-gateway compose stack
+    cmds:
+      - docker compose up -d --build
+
+  down:
+    desc: Stop gateway compose (keeps volume)
+    cmds:
+      - docker compose down
+
+  down:volumes:
+    desc: Stop gateway and DELETE secrets volume (destructive)
+    cmds:
+      - docker compose down -v
+
+  logs:
+    desc: Tail gateway logs
+    cmds:
+      - docker compose logs -f --tail=200

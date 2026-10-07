@@ -18,8 +18,14 @@ const AuthTokenFile = "auth_token"
 
 // SandboxToken authenticates one sandbox supervisor (proxy sidecar).
 type SandboxToken struct {
-	Hash       string `json:"hash"`
-	IssuedAtMS int64  `json:"issued_at_ms"`
+	Hash         string `json:"hash"`
+	PreviousHash string `json:"previous_hash,omitempty"`
+	IssuedAtMS   int64  `json:"issued_at_ms"`
+	// plaintext is deliberately process-local. It lets an already-connected
+	// supervisor recover from an operator rotation without persisting a bearer
+	// secret. The current token can still refresh after restart because the
+	// caller already proves possession of that token.
+	plaintext string `json:"-"`
 }
 
 // SSHSession is an OpenShell-style SSH session record.
@@ -96,11 +102,75 @@ func (s *Store) IssueSandboxToken(name string) (string, error) {
 	if s.state.SandboxTokens == nil {
 		s.state.SandboxTokens = map[string]SandboxToken{}
 	}
-	s.state.SandboxTokens[name] = SandboxToken{Hash: HashToken(tok), IssuedAtMS: time.Now().UnixMilli()}
+	previous := s.state.SandboxTokens[name]
+	s.state.SandboxTokens[name] = SandboxToken{Hash: HashToken(tok), PreviousHash: previous.Hash, IssuedAtMS: time.Now().UnixMilli(), plaintext: tok}
 	if err := s.flushLocked(); err != nil {
 		return "", err
 	}
 	return tok, nil
+}
+
+// RefreshSandboxToken returns the current token to a supervisor. The current
+// token is returned unchanged, which makes refresh survive a gateway restart
+// without persisting bearer plaintext. The immediately preceding token is also
+// accepted only for this refresh path while its plaintext remains process-local;
+// it never becomes valid for ordinary sandbox RPCs again.
+func (s *Store) RefreshSandboxToken(name, token string) (string, bool) {
+	if name == "" || token == "" {
+		return "", false
+	}
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	record, ok := s.state.SandboxTokens[name]
+	if !ok || !hashEqual(record.Hash, HashToken(token)) &&
+		(record.PreviousHash == "" || !hashEqual(record.PreviousHash, HashToken(token)) || record.plaintext == "") {
+		return "", false
+	}
+	if _, ok := s.state.Sandboxes[name]; !ok {
+		return "", false
+	}
+	if hashEqual(record.Hash, HashToken(token)) {
+		return token, true
+	}
+	return record.plaintext, true
+}
+
+// CurrentSandboxToken returns the current bearer only while it is available in
+// this process. It is intentionally not persisted and exists for controlled
+// supervisor/test seams that already possess the active token.
+func (s *Store) CurrentSandboxToken(name string) (string, bool) {
+	if name == "" {
+		return "", false
+	}
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	record, ok := s.state.SandboxTokens[name]
+	if !ok || record.plaintext == "" {
+		return "", false
+	}
+	if _, ok := s.state.Sandboxes[name]; !ok {
+		return "", false
+	}
+	return record.plaintext, true
+}
+
+// SandboxForRefreshToken resolves only the immediately previous token. It is
+// used by the auth interceptor exclusively for RefreshSandboxToken.
+func (s *Store) SandboxForRefreshToken(tok string) (string, bool) {
+	if tok == "" {
+		return "", false
+	}
+	h := HashToken(tok)
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	for name, record := range s.state.SandboxTokens {
+		if hashEqual(record.PreviousHash, h) {
+			if _, ok := s.state.Sandboxes[name]; ok {
+				return name, true
+			}
+		}
+	}
+	return "", false
 }
 
 // SandboxForToken resolves a supervisor token to its sandbox name.
@@ -197,6 +267,52 @@ func (s *Store) RevokeSSHSession(id string) error {
 	sess.Revoked = true
 	s.state.SSHSessions[id] = sess
 	return s.flushLocked()
+}
+
+// RevokeSSHSessionByToken marks the session for a bearer token revoked and
+// returns its record so callers can authorize the operation by workspace.
+// Tokens are compared only by their stored SHA-256 digest.
+func (s *Store) RevokeSSHSessionByToken(token string) (SSHSession, bool, error) {
+	if token == "" {
+		return SSHSession{}, false, nil
+	}
+	hash := HashToken(token)
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	for id, sess := range s.state.SSHSessions {
+		if !hashEqual(sess.TokenHash, hash) {
+			continue
+		}
+		if sess.Revoked {
+			return sess, false, nil
+		}
+		sess.Revoked = true
+		s.state.SSHSessions[id] = sess
+		if err := s.flushLocked(); err != nil {
+			sess.Revoked = false
+			s.state.SSHSessions[id] = sess
+			return SSHSession{}, false, err
+		}
+		return sess, true, nil
+	}
+	return SSHSession{}, false, nil
+}
+
+// FindSSHSessionByToken returns the session bound to a bearer token without
+// exposing or persisting the plaintext token.
+func (s *Store) FindSSHSessionByToken(token string) (SSHSession, bool) {
+	if token == "" {
+		return SSHSession{}, false
+	}
+	hash := HashToken(token)
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	for _, sess := range s.state.SSHSessions {
+		if hashEqual(sess.TokenHash, hash) {
+			return sess, true
+		}
+	}
+	return SSHSession{}, false
 }
 
 // ListSSHSessions returns sessions for sandbox ("" = all).

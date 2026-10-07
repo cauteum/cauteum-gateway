@@ -9,18 +9,23 @@ import (
 
 // Line is one observation log entry.
 type Line struct {
-	TS     time.Time `json:"ts"`
-	Source string    `json:"source"` // proxy | sandbox | proc | gateway
-	Level  string    `json:"level"`  // INFO | MED | HIGH | OCSF | …
-	Text   string    `json:"text"`
+	Sequence uint64            `json:"-"`
+	TS       time.Time         `json:"ts"`
+	Source   string            `json:"source"` // proxy | sandbox | proc | gateway
+	Level    string            `json:"level"`  // INFO | MED | HIGH | OCSF | …
+	Target   string            `json:"target,omitempty"`
+	Text     string            `json:"text"`
+	Fields   map[string]string `json:"fields,omitempty"`
 }
 
 // Buffer is a bounded per-sandbox ring (drop oldest under load).
 type Buffer struct {
-	mu      sync.Mutex
-	max     int
-	lines   []Line
-	waiters []chan struct{}
+	mu       sync.Mutex
+	max      int
+	lines    []Line
+	waiters  []chan struct{}
+	watchers map[chan struct{}]struct{}
+	sequence uint64
 }
 
 // Hub maps sandbox name → Buffer.
@@ -43,7 +48,7 @@ func (h *Hub) buf(name string) *Buffer {
 	defer h.mu.Unlock()
 	b, ok := h.buffers[name]
 	if !ok {
-		b = &Buffer{max: h.max}
+		b = &Buffer{max: h.max, watchers: map[chan struct{}]struct{}{}}
 		h.buffers[name] = b
 	}
 	return b
@@ -65,6 +70,31 @@ func (h *Hub) Snapshot(sandbox string, since time.Time, source, level string, li
 // Subscribe returns a channel closed when new lines arrive; call again after drain.
 func (h *Hub) Subscribe(sandbox string) <-chan struct{} {
 	return h.buf(sandbox).subscribe()
+}
+
+// Watch subscribes to persistent edge notifications. The returned cancel
+// function must be called when the consumer exits.
+func (h *Hub) Watch(sandbox string) (<-chan struct{}, func()) {
+	b := h.buf(sandbox)
+	ch := make(chan struct{}, 1)
+	b.mu.Lock()
+	b.watchers[ch] = struct{}{}
+	b.mu.Unlock()
+	return ch, func() {
+		b.mu.Lock()
+		delete(b.watchers, ch)
+		b.mu.Unlock()
+	}
+}
+
+// Tail returns the newest lines and the current sequence cursor atomically.
+func (h *Hub) Tail(sandbox string, limit int) ([]Line, uint64) {
+	return h.buf(sandbox).tail(limit)
+}
+
+// After returns buffered lines appended after sequence.
+func (h *Hub) After(sandbox string, sequence uint64) []Line {
+	return h.buf(sandbox).after(sequence)
 }
 
 // Names returns sandboxes that have any buffered lines.
@@ -94,6 +124,8 @@ func (b *Buffer) append(lines []Line) {
 	b.mu.Lock()
 	defer b.mu.Unlock()
 	for _, ln := range lines {
+		b.sequence++
+		ln.Sequence = b.sequence
 		if ln.TS.IsZero() {
 			ln.TS = time.Now().UTC()
 		}
@@ -109,6 +141,34 @@ func (b *Buffer) append(lines []Line) {
 		}
 	}
 	b.waiters = nil
+	for ch := range b.watchers {
+		select {
+		case ch <- struct{}{}:
+		default:
+		}
+	}
+}
+
+func (b *Buffer) tail(limit int) ([]Line, uint64) {
+	b.mu.Lock()
+	defer b.mu.Unlock()
+	start := 0
+	if limit > 0 && len(b.lines) > limit {
+		start = len(b.lines) - limit
+	}
+	return append([]Line(nil), b.lines[start:]...), b.sequence
+}
+
+func (b *Buffer) after(sequence uint64) []Line {
+	b.mu.Lock()
+	defer b.mu.Unlock()
+	var out []Line
+	for _, line := range b.lines {
+		if line.Sequence > sequence {
+			out = append(out, line)
+		}
+	}
+	return out
 }
 
 func (b *Buffer) subscribe() <-chan struct{} {
