@@ -29,6 +29,20 @@ func TestProviderCredentialLifecycleThroughHTTP(t *testing.T) {
 	defer tokenEndpoint.Close()
 
 	g := newTestGateway(t, httpapi.Options{})
+	profileReq, err := http.NewRequest(http.MethodPost, g.srv.URL+"/v1/profiles/openai?scope=global", strings.NewReader("id: openai\ndisplay_name: OpenAI\nsource: builtin\nscope: platform\n"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	profileReq.Header.Set("Authorization", "Bearer "+g.token)
+	profileResp, err := http.DefaultClient.Do(profileReq)
+	if err != nil {
+		t.Fatal(err)
+	}
+	profileResp.Body.Close()
+	if profileResp.StatusCode != http.StatusCreated {
+		t.Fatalf("create OpenAI profile=%d", profileResp.StatusCode)
+	}
+
 	body := map[string]any{
 		"type":        "openai",
 		"env_vars":    []string{"API_KEY", "REFRESH_TOKEN"},
