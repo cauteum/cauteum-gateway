@@ -1,6 +1,20 @@
 # Changelog
 
-## [Unreleased]
+## [v0.1.0-beta.1] - 2026-10-07
+
+### Added
+
+- Add contextual structured logs for gateway relay operations.
+
+### Changed
+
+- Use `whaleshell-core` v0.1.0-beta.1 and `whaleshell-runtime` v0.1.0-beta.1.
+- Update AWS SDK, go-jose, and SPIFFE dependencies to their latest compatible releases.
+
+### Fixed
+
+- Restrict gateway token files with Windows ACLs and run HTTP security integration tests across platforms.
+- Wait for the gateway listener before making RPC readiness assertions.
 
 ## [v0.1.0-alpha.2] - 2026-10-07
 
