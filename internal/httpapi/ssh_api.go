@@ -284,7 +284,7 @@ func (a *sshAPI) exec(w http.ResponseWriter, r *http.Request, name string) {
 		http.Error(w, "sandbox not found", http.StatusNotFound)
 		return
 	}
-	timeout := 60 * time.Second
+	timeout := relayExecTimeout
 	if req.TimeoutSec > 0 {
 		timeout = time.Duration(req.TimeoutSec) * time.Second
 	}
@@ -324,7 +324,7 @@ func execOverRelay(ctx context.Context, hub *sshrelay.Hub, sandbox string, argv 
 		// The relay channel is already authenticated end to end (gateway
 		// principal + sandbox supervisor token); host keys are ephemeral.
 		HostKeyCallback: ssh.InsecureIgnoreHostKey(), //nolint:gosec
-		Timeout:         10 * time.Second,
+		Timeout:         relayRequestTimeout,
 	}
 	c, chans, reqs, err := ssh.NewClientConn(conn, "sandbox", cfg)
 	if err != nil {
@@ -352,8 +352,7 @@ func execOverRelay(ctx context.Context, hub *sshrelay.Hub, sandbox string, argv 
 	if err == nil {
 		return buf.String(), 0, nil
 	}
-	var exitErr *ssh.ExitError
-	if errors.As(err, &exitErr) {
+	if exitErr, ok := errors.AsType[*ssh.ExitError](err); ok {
 		return buf.String(), exitErr.ExitStatus(), nil
 	}
 	return buf.String(), 0, fmt.Errorf("relay exec: %w", err)

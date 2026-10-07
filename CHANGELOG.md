@@ -2,10 +2,16 @@
 
 ## [Unreleased]
 
+## [v0.1.0-alpha.2] - 2026-10-07
+
 ### Added
 
 - Workspace/global provider profile catalog APIs with authorization and resource-version conflict checks.
 - Encrypted OAuth refresh material, output token rotation, and lazy credential refresh during sandbox secret resolution.
+
+### Changed
+
+- Align runtime, driver, and slogx with v0.1.0-alpha.2; update Go crypto, gRPC, protobuf, and SPIFFE dependencies.
 
 ## [v0.0.2-alpha.1] - 2026-09-28
 

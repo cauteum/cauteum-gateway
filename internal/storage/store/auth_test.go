@@ -84,6 +84,54 @@ func TestSandboxTokenHashedAndRotated(t *testing.T) {
 	}
 }
 
+func TestSandboxTokenRefreshAfterOperatorRotation(t *testing.T) {
+	st := openTest(t)
+	first, err := st.IssueSandboxToken("demo")
+	if err != nil {
+		t.Fatal(err)
+	}
+	second, err := st.IssueSandboxToken("demo")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if got, ok := st.SandboxForRefreshToken(first); !ok || got != "demo" {
+		t.Fatalf("previous token refresh lookup=%q ok=%v", got, ok)
+	}
+	refreshed, ok := st.RefreshSandboxToken("demo", first)
+	if !ok || refreshed != second {
+		t.Fatalf("refresh returned %q ok=%v; want current token", refreshed, ok)
+	}
+	if _, ok := st.SandboxForToken(first); ok {
+		t.Fatal("previous token became valid for ordinary RPCs")
+	}
+	third, err := st.IssueSandboxToken("demo")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, ok := st.SandboxForRefreshToken(first); ok {
+		t.Fatal("stale token remained refreshable after a second rotation")
+	}
+	if third == second {
+		t.Fatal("token rotation reused the current token")
+	}
+}
+
+func TestSandboxTokenRefreshSurvivesGatewayReopen(t *testing.T) {
+	st := openTest(t)
+	token, err := st.IssueSandboxToken("demo")
+	if err != nil {
+		t.Fatal(err)
+	}
+	reopened, err := Open(st.DataDir, "ignored")
+	if err != nil {
+		t.Fatal(err)
+	}
+	refreshed, ok := reopened.RefreshSandboxToken("demo", token)
+	if !ok || refreshed != token {
+		t.Fatalf("refresh after reopen = %q, %v; want original current token", refreshed, ok)
+	}
+}
+
 func TestSSHSessionLifecycle(t *testing.T) {
 	st := openTest(t)
 	if err := st.UpsertSandbox(Sandbox{Name: "other"}); err != nil {

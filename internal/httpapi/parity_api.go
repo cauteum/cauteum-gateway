@@ -2,6 +2,7 @@ package httpapi
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -166,10 +167,14 @@ func mountParityAPI(mux *http.ServeMux, st *store.Store, oidcValidator *idp.OIDC
 		switch p.Kind {
 		case PrincipalSandbox:
 			roles = []string{"sandbox_supervisor"}
+		case PrincipalUser:
+			if p.IDP == "oidc" || p.IDP == "local_dev" {
+				roles = p.Roles
+			}
 		case PrincipalNone:
 			auth, roles = "anonymous", []string{"user"}
 		}
-		if p.IDP == "none" {
+		if p.IDP == "local_dev" {
 			auth = "unauthenticated_allowed"
 		}
 		w.Header().Set("Content-Type", "application/json")
@@ -177,6 +182,7 @@ func mountParityAPI(mux *http.ServeMux, st *store.Store, oidcValidator *idp.OIDC
 			"subject":    p.Subject,
 			"auth":       auth,
 			"roles":      roles,
+			"scopes":     p.Scopes,
 			"idp":        p.IDP,
 			"sandbox":    p.Sandbox,
 			"gateway_id": st.Snapshot().GatewayID,
@@ -211,7 +217,7 @@ func mountParityAPI(mux *http.ServeMux, st *store.Store, oidcValidator *idp.OIDC
 		w.Header().Set("Content-Type", "application/json")
 		_ = json.NewEncoder(w).Encode(map[string]any{
 			"token":      token,
-			"expires_at": time.Now().Add(24 * time.Hour).UTC(),
+			"expires_at": time.Now().Add(defaultServiceSessionTTL).UTC(),
 			"mode":       "local-dev",
 		})
 	})
@@ -321,7 +327,11 @@ func mountWorkspacesAPI(mux *http.ServeMux, st *store.Store) {
 				_ = json.NewEncoder(w).Encode(ws)
 			case http.MethodDelete:
 				if err := st.DeleteWorkspace(name); err != nil {
-					http.Error(w, err.Error(), http.StatusInternalServerError)
+					code := http.StatusInternalServerError
+					if errors.Is(err, store.ErrWorkspaceNotEmpty) {
+						code = http.StatusConflict
+					}
+					http.Error(w, err.Error(), code)
 					return
 				}
 				w.WriteHeader(http.StatusNoContent)

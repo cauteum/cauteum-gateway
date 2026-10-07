@@ -2,9 +2,11 @@ package httpapi
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/whaleshell/whaleshell-runtime/idp"
 )
@@ -13,6 +15,15 @@ import (
 type OIDCOptions struct {
 	Issuer            string
 	Audience          string
+	JWKSTTLSecs       uint64
+	JWKSTTLSecsSet    bool
+	RolesClaim        string
+	RolesClaimSet     bool
+	AdminRole         string
+	AdminRoleSet      bool
+	UserRole          string
+	UserRoleSet       bool
+	ScopesClaim       string
 	ClientID          string // advertised to CLI via /v1/auth/oidc
 	AllowInsecureHTTP bool
 }
@@ -31,6 +42,18 @@ func oidcFromEnvAndFlags(opt *Options) {
 		v := strings.ToLower(strings.TrimSpace(os.Getenv("WHALESHELL_OIDC_ALLOW_INSECURE_HTTP")))
 		opt.OIDC.AllowInsecureHTTP = v == "1" || v == "true" || v == "yes"
 	}
+	if !opt.OIDC.JWKSTTLSecsSet && opt.OIDC.JWKSTTLSecs == 0 {
+		opt.OIDC.JWKSTTLSecs = 3600
+	}
+	if opt.OIDC.RolesClaim == "" && !opt.OIDC.RolesClaimSet {
+		opt.OIDC.RolesClaim = "realm_access.roles"
+	}
+	if opt.OIDC.AdminRole == "" && !opt.OIDC.AdminRoleSet {
+		opt.OIDC.AdminRole = "openshell-admin"
+	}
+	if opt.OIDC.UserRole == "" && !opt.OIDC.UserRoleSet {
+		opt.OIDC.UserRole = "openshell-user"
+	}
 }
 
 func firstNonEmptyEnv(keys ...string) string {
@@ -46,10 +69,17 @@ func newOIDCValidator(o OIDCOptions) (*idp.OIDC, error) {
 	if strings.TrimSpace(o.Issuer) == "" {
 		return nil, nil
 	}
+	if o.JWKSTTLSecs == 0 {
+		return nil, fmt.Errorf("oidc: jwks_ttl_secs must be greater than zero")
+	}
+	if o.JWKSTTLSecs > uint64((1<<63-1)/int64(time.Second)) {
+		return nil, fmt.Errorf("oidc: jwks_ttl_secs exceeds supported duration")
+	}
 	return idp.NewOIDC(idp.OIDCConfig{
 		Issuer:            o.Issuer,
 		Audience:          o.Audience,
 		AllowInsecureHTTP: o.AllowInsecureHTTP,
+		JWKSCacheTTL:      time.Duration(o.JWKSTTLSecs) * time.Second,
 	})
 }
 

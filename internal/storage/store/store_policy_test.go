@@ -2,6 +2,7 @@ package store_test
 
 import (
 	"path/filepath"
+	"strconv"
 	"testing"
 
 	"github.com/whaleshell/whaleshell-gateway/internal/storage/store"
@@ -26,7 +27,7 @@ func TestSetBasePolicyTracksRevisions(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if len(revs) != 2 || revs[1].Rev != 2 || revs[1].Status != store.PolicyStatusLoaded {
+	if len(revs) != 2 || revs[1].Rev != 2 || revs[1].Status != store.PolicyStatusPending {
 		t.Fatalf("%+v", revs)
 	}
 	r, err := st.GetPolicyRevision("demo", 1)
@@ -34,8 +35,8 @@ func TestSetBasePolicyTracksRevisions(t *testing.T) {
 		t.Fatalf("%+v %v", r, err)
 	}
 	// Cap: fill beyond max
-	for i := 0; i < store.MaxPolicyRevisions+5; i++ {
-		if err := st.SetBasePolicy("demo", "v: "+filepath.Base(dir)+"\n"); err != nil {
+	for i := range store.MaxPolicyRevisions + 5 {
+		if err := st.SetBasePolicy("demo", "v: "+filepath.Base(dir)+"\nrevision: "+strconv.Itoa(i)+"\n"); err != nil {
 			t.Fatal(err)
 		}
 	}

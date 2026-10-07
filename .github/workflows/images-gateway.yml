@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: Copyright (c) 2026 the whaleshell authors
-# SPDX-License-Identifier: MIT
+# SPDX-License-Identifier: Apache-2.0
 name: images-gateway
 
 on:
@@ -45,6 +45,15 @@ jobs:
           path: whaleshell-core
       - uses: actions/checkout@v4
         with:
+          repository: whaleshell/whaleshell-cli
+          path: whaleshell-cli
+          ref: release/v0.1.0-alpha.2
+      - uses: actions/checkout@v4
+        with:
+          repository: whaleshell/whaleshell-display
+          path: whaleshell-display
+      - uses: actions/checkout@v4
+        with:
           repository: whaleshell/whaleshell-providers
           path: whaleshell-providers
       - uses: actions/checkout@v4
@@ -68,7 +77,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: whaleshell/slogx
-          path: slogx
+          path: whaleshell-slogx
       - name: Write go.work
         working-directory: ${{ github.workspace }}
         shell: bash
@@ -87,13 +96,16 @@ jobs:
             for d in whaleshell-*; do
               if [[ -d "$d" ]]; then
                 echo "  github.com/whaleshell/${d} v0.1.0-alpha.1 => ./$d"
+                echo "  github.com/whaleshell/${d} v0.1.0-alpha.2 => ./$d"
               fi
             done
-            if [[ -d slogx ]]; then
-              echo '  github.com/whaleshell/slogx v0.1.0-alpha.1 => ./slogx'
+            if [[ -d whaleshell-slogx ]]; then
+              echo '  github.com/whaleshell/slogx v0.1.0-alpha.1 => ./whaleshell-slogx'
+              echo '  github.com/whaleshell/slogx v0.1.0-alpha.2 => ./whaleshell-slogx'
             fi
             echo ')'
           } > "${{ github.workspace }}/go.work"
+          touch "${{ github.workspace }}/go.work.sum"
           echo "Wrote go.work:" && cat "${{ github.workspace }}/go.work"
       - uses: actions/setup-go@v5
         with:

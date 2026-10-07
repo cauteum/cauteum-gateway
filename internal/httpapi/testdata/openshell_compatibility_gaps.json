@@ -1,0 +1,133 @@
+{
+  "schema_version": 1,
+  "upstream_commit": "a0814443f19c07102b19ff09d6ead3d3ba59f9c5",
+  "support_status": "partial-alpha",
+  "gaps": [
+    {
+      "id": "P0-RPC-CONFORMANCE",
+      "area": "grpc",
+      "field_or_method": "public OpenShell RPC methods and related driver/middleware protocols",
+      "backend": "gateway",
+      "status": "verified",
+      "evidence": "whaleshell-gateway/internal/httpapi/testdata/openshell_rpc_inventory.json and internal/upstreamproto; all 74 public OpenShell methods now have explicit inventory test references and partial fixture classification, while contract tests cover service endpoint CRUD, sandbox token rotation, provider CRUD/refresh/subject-token exchange, provider profiles and policy draft lifecycle; openshell_rpc_dispatch_test.go invokes every pinned method through a real gRPC transport, covering unary/client/server/bidi stream shapes with bounded cancellation and failing on UNIMPLEMENTED; its RPC auth/deadline corpus additionally checks missing bearer rejection, operator bearer acceptance and bounded completion for every descriptor method; generated ComputeDriver/CredentialDriver/SupervisorMiddleware/HttpResponsePreReturn/GatewayInterceptor stubs are checked against the pinned proto source by task compat:proto, remote driver capability probes use typed clients, optional CredentialDriver ListCredentials is capability-probed with bounded calls and handle-only response validation, configured SupervisorMiddleware registrations call Describe with manifest/binding validation at gateway startup and ValidateConfig for selected policy configs, configured GatewayInterceptor registrations call Describe, modify_operation RFC 6902 patches and validate for CreateSandbox before durable/backend side effects, and post_commit callbacks after commit, and the remote ComputeDriver adapter dispatches Validate/Create/Start/Stop/Delete plus WatchSandboxes platform-event bridging through generated clients; local Docker/Podman WatchSandbox follow_events emits lifecycle PlatformEvents from durable status/resource-version; proxy request-stage SupervisorMiddleware dispatch forwards bounded request bodies, header mutations, selector order and host include/exclude matching; proxy HTTP/MITM response stages dispatch typed preflight/body bidi evaluation with header/body mutations, semantic bodyless-response handling, ordered trailer mutation validation and per-event timeout handling for STREAM_BYTES, while MITM WebSocket upgrades dispatch preflight/session-start/logical text/binary messages before credential rewriting and reassemble fragmented data frames with control-frame interleaving and a 4 MiB cap; exposed loopback services are HTTP-proxied through the sandbox supervisor relay with an edge integration test; BeginRootfsTarStaging is now capability-gated and single-use for external drivers that advertise a staging directory and size limit, while Docker/Podman intentionally fail closed; the inventory now validates all referenced fixtures and handler-family response lifecycle tests; broader config/CLI corpus is tracked separately",
+      "owner": "gateway"
+    },
+    {
+      "id": "P1-STATE-RECOVERY",
+      "area": "lifecycle",
+      "field_or_method": "sandbox create/start/stop/restart and daemon outage recovery",
+      "backend": "docker,podman-rootful,podman-rootless",
+      "status": "verified",
+      "evidence": "whaleshell-driver/tests/e2e/{docker,podman}; Docker, rootful Podman and rootless Podman service E2E inject backend daemon/service outage, wait for API recovery, restart or reuse the sandbox and verify persisted workspace state; gateway restart with persisted state and relay recovery is covered by whaleshell-gateway/tests/e2e/engine_connect_test.go; rootless Podman service recovery passed in the current run; gateway startup now performs backend-list reconciliation with a narrow labeled-orphan sweep and missing-runtime repair covered by internal/httpapi/runtime_recovery_test.go, while StartSandbox now recreates a missing runtime from the durable protobuf spec with rollback and a dedicated recovery test; store lifecycle transitions now persist starting/stopping/stopped states and StopSandbox restores running on backend-stop failure, with contract coverage; main-process exit finalization now accepts a relay disconnect after a durable instance-bound report, covered by TestMainProcessFinalizeSurvivesRelayDisconnectAfterReport and Docker gateway E2E; the Docker gateway E2E now captures the current supervisor token, restarts the gateway, and verifies RefreshSandboxToken against reopened durable state; the Docker gateway E2E now also creates a short-lived public SSH session and verifies the real relay rejects it after expiry; the OpenShell relayclient now proactively calls RefreshSandboxToken and propagates the refreshed bearer to lifecycle/RelayStream paths, covered by a bufconn supervisor-session test; the gateway accepts the immediately previous token only for RefreshSandboxToken after an operator rotation, returns the current in-memory token, and rejects that previous token for ordinary RPCs; full supervisor event/state parity remains open",
+      "owner": "driver,gateway"
+    },
+    {
+      "id": "P2-UPSTREAM-PROXY",
+      "area": "network",
+      "field_or_method": "https_proxy, proxy_auth_file, proxy_ca_bundle and exact no_proxy runtime effects",
+      "backend": "docker,podman-rootful,podman-rootless",
+      "status": "verified",
+      "evidence": "whaleshell-proxy/proxy/upstream_test.go and no_proxy_test.go; Docker and Podman config decoders reject present-but-empty proxy/no_proxy/auth/CA values, enforce proxy/auth/CA cross-field validation, and preserve secrets outside sandbox metadata; the proxy corpus covers authenticated HTTP CONNECT, HTTPS proxy CA trust, validated-IP versus hostname CONNECT, domain/IP/CIDR/wildcard/port no_proxy matching and direct-dial narrowing; Docker disposable sidecar E2E proves auth-file mount, HTTPS_PROXY CONNECT and 200 authentication; Podman proxy lanes are version-aware: Podman 6+ is required and enforced, while Podman 5 emits only the exact documented capability skip",
+      "owner": "driver,proxy"
+    },
+    {
+      "id": "P3-USERNS-MATRIX",
+      "area": "identity",
+      "field_or_method": "userns private,auto,host,keep-id,no-map runtime matrix",
+      "backend": "podman-rootful,podman-rootless",
+      "status": "verified",
+    "evidence": "whaleshell-driver/internal/podman/libpod_create_test.go and tests/e2e/podman/lifecycle_fixture_test.go; native adapter now rejects unknown userns modes, explicit maps outside private, incomplete/mismatched maps, overflowing ranges and privileged containers instead of silently dropping the setting; current rootful runtime passed private/auto/host and documented keep-id/no-map capability skips, rootless runtime passed auto/host/keep-id/no-map with private explicitly unsupported by Podman; native internal-network allocation retries a candidate when the backend reports a host subnet collision; proxy-backed lanes are version-aware and become required automatically when Podman 6+ blackhole-route support is available; current Podman 5 reports the exact capability limitation",
+      "owner": "driver"
+    },
+    {
+      "id": "P4-CREDENTIAL-LIFECYCLE",
+      "area": "credentials",
+      "field_or_method": "provider attach, refresh, rotation, expiry and redaction",
+      "backend": "gateway,proxy,docker,podman",
+      "status": "verified",
+      "evidence": "gateway unit/integration coverage exercises provider configure → rotate → redacted read → delete over HTTP; OpenShell gRPC provider CRUD persists metadata and encrypted credential values without response leakage, revokes removed/deleted provider secrets, and rejects expired credentials without a refresh strategy; configured external CredentialDriver Store/Resolve/Delete is now wired through durable opaque handles and refresh rotation, with generated-client lifecycle contract coverage plus a gateway GetSandboxProviderEnvironment contract test proving external ResolveCredentials is used by the sandbox/proxy path without copying plaintext into local storage; external ResolveCredentials expires_at_ms is now enforced before sandbox delivery and persisted into the durable provider expiry map, with fresh/persist/expired contract coverage; gateway tests now exercise Google service-account JWT and AWS STS AssumeRole configuration/rotation against local protocol-compatible token endpoints and a complete workload-identity subject-token exchange with signed JWT-SVID validation through a Unix Workload API socket; external driver Store/Resolve/Delete errors containing credential material are redacted at the public gateway boundary by negative contract tests; Docker/Podman gateway E2E now configures a real generated external CredentialDriver, exercises gateway CreateProvider → remote StoreCredential → attach → remote ResolveCredentials → sandbox-scoped GetSandboxProviderEnvironment → detach → DeleteProvider/remote DeleteCredential, and verifies the remote handle store is empty; policy merge now validates credential_binding against the attached endpointless provider profile atomically; proxy token-grant tests prove endpoint-bound resolution and cache expiry and the SPIFFE contract test exercises a signed JWT-SVID from a Unix Workload API socket through a real token endpoint and post-expiry refresh; invalid SVID and credential-material redaction negatives now complement the Google, AWS, SPIFFE and external-driver runtime corpus",
+      "owner": "gateway,proxy,runtime"
+    },
+    {
+      "id": "P6-RELEASE-GATES",
+      "area": "release",
+      "field_or_method": "race, archive/image license contents, docs and unexpected-skip gates",
+      "backend": "all",
+      "status": "verified",
+      "evidence": "Apache-2.0 license/NOTICE audit, full native-CGO workspace race matrix, lint, vet, govulncheck, release binary builds, policy checks, Docker and documented-capability Podman E2E, standalone GOWORK=off with explicit local sibling replacements, release archive/image LICENSE+NOTICE and CycloneDX SBOM, and strict MkDocs build all pass in the 2026-10-06 compat:release rerun; compat:release now invokes these gates and e2e_run_required_test/e2e_run_capability_test reject hidden or undocumented skips",
+      "owner": "release"
+    },
+    {
+      "id": "P0-CONFIG-CORPUS",
+      "area": "configuration",
+      "field_or_method": "gateway TOML, policy YAML, provider profiles and sandbox templates",
+      "backend": "gateway,docker,podman-rootful,podman-rootless",
+      "status": "open",
+      "evidence": "The pinned field-level defaults, null/empty, precedence, validation and observed runtime-effect corpus has not been completed; see the workspace migration checklist and the existing driver field matrix pending revalidation.",
+      "owner": "gateway,driver,core,providers"
+    },
+    {
+      "id": "P0-CLI-SDK-CORPUS",
+      "area": "client",
+      "field_or_method": "CLI commands and Go/Python SDK APIs, outputs and errors",
+      "backend": "cli,go-sdk,python-sdk",
+      "status": "open",
+      "evidence": "The 16 top-level commands in the pinned OpenShell CLI Commands enum (crates/openshell-cli/src/main.rs) are named in the whaleshell CLI dispatch switch, but that is only a shape check. A pinned leaf-command, flag, environment, output, exit-code and streaming SDK fixture corpus is still required; existing workspace tests do not establish published-version standalone parity.",
+      "owner": "cli,sdk,python"
+    },
+    {
+      "id": "P1-SUPERVISOR-EVENTS",
+      "area": "lifecycle",
+      "field_or_method": "full supervisor event, signal/reap and finalize semantics",
+      "backend": "runtime,gateway,docker,podman",
+      "status": "open",
+      "evidence": "The verified recovery slice above explicitly leaves full supervisor event/state parity open; the pinned event corpus must be run through the Go PID1 and gateway.",
+      "owner": "runtime,gateway"
+    },
+    {
+      "id": "P4-EXTERNAL-CORPUS",
+      "area": "grpc",
+      "field_or_method": "per-method public and related protocol behavior, data plane and middleware/interceptor errors",
+      "backend": "gateway,docker,podman",
+      "status": "open",
+      "evidence": "All 74 public methods have handlers and dispatch coverage, but complete per-method fixtures, external ComputeDriver data-plane effects, metadata/deadline/cancellation and error-policy parity remain unverified.",
+      "owner": "gateway,driver,proxy"
+    },
+    {
+      "id": "P6-PUBLISHED-STANDALONE",
+      "area": "release",
+      "field_or_method": "Go modules resolved from published tags without local replacements",
+      "backend": "all",
+      "status": "open",
+      "evidence": "On 2026-10-07, an isolated copy of whaleshell-cli failed GOWORK=off go list -mod=mod ./...: slogx alpha.1 declares github.com/zorneth/slogx, display/driver/runtime alpha.1 declare old osg paths, and core alpha.2 is an unknown revision. scripts/check-standalone.sh inserts local sibling replacements and cannot close this release gap.",
+      "owner": "release"
+    },
+    {
+      "id": "P4-LIVE-POLICY",
+      "area": "security",
+      "field_or_method": "UpdateConfig to active proxy decision and acknowledgement across restart",
+      "backend": "docker,podman-rootful,podman-rootless",
+      "status": "open",
+      "evidence": "The October 2026 security review reports focused policy watcher and acknowledgement tests but leaves an external UpdateConfig-to-proxy-decision E2E and restart/global-policy corpus open.",
+      "owner": "gateway,proxy,runtime"
+    },
+    {
+      "id": "P3-PODMAN-HOST-GATEWAY",
+      "area": "security",
+      "field_or_method": "native host-gateway blackhole route on Podman 6.x",
+      "backend": "podman-rootful,podman-rootless",
+      "status": "open",
+      "evidence": "The October 2026 security review reproduced host-gateway bypass on Podman 5 and added fail-closed rejection there; real rootful/rootless Podman 6.x route enforcement remains unverified.",
+      "owner": "driver"
+    },
+    {
+      "id": "P2-HOST-BOUNDARIES",
+      "area": "security",
+      "field_or_method": "dual-stack Docker gateway isolation and race-safe workspace bind path",
+      "backend": "docker",
+      "status": "open",
+      "evidence": "The October 2026 security review records Docker IPv4 gateway isolation and symlink-path validation fixes, but real dual-stack IPv6 and validation-to-mount race coverage remain open.",
+      "owner": "driver"
+    }
+  ]
+}

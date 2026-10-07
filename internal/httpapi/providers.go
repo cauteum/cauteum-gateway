@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"maps"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -35,6 +36,11 @@ type providerWriteBody struct {
 }
 
 func mountProviderAPI(mux *http.ServeMux, st *store.Store, sec *secrets.LocalEncrypted, builtinDir string) {
+	mountProviderAPIWithSources(mux, st, sec, builtinDir, nil)
+}
+
+func mountProviderAPIWithSources(mux *http.ServeMux, st *store.Store, sec *secrets.LocalEncrypted, builtinDir string, profileSources []string) {
+	profileSources = effectiveProviderProfileSources(profileSources)
 	mux.HandleFunc("/v1/profiles", func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != http.MethodGet {
 			http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
@@ -48,7 +54,7 @@ func mountProviderAPI(mux *http.ServeMux, st *store.Store, sec *secrets.LocalEnc
 		if !authorizeProfileScope(w, r, st, scope, workspace, false) {
 			return
 		}
-		list := listProfiles(st, builtinDir, workspace)
+		list := listProfilesWithSources(st, builtinDir, workspace, profileSources)
 		w.Header().Set("Content-Type", "application/json")
 		_ = json.NewEncoder(w).Encode(map[string]any{"profiles": list})
 	})
@@ -68,7 +74,7 @@ func mountProviderAPI(mux *http.ServeMux, st *store.Store, sec *secrets.LocalEnc
 		}
 		switch r.Method {
 		case http.MethodGet:
-			p, src, err := resolveProfileForWorkspace(st, builtinDir, id, workspace)
+			p, src, err := resolveProfileForWorkspaceWithSources(st, builtinDir, id, workspace, profileSources)
 			if err != nil {
 				http.Error(w, err.Error(), http.StatusNotFound)
 				return
@@ -215,7 +221,7 @@ func mountProviderAPI(mux *http.ServeMux, st *store.Store, sec *secrets.LocalEnc
 			if !authorizeProfileScope(w, r, st, profileScope, profileWorkspace, true) {
 				return
 			}
-			if _, _, err := resolveProfileForWorkspace(st, builtinDir, body.Type, profileWorkspace); err != nil {
+			if _, _, err := resolveProfileForWorkspaceWithSources(st, builtinDir, body.Type, profileWorkspace, profileSources); err != nil {
 				http.Error(w, "unknown profile type: "+err.Error(), http.StatusBadRequest)
 				return
 			}
@@ -270,11 +276,11 @@ func mountProviderAPI(mux *http.ServeMux, st *store.Store, sec *secrets.LocalEnc
 	})
 }
 
-func handleSandboxSubpath(w http.ResponseWriter, r *http.Request, st *store.Store, sec *secrets.LocalEncrypted, logs *logbuf.Hub, builtinDir, name, rest string) {
+func handleSandboxSubpath(w http.ResponseWriter, r *http.Request, st *store.Store, sec *secrets.LocalEncrypted, logs *logbuf.Hub, builtinDir string, profileSources []string, name, rest string) {
 	parts := strings.Split(strings.Trim(rest, "/"), "/")
 	switch {
 	case len(parts) == 1 && parts[0] == "effective-policy" && r.Method == http.MethodGet:
-		doc, err := effectivePolicy(st, builtinDir, name)
+		doc, err := effectivePolicyWithSources(st, builtinDir, name, profileSources)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
@@ -287,7 +293,7 @@ func handleSandboxSubpath(w http.ResponseWriter, r *http.Request, st *store.Stor
 		w.Header().Set("Content-Type", "application/yaml")
 		_, _ = w.Write(b)
 	case len(parts) == 1 && parts[0] == "policy":
-		handleSandboxPolicy(w, r, st, builtinDir, name)
+		handleSandboxPolicy(w, r, st, builtinDir, profileSources, name)
 	case len(parts) == 1 && parts[0] == "policy-revisions" && r.Method == http.MethodGet:
 		if revStr := strings.TrimSpace(r.URL.Query().Get("rev")); revStr != "" {
 			var rev int
@@ -345,10 +351,10 @@ func handleSandboxSubpath(w http.ResponseWriter, r *http.Request, st *store.Stor
 		_ = json.NewEncoder(w).Encode(map[string]any{"providers": list})
 	case len(parts) == 1 && parts[0] == "base-policy" && r.Method == http.MethodGet:
 		// Alias for OpenShell-style policy get --base.
-		handleSandboxPolicy(w, r, st, builtinDir, name)
+		handleSandboxPolicy(w, r, st, builtinDir, profileSources, name)
 	case len(parts) == 1 && parts[0] == "secrets" && r.Method == http.MethodGet:
 		// Sidecar resolve: return KEY=VAL map for all attached providers (never logged).
-		out, err := resolveSandboxSecrets(r.Context(), st, sec, builtinDir, name)
+		out, err := resolveSandboxSecretsWithSources(r.Context(), st, sec, builtinDir, name, profileSources)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
@@ -408,7 +414,7 @@ func handleSandboxSubpath(w http.ResponseWriter, r *http.Request, st *store.Stor
 // PUT stores the editable base layer, then validates EffectivePolicy(base, providers, global).
 // On compose/validate failure the previous base is kept (fail-closed). Response body
 // is the effective YAML so clients can write it to the sandbox policy bind.
-func handleSandboxPolicy(w http.ResponseWriter, r *http.Request, st *store.Store, builtinDir, name string) {
+func handleSandboxPolicy(w http.ResponseWriter, r *http.Request, st *store.Store, builtinDir string, profileSources []string, name string) {
 	switch r.Method {
 	case http.MethodGet:
 		view := strings.ToLower(strings.TrimSpace(r.URL.Query().Get("view")))
@@ -430,7 +436,7 @@ func handleSandboxPolicy(w http.ResponseWriter, r *http.Request, st *store.Store
 		case "base":
 			_, _ = w.Write([]byte(sb.BasePolicyYAML))
 		case "full", "effective":
-			doc, err := effectivePolicy(st, builtinDir, name)
+			doc, err := effectivePolicyWithSources(st, builtinDir, name, profileSources)
 			if err != nil {
 				http.Error(w, err.Error(), http.StatusBadRequest)
 				return
@@ -450,7 +456,7 @@ func handleSandboxPolicy(w http.ResponseWriter, r *http.Request, st *store.Store
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
-		eff, stripped, err := setSandboxBasePolicy(st, builtinDir, name, body)
+		eff, stripped, err := setSandboxBasePolicyWithSources(st, builtinDir, name, body, profileSources)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
@@ -467,6 +473,10 @@ func handleSandboxPolicy(w http.ResponseWriter, r *http.Request, st *store.Store
 
 // setSandboxBasePolicy validates and stores base YAML, then returns effective YAML.
 func setSandboxBasePolicy(st *store.Store, builtinDir, name string, body []byte) (effective []byte, stripped int, err error) {
+	return setSandboxBasePolicyWithSources(st, builtinDir, name, body, nil)
+}
+
+func setSandboxBasePolicyWithSources(st *store.Store, builtinDir, name string, body []byte, profileSources []string) (effective []byte, stripped int, err error) {
 	if _, ok := st.GetSandbox(name); !ok {
 		return nil, 0, fmt.Errorf("sandbox %q not found", name)
 	}
@@ -490,7 +500,7 @@ func setSandboxBasePolicy(st *store.Store, builtinDir, name string, body []byte)
 	if err := st.SetBasePolicy(name, string(storeYAML)); err != nil {
 		return nil, 0, err
 	}
-	effDoc, err := effectivePolicy(st, builtinDir, name)
+	effDoc, err := effectivePolicyWithSources(st, builtinDir, name, profileSources)
 	if err != nil {
 		_ = st.SetBasePolicy(name, prevBase) // roll back
 		return nil, 0, fmt.Errorf("effective policy: %w", err)
@@ -504,12 +514,31 @@ func setSandboxBasePolicy(st *store.Store, builtinDir, name string, body []byte)
 }
 
 func resolveSandboxSecrets(ctx context.Context, st *store.Store, sec *secrets.LocalEncrypted, builtinDir, sandbox string) (map[string]string, error) {
+	return resolveSandboxSecretsWithSources(ctx, st, sec, builtinDir, sandbox, nil)
+}
+
+func resolveSandboxSecretsWithSources(ctx context.Context, st *store.Store, sec *secrets.LocalEncrypted, builtinDir, sandbox string, profileSources []string) (map[string]string, error) {
+	return resolveSandboxSecretsWithSourcesAndDrivers(ctx, st, sec, nil, Options{}, builtinDir, sandbox, profileSources)
+}
+
+func resolveProviderCredentialsForRecord(ctx context.Context, sec *secrets.LocalEncrypted, drivers *driverRegistry, record store.ProviderRecord, keys []string) (map[string]string, error) {
+	if drivers != nil && record.CredentialDriver != "" {
+		values, _, err := drivers.resolveProviderCredentialsWithExpiry(ctx, record, keys, sec)
+		return values, err
+	}
+	if sec == nil {
+		return nil, fmt.Errorf("local credential storage is not initialized")
+	}
+	return sec.GetProviderCredentials(ctx, record.Name, keys)
+}
+
+func resolveSandboxSecretsWithSourcesAndDrivers(ctx context.Context, st *store.Store, sec *secrets.LocalEncrypted, drivers *driverRegistry, opt Options, builtinDir, sandbox string, profileSources []string) (map[string]string, error) {
 	sb, ok := st.GetSandbox(sandbox)
 	if !ok {
 		return nil, fmt.Errorf("sandbox %q not found", sandbox)
 	}
 	out := map[string]string{}
-	if sec == nil {
+	if sec == nil && drivers == nil {
 		return out, nil
 	}
 	for _, pname := range sb.AttachedProviders {
@@ -527,24 +556,55 @@ func resolveSandboxSecrets(ctx context.Context, st *store.Store, sec *secrets.Lo
 			}
 			refreshAt := time.Now().Add(time.Duration(cfg.RefreshBeforeSeconds) * time.Second).UnixMilli()
 			if refreshAt >= expiresAt {
-				if err := refreshStoredProviderCredential(ctx, st, sec, pname, key); err != nil {
+				if err := refreshStoredProviderCredentialWithDrivers(ctx, st, sec, drivers, opt, pname, key); err != nil {
 					return nil, fmt.Errorf("provider %s credential %s refresh: %w", pname, key, err)
 				}
+				// Refresh updates the durable expiry and may rotate the set of
+				// output keys; use the fresh record for the fail-closed check below.
+				inst, _ = st.GetProvider(pname)
+			}
+		}
+		now := time.Now().UnixMilli()
+		for key, expiresAt := range inst.CredentialExpiresAtMS {
+			if expiresAt > 0 && expiresAt <= now {
+				return nil, fmt.Errorf("provider %s credential %s is expired", pname, key)
 			}
 		}
 		keys := inst.EnvVars
 		if len(keys) == 0 {
-			if prof, _, err := resolveProfileForWorkspace(st, builtinDir, inst.Type, sb.Workspace); err == nil {
+			if prof, _, err := resolveProfileForWorkspaceWithSources(st, builtinDir, inst.Type, sb.Workspace, profileSources); err == nil {
 				keys = prof.EnvKeys()
 			}
 		}
-		creds, err := sec.GetProviderCredentials(ctx, pname, keys)
+		var creds map[string]string
+		var resolvedExpiry map[string]int64
+		var err error
+		if drivers != nil {
+			creds, resolvedExpiry, err = drivers.resolveProviderCredentialsWithExpiry(ctx, inst, keys, sec)
+		} else {
+			creds, err = sec.GetProviderCredentials(ctx, pname, keys)
+		}
 		if err != nil {
 			return nil, err
 		}
-		for k, v := range creds {
-			out[k] = v
+		if len(resolvedExpiry) > 0 {
+			if inst.CredentialExpiresAtMS == nil {
+				inst.CredentialExpiresAtMS = map[string]int64{}
+			}
+			changed := false
+			for key, expiresAt := range resolvedExpiry {
+				if inst.CredentialExpiresAtMS[key] != expiresAt {
+					inst.CredentialExpiresAtMS[key] = expiresAt
+					changed = true
+				}
+			}
+			if changed {
+				if err := st.UpsertProvider(inst); err != nil {
+					return nil, fmt.Errorf("persist credential expiry: %w", err)
+				}
+			}
 		}
+		maps.Copy(out, creds)
 	}
 	aliasGitHubTokenKeys(out)
 	return out, nil
@@ -620,7 +680,7 @@ func handleSandboxLogs(w http.ResponseWriter, r *http.Request, logs *logbuf.Hub,
 				case <-r.Context().Done():
 					return
 				case <-logs.Subscribe(name):
-				case <-time.After(15 * time.Second):
+				case <-time.After(providerRotationInterval):
 					fmt.Fprintf(w, ": keepalive\n\n")
 					flusher.Flush()
 				}
@@ -669,12 +729,12 @@ func profileRequestScope(r *http.Request) (scope, workspace string, err error) {
 
 func authorizeProfileScope(w http.ResponseWriter, r *http.Request, st *store.Store, scope, workspace string, write bool) bool {
 	principal := PrincipalFrom(r.Context())
-	if principal.Kind == PrincipalNone || principal.IDP == "local" {
+	if principal.Kind == PrincipalNone || principal.IDP == "local" || principal.IDP == "local_dev" {
 		return true // direct handler tests and the local operator token
 	}
 	if scope == "global" {
 		for _, role := range principal.Roles {
-			if role == "platform-admin" || role == "whaleshell:platform-admin" {
+			if role == "platform-admin" || role == "platform_admin" || role == "whaleshell:platform-admin" {
 				return true
 			}
 		}
@@ -699,39 +759,42 @@ func authorizeProfileScope(w http.ResponseWriter, r *http.Request, st *store.Sto
 	return false
 }
 
-func listProfiles(st *store.Store, builtinDir, workspace string) []map[string]string {
+func listProfilesWithSources(st *store.Store, builtinDir, workspace string, profileSources []string) []map[string]string {
+	profileSources = effectiveProviderProfileSources(profileSources)
 	catalog := map[string]map[string]string{}
 	workspaceOverrides := map[string]bool{}
-	if builtinDir != "" {
+	if providerProfileSourceEnabled(profileSources, "builtin") && builtinDir != "" {
 		if m, err := provider.LoadDir(builtinDir); err == nil {
 			for id, prof := range m {
 				catalog[id] = map[string]string{"id": id, "category": prof.Category, "source": "builtin", "scope": "builtin"}
 			}
 		}
 	}
-	for key, rec := range st.Snapshot().Profiles {
-		isWorkspace := rec.Scope == "workspace" || strings.HasPrefix(key, "workspace/")
-		if isWorkspace && (workspace == "" || rec.Workspace != workspace) {
-			continue
-		}
-		if !isWorkspace && workspace == "" && rec.Workspace != "" {
-			continue
-		}
-		id := rec.ID
-		if !isWorkspace && workspaceOverrides[id] {
-			continue
-		}
-		category := ""
-		if prof, err := provider.ParseYAML([]byte(rec.YAML)); err == nil {
-			category = prof.Category
-		}
-		scope := "global"
-		if isWorkspace {
-			scope = "workspace"
-		}
-		catalog[id] = map[string]string{"id": id, "category": category, "source": "custom", "scope": scope}
-		if isWorkspace {
-			workspaceOverrides[id] = true
+	if providerProfileSourceEnabled(profileSources, "user") {
+		for key, rec := range st.Snapshot().Profiles {
+			isWorkspace := rec.Scope == "workspace" || strings.HasPrefix(key, "workspace/")
+			if isWorkspace && (workspace == "" || rec.Workspace != workspace) {
+				continue
+			}
+			if !isWorkspace && workspace == "" && rec.Workspace != "" {
+				continue
+			}
+			id := rec.ID
+			if !isWorkspace && workspaceOverrides[id] {
+				continue
+			}
+			category := ""
+			if prof, err := provider.ParseYAML([]byte(rec.YAML)); err == nil {
+				category = prof.Category
+			}
+			scope := "global"
+			if isWorkspace {
+				scope = "workspace"
+			}
+			catalog[id] = map[string]string{"id": id, "category": category, "source": "custom", "scope": scope}
+			if isWorkspace {
+				workspaceOverrides[id] = true
+			}
 		}
 	}
 	ids := make([]string, 0, len(catalog))
@@ -746,27 +809,53 @@ func listProfiles(st *store.Store, builtinDir, workspace string) []map[string]st
 	return out
 }
 
-func resolveProfileForWorkspace(st *store.Store, builtinDir, id, workspace string) (provider.Profile, string, error) {
-	if rec, ok := st.GetProfileScoped(id, workspace); ok {
-		p, err := provider.ParseYAML([]byte(rec.YAML))
-		return p, "custom", err
+func resolveProfileForWorkspaceWithSources(st *store.Store, builtinDir, id, workspace string, profileSources []string) (provider.Profile, string, error) {
+	profileSources = effectiveProviderProfileSources(profileSources)
+	if providerProfileSourceEnabled(profileSources, "user") {
+		if rec, ok := st.GetProfileScoped(id, workspace); ok {
+			p, err := provider.ParseYAML([]byte(rec.YAML))
+			p.Source = "user"
+			p.Scope = "platform"
+			if rec.Scope == "workspace" || rec.Workspace != "" {
+				p.Scope = "workspace"
+			}
+			return p, "custom", err
+		}
 	}
-	if builtinDir != "" {
+	if providerProfileSourceEnabled(profileSources, "builtin") && builtinDir != "" {
 		path := filepath.Join(builtinDir, id+".yaml")
 		if _, err := os.Stat(path); err == nil {
 			p, err := provider.LoadFile(path)
+			p.Source, p.Scope = "builtin", ""
 			return p, "builtin", err
 		}
 		path = filepath.Join(builtinDir, id+".yml")
 		if _, err := os.Stat(path); err == nil {
 			p, err := provider.LoadFile(path)
+			p.Source, p.Scope = "builtin", ""
 			return p, "builtin", err
 		}
 	}
 	return provider.Profile{}, "", fmt.Errorf("profile %q not found", id)
 }
 
-func effectivePolicy(st *store.Store, builtinDir, sandbox string) (policy.Document, error) {
+func effectiveProviderProfileSources(configured []string) []string {
+	if configured == nil {
+		return []string{"builtin", "user"}
+	}
+	return append([]string(nil), configured...)
+}
+
+func providerProfileSourceEnabled(sources []string, source string) bool {
+	for _, configured := range sources {
+		if configured == source {
+			return true
+		}
+	}
+	return false
+}
+
+func effectivePolicyWithSources(st *store.Store, builtinDir, sandbox string, profileSources []string) (policy.Document, error) {
 	sb, ok := st.GetSandbox(sandbox)
 	if !ok {
 		return policy.Document{}, fmt.Errorf("sandbox %q not found", sandbox)
@@ -802,7 +891,7 @@ func effectivePolicy(st *store.Store, builtinDir, sandbox string) (policy.Docume
 		if !ok {
 			continue
 		}
-		prof, _, err := resolveProfileForWorkspace(st, builtinDir, inst.Type, sb.Workspace)
+		prof, _, err := resolveProfileForWorkspaceWithSources(st, builtinDir, inst.Type, sb.Workspace, profileSources)
 		if err != nil {
 			return policy.Document{}, err
 		}
@@ -812,11 +901,7 @@ func effectivePolicy(st *store.Store, builtinDir, sandbox string) (policy.Docume
 			EnvVars:      inst.EnvVars,
 		})
 	}
-	out := provider.EffectivePolicy(base, layers, suppress)
-	if err := out.Validate(); err != nil {
-		return policy.Document{}, err
-	}
-	return out, nil
+	return provider.EffectivePolicy(base, layers, suppress)
 }
 
 // BuiltinProvidersDir tries to locate whaleshell-cli/providers next to the module.

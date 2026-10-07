@@ -1,0 +1,20 @@
+# Overlay for OIDC lab: host networking so JWT iss http://127.0.0.1:5556/dex
+# matches JWKS fetches from both CLI (host) and gateway.
+#
+#   docker compose -f whaleshell-gateway/compose/docker-compose.yml \
+#     -f whaleshell-gateway/compose/docker-compose.oidc.yml --profile oidc up -d --build
+
+services:
+  whaleshell-gateway:
+    network_mode: host
+    networks: !reset null
+    ports: []
+    environment:
+      WHALESHELL_OIDC_ISSUER: ${WHALESHELL_OIDC_ISSUER:-http://127.0.0.1:5556/dex}
+      WHALESHELL_OIDC_CLIENT_ID: ${WHALESHELL_OIDC_CLIENT_ID:-whaleshell-cli}
+      WHALESHELL_OIDC_ALLOW_INSECURE_HTTP: ${WHALESHELL_OIDC_ALLOW_INSECURE_HTTP:-true}
+
+  dex:
+    network_mode: host
+    networks: !reset null
+    ports: []

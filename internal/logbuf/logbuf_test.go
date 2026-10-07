@@ -1,5 +1,5 @@
 // SPDX-FileCopyrightText: Copyright (c) 2026 whaleshell
-// SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: Apache-2.0
 
 package logbuf
 
@@ -33,7 +33,7 @@ func TestHubRemoveIdempotent(t *testing.T) {
 
 func TestHubRingCaps(t *testing.T) {
 	h := NewHub(3)
-	for i := 0; i < 10; i++ {
+	for range 10 {
 		h.Append("s", []Line{{Text: "x"}})
 	}
 	got := h.Snapshot("s", time.Time{}, "", "", 0)
