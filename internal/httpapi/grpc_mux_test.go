@@ -140,6 +140,18 @@ func TestOpenShellGRPCExternalClientAuthentication(t *testing.T) {
 	defer cancel()
 	serveErr := make(chan error, 1)
 	go func() { serveErr <- listenAndServe(ctx, opt, http.NotFoundHandler()) }()
+	readyBy := time.Now().Add(3 * time.Second)
+	for {
+		probe, err := net.DialTimeout("tcp", addr, 20*time.Millisecond)
+		if err == nil {
+			_ = probe.Close()
+			break
+		}
+		if time.Now().After(readyBy) {
+			t.Fatalf("gRPC server did not start listening: %v", err)
+		}
+		time.Sleep(10 * time.Millisecond)
+	}
 	conn, err := grpc.NewClient("passthrough:///"+addr, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		t.Fatal(err)
