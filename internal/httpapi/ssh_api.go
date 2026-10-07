@@ -15,6 +15,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/whaleshell/slogx"
 	"github.com/whaleshell/whaleshell-core/relayproto"
 	"github.com/whaleshell/whaleshell-gateway/internal/sshrelay"
 	"github.com/whaleshell/whaleshell-gateway/internal/storage/store"
@@ -204,6 +205,7 @@ func (a *sshAPI) handleSSHConnect(w http.ResponseWriter, r *http.Request) {
 	}
 	upstream, err := a.hub.OpenChannel(r.Context(), sb.Name, relayproto.TargetSSH)
 	if err != nil {
+		log.Warn("ssh relay channel open failed", slog.String("sandbox", sb.Name), slog.String("session_id", sess.ID), slogx.Err(err))
 		code := http.StatusBadGateway
 		if errors.Is(err, sshrelay.ErrNotConnected) {
 			code = http.StatusPreconditionFailed
@@ -215,11 +217,16 @@ func (a *sshAPI) handleSSHConnect(w http.ResponseWriter, r *http.Request) {
 	}
 	client, err := relayproto.Accept(w, r)
 	if err != nil {
-		_ = upstream.Close()
+		if closeErr := upstream.Close(); closeErr != nil {
+			log.Debug("ssh relay upstream close failed", slog.String("sandbox", sb.Name), slogx.Err(closeErr))
+		}
+		log.Debug("ssh client relay upgrade rejected", slog.String("sandbox", sb.Name), slogx.Err(err))
 		return
 	}
 	log.Info("ssh relay open", slog.String("sandbox", sb.Name), slog.String("session_id", sess.ID))
-	sshrelay.Bridge(client, upstream)
+	if err := sshrelay.Bridge(client, upstream); err != nil {
+		log.Warn("ssh relay ended with error", slog.String("sandbox", sb.Name), slog.String("session_id", sess.ID), slogx.Err(err))
+	}
 	log.Info("ssh relay closed", slog.String("sandbox", sb.Name), slog.String("session_id", sess.ID))
 }
 

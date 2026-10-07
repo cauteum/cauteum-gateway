@@ -6,6 +6,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/whaleshell/slogx"
 	"github.com/whaleshell/whaleshell-driver/driver"
 	"github.com/whaleshell/whaleshell-gateway/internal/storage/store"
 )
@@ -28,12 +29,12 @@ func reconcileRuntimeState(ctx context.Context, st *store.Store, registry *compu
 	for _, name := range names {
 		engine, err := registry.engine(name)
 		if err != nil {
-			log.Warn("runtime reconciliation skipped", slog.String("op", "gateway.runtime.reconcile"), slog.String("driver", name), slog.Any("error", err))
+			log.Warn("runtime reconciliation skipped", slog.String("op", "gateway.runtime.reconcile"), slog.String("driver", name), slogx.Err(err))
 			continue
 		}
 		rows, err := engine.List(reconcileCtx)
 		if err != nil {
-			log.Warn("runtime reconciliation skipped while backend is unavailable", slog.String("op", "gateway.runtime.reconcile"), slog.String("driver", name), slog.Any("error", err))
+			log.Warn("runtime reconciliation skipped while backend is unavailable", slog.String("op", "gateway.runtime.reconcile"), slog.String("driver", name), slogx.Err(err))
 			continue
 		}
 		seen := make(map[string]driver.Info, len(rows))
@@ -62,7 +63,7 @@ func reconcileRuntimeState(ctx context.Context, st *store.Store, registry *compu
 			sandbox.RuntimeID = ""
 			sandbox.UpdatedAt = time.Now().UTC()
 			if err := st.UpsertSandbox(sandbox); err != nil {
-				log.Warn("could not persist missing runtime", slog.String("op", "gateway.runtime.reconcile"), slog.String("sandbox", sandbox.Name), slog.Any("error", err))
+				log.Warn("could not persist missing runtime", slog.String("op", "gateway.runtime.reconcile"), slog.String("sandbox", sandbox.Name), slogx.Err(err))
 			} else {
 				log.Warn("marked sandbox runtime missing", slog.String("op", "gateway.runtime.reconcile"), slog.String("sandbox", sandbox.Name), slog.String("driver", name))
 			}

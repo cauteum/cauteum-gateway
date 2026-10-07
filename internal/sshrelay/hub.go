@@ -9,6 +9,7 @@ import (
 	"crypto/rand"
 	"encoding/hex"
 	"errors"
+	"fmt"
 	"io"
 	"log/slog"
 	"net"
@@ -16,6 +17,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/whaleshell/slogx"
 	"github.com/whaleshell/whaleshell-core/relayproto"
 )
 
@@ -220,8 +222,10 @@ func (h *Hub) Disconnect(sandbox string) {
 // ServeSupervisor upgrades r into the control stream for an already
 // authenticated sandbox and blocks until the stream ends.
 func (h *Hub) ServeSupervisor(w http.ResponseWriter, r *http.Request, sandbox string) {
+	log := h.log().With(slog.String("op", "gateway.relay.supervisor"), slog.String("sandbox", sandbox))
 	conn, err := relayproto.Accept(w, r)
 	if err != nil {
+		log.Debug("supervisor relay upgrade rejected", slogx.Err(err))
 		return
 	}
 	s := &session{sandbox: sandbox, conn: conn, w: relayproto.NewMessageWriter(conn), done: make(chan struct{})}
@@ -232,7 +236,6 @@ func (h *Hub) ServeSupervisor(w http.ResponseWriter, r *http.Request, sandbox st
 	if prev != nil {
 		prev.close()
 	}
-	log := h.log().With(slog.String("op", "gateway.relay.supervisor"), slog.String("sandbox", sandbox))
 	log.Info("supervisor connected")
 	defer func() {
 		h.mu.Lock()
@@ -250,6 +253,9 @@ func (h *Hub) ServeSupervisor(w http.ResponseWriter, r *http.Request, sandbox st
 		for {
 			m, err := rd.Read()
 			if err != nil {
+				if !errors.Is(err, net.ErrClosed) {
+					log.Debug("supervisor control stream ended", slogx.Err(err))
+				}
 				s.close()
 				return
 			}
@@ -279,6 +285,7 @@ func (h *Hub) ServeSupervisor(w http.ResponseWriter, r *http.Request, sandbox st
 				return
 			}
 			if err := s.w.Write(relayproto.Message{Type: relayproto.MsgPing}); err != nil {
+				log.Warn("supervisor keepalive write failed", slogx.Err(err))
 				return
 			}
 		}
@@ -322,7 +329,7 @@ func (h *Hub) OpenChannel(ctx context.Context, sandbox, target string) (net.Conn
 	}
 	if openErr != nil {
 		s.close()
-		return nil, ErrNotConnected
+		return nil, fmt.Errorf("%w: %w", ErrNotConnected, openErr)
 	}
 	timeout := h.OpenTimeout
 	if timeout <= 0 {
@@ -348,6 +355,11 @@ func (h *Hub) OpenChannel(ctx context.Context, sandbox, target string) (net.Conn
 // ServeRelay upgrades the supervisor data stream for channel and hands it to
 // the waiting OpenChannel caller. The channel must belong to sandbox.
 func (h *Hub) ServeRelay(w http.ResponseWriter, r *http.Request, sandbox, channel string) {
+	log := h.log().With(
+		slog.String("op", "gateway.relay.open"),
+		slog.String("sandbox", sandbox),
+		slog.String("channel", channel),
+	)
 	h.mu.Lock()
 	p := h.pending[channel]
 	if p != nil && p.sandbox == sandbox {
@@ -357,17 +369,21 @@ func (h *Hub) ServeRelay(w http.ResponseWriter, r *http.Request, sandbox, channe
 	}
 	h.mu.Unlock()
 	if p == nil {
+		log.Debug("unknown relay channel rejected")
 		http.Error(w, "unknown relay channel", http.StatusNotFound)
 		return
 	}
 	conn, err := relayproto.Accept(w, r)
 	if err != nil {
+		log.Debug("relay data upgrade rejected", slogx.Err(err))
 		return
 	}
 	select {
 	case p.ready <- conn:
+		log.Debug("relay data stream accepted")
 	default:
 		_ = conn.Close()
+		log.Warn("duplicate relay data stream rejected")
 	}
 }
 
@@ -380,6 +396,6 @@ func newChannelID() (string, error) {
 }
 
 // Bridge pipes client <-> supervisor until both sides finish.
-func Bridge(client, supervisor io.ReadWriteCloser) {
-	relayproto.Pipe(client, supervisor)
+func Bridge(client, supervisor io.ReadWriteCloser) error {
+	return relayproto.Pipe(client, supervisor)
 }
