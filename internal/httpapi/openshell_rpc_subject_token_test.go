@@ -11,6 +11,7 @@ import (
 	"net/http/httptest"
 	"os"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"testing"
 	"time"
@@ -48,6 +49,9 @@ func (s *subjectTokenWorkloadAPIServer) FetchJWTBundles(_ *workload.JWTBundlesRe
 }
 
 func TestExchangeProviderSubjectTokenUsesWorkloadSVIDAndProviderCredential(t *testing.T) {
+	if runtime.GOOS == "windows" {
+		t.Skip("workload API test uses a Unix domain socket")
+	}
 	key, err := rsa.GenerateKey(rand.Reader, 2048)
 	if err != nil {
 		t.Fatal(err)
@@ -87,7 +91,7 @@ func TestExchangeProviderSubjectTokenUsesWorkloadSVIDAndProviderCredential(t *te
 		t.Fatal(err)
 	}
 
-	socketDir, err := os.MkdirTemp("/tmp", "gw-wapi")
+	socketDir, err := os.MkdirTemp("", "gw-wapi")
 	if err != nil {
 		t.Fatal(err)
 	}

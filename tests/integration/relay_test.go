@@ -101,11 +101,16 @@ func (g *testGateway) sandboxToken(name string) string {
 // dialing out to the gateway, like the proxy sidecar does.
 func (g *testGateway) startSupervisor(name, token string) {
 	g.t.Helper()
+	initPath := filepath.Join(g.t.TempDir(), "whaleshell-init")
+	if err := os.WriteFile(initPath, []byte("#!/bin/sh\n[ \"$1\" = \"--\" ] || exit 99\nshift\nexec \"$@\"\n"), 0o700); err != nil {
+		g.t.Fatal(err)
+	}
 	quiet := slog.New(slog.NewTextHandler(io.Discard, nil))
 	srv, err := sshserver.New(sshserver.Config{
-		Shell: "/bin/sh",
-		Env:   []string{"PATH=/usr/local/bin:/usr/bin:/bin", "HOME=" + g.t.TempDir()},
-		Log:   quiet,
+		Shell:    "/bin/sh",
+		InitPath: initPath,
+		Env:      []string{"PATH=/usr/local/bin:/usr/bin:/bin", "HOME=" + g.t.TempDir()},
+		Log:      quiet,
 	})
 	if err != nil {
 		g.t.Fatal(err)

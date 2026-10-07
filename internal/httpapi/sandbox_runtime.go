@@ -405,7 +405,7 @@ func sandboxHelperPath(name string) (string, error) {
 	}
 	path := filepath.Join(root, name)
 	info, err := os.Stat(path)
-	if err != nil || !info.Mode().IsRegular() || info.Mode().Perm()&0o111 == 0 {
+	if err != nil || !info.Mode().IsRegular() || (runtime.GOOS != "windows" && info.Mode().Perm()&0o111 == 0) {
 		return "", fmt.Errorf("gateway helper %s is unavailable; install gateway helper bundle or set WHALESHELL_HELPERS_DIR", name)
 	}
 	return path, nil
