@@ -88,6 +88,7 @@ jobs:
             echo 'go 1.27.0'
             echo 'use ('
             for d in whaleshell-* slogx; do
+              [[ "$d" == whaleshell-cli || "$d" == whaleshell-display ]] && continue
               if [[ -d "$d" ]]; then
                 echo "  ./$d"
               fi
@@ -95,6 +96,7 @@ jobs:
             echo ')'
             echo 'replace ('
             for d in whaleshell-*; do
+              [[ "$d" == whaleshell-cli || "$d" == whaleshell-display ]] && continue
               if [[ -d "$d" ]]; then
                 echo "  github.com/whaleshell/${d} v0.1.0-alpha.1 => ./$d"
                 echo "  github.com/whaleshell/${d} v0.1.0-alpha.2 => ./$d"
@@ -195,6 +197,7 @@ jobs:
             echo 'go 1.27.0'
             echo 'use ('
             for d in whaleshell-* slogx; do
+              [[ "$d" == whaleshell-cli || "$d" == whaleshell-display ]] && continue
               if [[ -d "$d" ]]; then
                 echo "  ./$d"
               fi
@@ -202,6 +205,7 @@ jobs:
             echo ')'
             echo 'replace ('
             for d in whaleshell-*; do
+              [[ "$d" == whaleshell-cli || "$d" == whaleshell-display ]] && continue
               if [[ -d "$d" ]]; then
                 echo "  github.com/whaleshell/${d} v0.1.0-alpha.1 => ./$d"
                 echo "  github.com/whaleshell/${d} v0.1.0-alpha.2 => ./$d"
@@ -302,6 +306,7 @@ jobs:
             echo 'go 1.27.0'
             echo 'use ('
             for d in whaleshell-* slogx; do
+              [[ "$d" == whaleshell-cli || "$d" == whaleshell-display ]] && continue
               if [[ -d "$d" ]]; then
                 echo "  ./$d"
               fi
@@ -309,6 +314,7 @@ jobs:
             echo ')'
             echo 'replace ('
             for d in whaleshell-*; do
+              [[ "$d" == whaleshell-cli || "$d" == whaleshell-display ]] && continue
               if [[ -d "$d" ]]; then
                 echo "  github.com/whaleshell/${d} v0.1.0-alpha.1 => ./$d"
                 echo "  github.com/whaleshell/${d} v0.1.0-alpha.2 => ./$d"
@@ -407,6 +413,7 @@ jobs:
             echo 'go 1.27.0'
             echo 'use ('
             for d in whaleshell-* slogx; do
+              [[ "$d" == whaleshell-cli || "$d" == whaleshell-display ]] && continue
               if [[ -d "$d" ]]; then
                 echo "  ./$d"
               fi
@@ -414,6 +421,7 @@ jobs:
             echo ')'
             echo 'replace ('
             for d in whaleshell-*; do
+              [[ "$d" == whaleshell-cli || "$d" == whaleshell-display ]] && continue
               if [[ -d "$d" ]]; then
                 echo "  github.com/whaleshell/${d} v0.1.0-alpha.1 => ./$d"
                 echo "  github.com/whaleshell/${d} v0.1.0-alpha.2 => ./$d"
