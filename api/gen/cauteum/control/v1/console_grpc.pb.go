@@ -1064,8 +1064,8 @@ type PolicyServiceClient interface {
 	GetSandboxPolicyRevision(ctx context.Context, in *GetSandboxPolicyRevisionRequest, opts ...grpc.CallOption) (*GetSandboxPolicyRevisionResponse, error)
 	ListPolicyProposals(ctx context.Context, in *ListPolicyProposalsRequest, opts ...grpc.CallOption) (*ListPolicyProposalsResponse, error)
 	GetPolicyProposal(ctx context.Context, in *GetPolicyProposalRequest, opts ...grpc.CallOption) (*GetPolicyProposalResponse, error)
-	ApprovePolicyProposal(ctx context.Context, in *ApprovePolicyProposalRequest, opts ...grpc.CallOption) (*GetPolicyProposalResponse, error)
-	RejectPolicyProposal(ctx context.Context, in *RejectPolicyProposalRequest, opts ...grpc.CallOption) (*GetPolicyProposalResponse, error)
+	ApprovePolicyProposal(ctx context.Context, in *ApprovePolicyProposalRequest, opts ...grpc.CallOption) (*ApprovePolicyProposalResponse, error)
+	RejectPolicyProposal(ctx context.Context, in *RejectPolicyProposalRequest, opts ...grpc.CallOption) (*RejectPolicyProposalResponse, error)
 }
 
 type policyServiceClient struct {
@@ -1156,9 +1156,9 @@ func (c *policyServiceClient) GetPolicyProposal(ctx context.Context, in *GetPoli
 	return out, nil
 }
 
-func (c *policyServiceClient) ApprovePolicyProposal(ctx context.Context, in *ApprovePolicyProposalRequest, opts ...grpc.CallOption) (*GetPolicyProposalResponse, error) {
+func (c *policyServiceClient) ApprovePolicyProposal(ctx context.Context, in *ApprovePolicyProposalRequest, opts ...grpc.CallOption) (*ApprovePolicyProposalResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(GetPolicyProposalResponse)
+	out := new(ApprovePolicyProposalResponse)
 	err := c.cc.Invoke(ctx, PolicyService_ApprovePolicyProposal_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -1166,9 +1166,9 @@ func (c *policyServiceClient) ApprovePolicyProposal(ctx context.Context, in *App
 	return out, nil
 }
 
-func (c *policyServiceClient) RejectPolicyProposal(ctx context.Context, in *RejectPolicyProposalRequest, opts ...grpc.CallOption) (*GetPolicyProposalResponse, error) {
+func (c *policyServiceClient) RejectPolicyProposal(ctx context.Context, in *RejectPolicyProposalRequest, opts ...grpc.CallOption) (*RejectPolicyProposalResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(GetPolicyProposalResponse)
+	out := new(RejectPolicyProposalResponse)
 	err := c.cc.Invoke(ctx, PolicyService_RejectPolicyProposal_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -1188,8 +1188,8 @@ type PolicyServiceServer interface {
 	GetSandboxPolicyRevision(context.Context, *GetSandboxPolicyRevisionRequest) (*GetSandboxPolicyRevisionResponse, error)
 	ListPolicyProposals(context.Context, *ListPolicyProposalsRequest) (*ListPolicyProposalsResponse, error)
 	GetPolicyProposal(context.Context, *GetPolicyProposalRequest) (*GetPolicyProposalResponse, error)
-	ApprovePolicyProposal(context.Context, *ApprovePolicyProposalRequest) (*GetPolicyProposalResponse, error)
-	RejectPolicyProposal(context.Context, *RejectPolicyProposalRequest) (*GetPolicyProposalResponse, error)
+	ApprovePolicyProposal(context.Context, *ApprovePolicyProposalRequest) (*ApprovePolicyProposalResponse, error)
+	RejectPolicyProposal(context.Context, *RejectPolicyProposalRequest) (*RejectPolicyProposalResponse, error)
 	mustEmbedUnimplementedPolicyServiceServer()
 }
 
@@ -1224,10 +1224,10 @@ func (UnimplementedPolicyServiceServer) ListPolicyProposals(context.Context, *Li
 func (UnimplementedPolicyServiceServer) GetPolicyProposal(context.Context, *GetPolicyProposalRequest) (*GetPolicyProposalResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetPolicyProposal not implemented")
 }
-func (UnimplementedPolicyServiceServer) ApprovePolicyProposal(context.Context, *ApprovePolicyProposalRequest) (*GetPolicyProposalResponse, error) {
+func (UnimplementedPolicyServiceServer) ApprovePolicyProposal(context.Context, *ApprovePolicyProposalRequest) (*ApprovePolicyProposalResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ApprovePolicyProposal not implemented")
 }
-func (UnimplementedPolicyServiceServer) RejectPolicyProposal(context.Context, *RejectPolicyProposalRequest) (*GetPolicyProposalResponse, error) {
+func (UnimplementedPolicyServiceServer) RejectPolicyProposal(context.Context, *RejectPolicyProposalRequest) (*RejectPolicyProposalResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RejectPolicyProposal not implemented")
 }
 func (UnimplementedPolicyServiceServer) mustEmbedUnimplementedPolicyServiceServer() {}

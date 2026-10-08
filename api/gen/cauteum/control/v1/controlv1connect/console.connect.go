@@ -854,8 +854,8 @@ type PolicyServiceClient interface {
 	GetSandboxPolicyRevision(context.Context, *connect.Request[v1.GetSandboxPolicyRevisionRequest]) (*connect.Response[v1.GetSandboxPolicyRevisionResponse], error)
 	ListPolicyProposals(context.Context, *connect.Request[v1.ListPolicyProposalsRequest]) (*connect.Response[v1.ListPolicyProposalsResponse], error)
 	GetPolicyProposal(context.Context, *connect.Request[v1.GetPolicyProposalRequest]) (*connect.Response[v1.GetPolicyProposalResponse], error)
-	ApprovePolicyProposal(context.Context, *connect.Request[v1.ApprovePolicyProposalRequest]) (*connect.Response[v1.GetPolicyProposalResponse], error)
-	RejectPolicyProposal(context.Context, *connect.Request[v1.RejectPolicyProposalRequest]) (*connect.Response[v1.GetPolicyProposalResponse], error)
+	ApprovePolicyProposal(context.Context, *connect.Request[v1.ApprovePolicyProposalRequest]) (*connect.Response[v1.ApprovePolicyProposalResponse], error)
+	RejectPolicyProposal(context.Context, *connect.Request[v1.RejectPolicyProposalRequest]) (*connect.Response[v1.RejectPolicyProposalResponse], error)
 }
 
 // NewPolicyServiceClient constructs a client for the cauteum.control.v1.PolicyService service. By
@@ -917,13 +917,13 @@ func NewPolicyServiceClient(httpClient connect.HTTPClient, baseURL string, opts 
 			connect.WithSchema(policyServiceMethods.ByName("GetPolicyProposal")),
 			connect.WithClientOptions(opts...),
 		),
-		approvePolicyProposal: connect.NewClient[v1.ApprovePolicyProposalRequest, v1.GetPolicyProposalResponse](
+		approvePolicyProposal: connect.NewClient[v1.ApprovePolicyProposalRequest, v1.ApprovePolicyProposalResponse](
 			httpClient,
 			baseURL+PolicyServiceApprovePolicyProposalProcedure,
 			connect.WithSchema(policyServiceMethods.ByName("ApprovePolicyProposal")),
 			connect.WithClientOptions(opts...),
 		),
-		rejectPolicyProposal: connect.NewClient[v1.RejectPolicyProposalRequest, v1.GetPolicyProposalResponse](
+		rejectPolicyProposal: connect.NewClient[v1.RejectPolicyProposalRequest, v1.RejectPolicyProposalResponse](
 			httpClient,
 			baseURL+PolicyServiceRejectPolicyProposalProcedure,
 			connect.WithSchema(policyServiceMethods.ByName("RejectPolicyProposal")),
@@ -942,8 +942,8 @@ type policyServiceClient struct {
 	getSandboxPolicyRevision   *connect.Client[v1.GetSandboxPolicyRevisionRequest, v1.GetSandboxPolicyRevisionResponse]
 	listPolicyProposals        *connect.Client[v1.ListPolicyProposalsRequest, v1.ListPolicyProposalsResponse]
 	getPolicyProposal          *connect.Client[v1.GetPolicyProposalRequest, v1.GetPolicyProposalResponse]
-	approvePolicyProposal      *connect.Client[v1.ApprovePolicyProposalRequest, v1.GetPolicyProposalResponse]
-	rejectPolicyProposal       *connect.Client[v1.RejectPolicyProposalRequest, v1.GetPolicyProposalResponse]
+	approvePolicyProposal      *connect.Client[v1.ApprovePolicyProposalRequest, v1.ApprovePolicyProposalResponse]
+	rejectPolicyProposal       *connect.Client[v1.RejectPolicyProposalRequest, v1.RejectPolicyProposalResponse]
 }
 
 // GetGlobalPolicy calls cauteum.control.v1.PolicyService.GetGlobalPolicy.
@@ -987,12 +987,12 @@ func (c *policyServiceClient) GetPolicyProposal(ctx context.Context, req *connec
 }
 
 // ApprovePolicyProposal calls cauteum.control.v1.PolicyService.ApprovePolicyProposal.
-func (c *policyServiceClient) ApprovePolicyProposal(ctx context.Context, req *connect.Request[v1.ApprovePolicyProposalRequest]) (*connect.Response[v1.GetPolicyProposalResponse], error) {
+func (c *policyServiceClient) ApprovePolicyProposal(ctx context.Context, req *connect.Request[v1.ApprovePolicyProposalRequest]) (*connect.Response[v1.ApprovePolicyProposalResponse], error) {
 	return c.approvePolicyProposal.CallUnary(ctx, req)
 }
 
 // RejectPolicyProposal calls cauteum.control.v1.PolicyService.RejectPolicyProposal.
-func (c *policyServiceClient) RejectPolicyProposal(ctx context.Context, req *connect.Request[v1.RejectPolicyProposalRequest]) (*connect.Response[v1.GetPolicyProposalResponse], error) {
+func (c *policyServiceClient) RejectPolicyProposal(ctx context.Context, req *connect.Request[v1.RejectPolicyProposalRequest]) (*connect.Response[v1.RejectPolicyProposalResponse], error) {
 	return c.rejectPolicyProposal.CallUnary(ctx, req)
 }
 
@@ -1006,8 +1006,8 @@ type PolicyServiceHandler interface {
 	GetSandboxPolicyRevision(context.Context, *connect.Request[v1.GetSandboxPolicyRevisionRequest]) (*connect.Response[v1.GetSandboxPolicyRevisionResponse], error)
 	ListPolicyProposals(context.Context, *connect.Request[v1.ListPolicyProposalsRequest]) (*connect.Response[v1.ListPolicyProposalsResponse], error)
 	GetPolicyProposal(context.Context, *connect.Request[v1.GetPolicyProposalRequest]) (*connect.Response[v1.GetPolicyProposalResponse], error)
-	ApprovePolicyProposal(context.Context, *connect.Request[v1.ApprovePolicyProposalRequest]) (*connect.Response[v1.GetPolicyProposalResponse], error)
-	RejectPolicyProposal(context.Context, *connect.Request[v1.RejectPolicyProposalRequest]) (*connect.Response[v1.GetPolicyProposalResponse], error)
+	ApprovePolicyProposal(context.Context, *connect.Request[v1.ApprovePolicyProposalRequest]) (*connect.Response[v1.ApprovePolicyProposalResponse], error)
+	RejectPolicyProposal(context.Context, *connect.Request[v1.RejectPolicyProposalRequest]) (*connect.Response[v1.RejectPolicyProposalResponse], error)
 }
 
 // NewPolicyServiceHandler builds an HTTP handler from the service implementation. It returns the
@@ -1140,11 +1140,11 @@ func (UnimplementedPolicyServiceHandler) GetPolicyProposal(context.Context, *con
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("cauteum.control.v1.PolicyService.GetPolicyProposal is not implemented"))
 }
 
-func (UnimplementedPolicyServiceHandler) ApprovePolicyProposal(context.Context, *connect.Request[v1.ApprovePolicyProposalRequest]) (*connect.Response[v1.GetPolicyProposalResponse], error) {
+func (UnimplementedPolicyServiceHandler) ApprovePolicyProposal(context.Context, *connect.Request[v1.ApprovePolicyProposalRequest]) (*connect.Response[v1.ApprovePolicyProposalResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("cauteum.control.v1.PolicyService.ApprovePolicyProposal is not implemented"))
 }
 
-func (UnimplementedPolicyServiceHandler) RejectPolicyProposal(context.Context, *connect.Request[v1.RejectPolicyProposalRequest]) (*connect.Response[v1.GetPolicyProposalResponse], error) {
+func (UnimplementedPolicyServiceHandler) RejectPolicyProposal(context.Context, *connect.Request[v1.RejectPolicyProposalRequest]) (*connect.Response[v1.RejectPolicyProposalResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("cauteum.control.v1.PolicyService.RejectPolicyProposal is not implemented"))
 }
 

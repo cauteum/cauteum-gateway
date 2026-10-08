@@ -4642,6 +4642,94 @@ func (x *GetPolicyProposalResponse) GetProposal() *PolicyProposalSummary {
 	return nil
 }
 
+type ApprovePolicyProposalResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Proposal      *PolicyProposalSummary `protobuf:"bytes,1,opt,name=proposal,proto3" json:"proposal,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ApprovePolicyProposalResponse) Reset() {
+	*x = ApprovePolicyProposalResponse{}
+	mi := &file_cauteum_control_v1_console_proto_msgTypes[75]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ApprovePolicyProposalResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ApprovePolicyProposalResponse) ProtoMessage() {}
+
+func (x *ApprovePolicyProposalResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_cauteum_control_v1_console_proto_msgTypes[75]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ApprovePolicyProposalResponse.ProtoReflect.Descriptor instead.
+func (*ApprovePolicyProposalResponse) Descriptor() ([]byte, []int) {
+	return file_cauteum_control_v1_console_proto_rawDescGZIP(), []int{75}
+}
+
+func (x *ApprovePolicyProposalResponse) GetProposal() *PolicyProposalSummary {
+	if x != nil {
+		return x.Proposal
+	}
+	return nil
+}
+
+type RejectPolicyProposalResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Proposal      *PolicyProposalSummary `protobuf:"bytes,1,opt,name=proposal,proto3" json:"proposal,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *RejectPolicyProposalResponse) Reset() {
+	*x = RejectPolicyProposalResponse{}
+	mi := &file_cauteum_control_v1_console_proto_msgTypes[76]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *RejectPolicyProposalResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RejectPolicyProposalResponse) ProtoMessage() {}
+
+func (x *RejectPolicyProposalResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_cauteum_control_v1_console_proto_msgTypes[76]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RejectPolicyProposalResponse.ProtoReflect.Descriptor instead.
+func (*RejectPolicyProposalResponse) Descriptor() ([]byte, []int) {
+	return file_cauteum_control_v1_console_proto_rawDescGZIP(), []int{76}
+}
+
+func (x *RejectPolicyProposalResponse) GetProposal() *PolicyProposalSummary {
+	if x != nil {
+		return x.Proposal
+	}
+	return nil
+}
+
 type ApprovePolicyProposalRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Workspace     string                 `protobuf:"bytes,1,opt,name=workspace,proto3" json:"workspace,omitempty"`
@@ -4652,7 +4740,7 @@ type ApprovePolicyProposalRequest struct {
 
 func (x *ApprovePolicyProposalRequest) Reset() {
 	*x = ApprovePolicyProposalRequest{}
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[75]
+	mi := &file_cauteum_control_v1_console_proto_msgTypes[77]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4664,7 +4752,7 @@ func (x *ApprovePolicyProposalRequest) String() string {
 func (*ApprovePolicyProposalRequest) ProtoMessage() {}
 
 func (x *ApprovePolicyProposalRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[75]
+	mi := &file_cauteum_control_v1_console_proto_msgTypes[77]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4677,7 +4765,7 @@ func (x *ApprovePolicyProposalRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ApprovePolicyProposalRequest.ProtoReflect.Descriptor instead.
 func (*ApprovePolicyProposalRequest) Descriptor() ([]byte, []int) {
-	return file_cauteum_control_v1_console_proto_rawDescGZIP(), []int{75}
+	return file_cauteum_control_v1_console_proto_rawDescGZIP(), []int{77}
 }
 
 func (x *ApprovePolicyProposalRequest) GetWorkspace() string {
@@ -4705,7 +4793,7 @@ type RejectPolicyProposalRequest struct {
 
 func (x *RejectPolicyProposalRequest) Reset() {
 	*x = RejectPolicyProposalRequest{}
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[76]
+	mi := &file_cauteum_control_v1_console_proto_msgTypes[78]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4717,7 +4805,7 @@ func (x *RejectPolicyProposalRequest) String() string {
 func (*RejectPolicyProposalRequest) ProtoMessage() {}
 
 func (x *RejectPolicyProposalRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[76]
+	mi := &file_cauteum_control_v1_console_proto_msgTypes[78]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4730,7 +4818,7 @@ func (x *RejectPolicyProposalRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RejectPolicyProposalRequest.ProtoReflect.Descriptor instead.
 func (*RejectPolicyProposalRequest) Descriptor() ([]byte, []int) {
-	return file_cauteum_control_v1_console_proto_rawDescGZIP(), []int{76}
+	return file_cauteum_control_v1_console_proto_rawDescGZIP(), []int{78}
 }
 
 func (x *RejectPolicyProposalRequest) GetWorkspace() string {
@@ -4777,7 +4865,7 @@ type PolicyProposalSummary struct {
 
 func (x *PolicyProposalSummary) Reset() {
 	*x = PolicyProposalSummary{}
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[77]
+	mi := &file_cauteum_control_v1_console_proto_msgTypes[79]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4789,7 +4877,7 @@ func (x *PolicyProposalSummary) String() string {
 func (*PolicyProposalSummary) ProtoMessage() {}
 
 func (x *PolicyProposalSummary) ProtoReflect() protoreflect.Message {
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[77]
+	mi := &file_cauteum_control_v1_console_proto_msgTypes[79]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4802,7 +4890,7 @@ func (x *PolicyProposalSummary) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PolicyProposalSummary.ProtoReflect.Descriptor instead.
 func (*PolicyProposalSummary) Descriptor() ([]byte, []int) {
-	return file_cauteum_control_v1_console_proto_rawDescGZIP(), []int{77}
+	return file_cauteum_control_v1_console_proto_rawDescGZIP(), []int{79}
 }
 
 func (x *PolicyProposalSummary) GetId() string {
@@ -5245,6 +5333,10 @@ const file_cauteum_control_v1_console_proto_rawDesc = "" +
 	"\tworkspace\x18\x01 \x01(\tR\tworkspace\x12\x0e\n" +
 	"\x02id\x18\x02 \x01(\tR\x02id\"b\n" +
 	"\x19GetPolicyProposalResponse\x12E\n" +
+	"\bproposal\x18\x01 \x01(\v2).cauteum.control.v1.PolicyProposalSummaryR\bproposal\"f\n" +
+	"\x1dApprovePolicyProposalResponse\x12E\n" +
+	"\bproposal\x18\x01 \x01(\v2).cauteum.control.v1.PolicyProposalSummaryR\bproposal\"e\n" +
+	"\x1cRejectPolicyProposalResponse\x12E\n" +
 	"\bproposal\x18\x01 \x01(\v2).cauteum.control.v1.PolicyProposalSummaryR\bproposal\"L\n" +
 	"\x1cApprovePolicyProposalRequest\x12\x1c\n" +
 	"\tworkspace\x18\x01 \x01(\tR\tworkspace\x12\x0e\n" +
@@ -5307,7 +5399,7 @@ const file_cauteum_control_v1_console_proto_rawDesc = "" +
 	"\fListServices\x12'.cauteum.control.v1.ListServicesRequest\x1a(.cauteum.control.v1.ListServicesResponse\x12d\n" +
 	"\rListTemplates\x12(.cauteum.control.v1.ListTemplatesRequest\x1a).cauteum.control.v1.ListTemplatesResponse\x12g\n" +
 	"\x0eListWorkspaces\x12).cauteum.control.v1.ListWorkspacesRequest\x1a*.cauteum.control.v1.ListWorkspacesResponse\x12a\n" +
-	"\fGetWorkspace\x12'.cauteum.control.v1.GetWorkspaceRequest\x1a(.cauteum.control.v1.GetWorkspaceResponse2\xc9\t\n" +
+	"\fGetWorkspace\x12'.cauteum.control.v1.GetWorkspaceRequest\x1a(.cauteum.control.v1.GetWorkspaceResponse2\xd0\t\n" +
 	"\rPolicyService\x12j\n" +
 	"\x0fGetGlobalPolicy\x12*.cauteum.control.v1.GetGlobalPolicyRequest\x1a+.cauteum.control.v1.GetGlobalPolicyResponse\x12s\n" +
 	"\x12UpdateGlobalPolicy\x12-.cauteum.control.v1.UpdateGlobalPolicyRequest\x1a..cauteum.control.v1.UpdateGlobalPolicyResponse\x12m\n" +
@@ -5316,9 +5408,9 @@ const file_cauteum_control_v1_console_proto_rawDesc = "" +
 	"\x1aListSandboxPolicyRevisions\x125.cauteum.control.v1.ListSandboxPolicyRevisionsRequest\x1a6.cauteum.control.v1.ListSandboxPolicyRevisionsResponse\x12\x85\x01\n" +
 	"\x18GetSandboxPolicyRevision\x123.cauteum.control.v1.GetSandboxPolicyRevisionRequest\x1a4.cauteum.control.v1.GetSandboxPolicyRevisionResponse\x12v\n" +
 	"\x13ListPolicyProposals\x12..cauteum.control.v1.ListPolicyProposalsRequest\x1a/.cauteum.control.v1.ListPolicyProposalsResponse\x12p\n" +
-	"\x11GetPolicyProposal\x12,.cauteum.control.v1.GetPolicyProposalRequest\x1a-.cauteum.control.v1.GetPolicyProposalResponse\x12x\n" +
-	"\x15ApprovePolicyProposal\x120.cauteum.control.v1.ApprovePolicyProposalRequest\x1a-.cauteum.control.v1.GetPolicyProposalResponse\x12v\n" +
-	"\x14RejectPolicyProposal\x12/.cauteum.control.v1.RejectPolicyProposalRequest\x1a-.cauteum.control.v1.GetPolicyProposalResponse2\x82\x05\n" +
+	"\x11GetPolicyProposal\x12,.cauteum.control.v1.GetPolicyProposalRequest\x1a-.cauteum.control.v1.GetPolicyProposalResponse\x12|\n" +
+	"\x15ApprovePolicyProposal\x120.cauteum.control.v1.ApprovePolicyProposalRequest\x1a1.cauteum.control.v1.ApprovePolicyProposalResponse\x12y\n" +
+	"\x14RejectPolicyProposal\x12/.cauteum.control.v1.RejectPolicyProposalRequest\x1a0.cauteum.control.v1.RejectPolicyProposalResponse2\x82\x05\n" +
 	"\x16ProviderProfileService\x12y\n" +
 	"\x14ListProviderProfiles\x12/.cauteum.control.v1.ListProviderProfilesRequest\x1a0.cauteum.control.v1.ListProviderProfilesResponse\x12s\n" +
 	"\x12GetProviderProfile\x12-.cauteum.control.v1.GetProviderProfileRequest\x1a..cauteum.control.v1.GetProviderProfileResponse\x12|\n" +
@@ -5341,7 +5433,7 @@ func file_cauteum_control_v1_console_proto_rawDescGZIP() []byte {
 }
 
 var file_cauteum_control_v1_console_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
-var file_cauteum_control_v1_console_proto_msgTypes = make([]protoimpl.MessageInfo, 82)
+var file_cauteum_control_v1_console_proto_msgTypes = make([]protoimpl.MessageInfo, 84)
 var file_cauteum_control_v1_console_proto_goTypes = []any{
 	(SandboxWatchEventKind)(0),                 // 0: cauteum.control.v1.SandboxWatchEventKind
 	(SandboxLogWatchKind)(0),                   // 1: cauteum.control.v1.SandboxLogWatchKind
@@ -5420,20 +5512,22 @@ var file_cauteum_control_v1_console_proto_goTypes = []any{
 	(*ListPolicyProposalsResponse)(nil),        // 74: cauteum.control.v1.ListPolicyProposalsResponse
 	(*GetPolicyProposalRequest)(nil),           // 75: cauteum.control.v1.GetPolicyProposalRequest
 	(*GetPolicyProposalResponse)(nil),          // 76: cauteum.control.v1.GetPolicyProposalResponse
-	(*ApprovePolicyProposalRequest)(nil),       // 77: cauteum.control.v1.ApprovePolicyProposalRequest
-	(*RejectPolicyProposalRequest)(nil),        // 78: cauteum.control.v1.RejectPolicyProposalRequest
-	(*PolicyProposalSummary)(nil),              // 79: cauteum.control.v1.PolicyProposalSummary
-	nil,                                        // 80: cauteum.control.v1.UpdateProviderCredentialsRequest.CredentialsEntry
-	nil,                                        // 81: cauteum.control.v1.ListSandboxesRequest.LabelsEntry
-	nil,                                        // 82: cauteum.control.v1.CreateSandboxRequest.LabelsEntry
-	nil,                                        // 83: cauteum.control.v1.SandboxSummary.LabelsEntry
+	(*ApprovePolicyProposalResponse)(nil),      // 77: cauteum.control.v1.ApprovePolicyProposalResponse
+	(*RejectPolicyProposalResponse)(nil),       // 78: cauteum.control.v1.RejectPolicyProposalResponse
+	(*ApprovePolicyProposalRequest)(nil),       // 79: cauteum.control.v1.ApprovePolicyProposalRequest
+	(*RejectPolicyProposalRequest)(nil),        // 80: cauteum.control.v1.RejectPolicyProposalRequest
+	(*PolicyProposalSummary)(nil),              // 81: cauteum.control.v1.PolicyProposalSummary
+	nil,                                        // 82: cauteum.control.v1.UpdateProviderCredentialsRequest.CredentialsEntry
+	nil,                                        // 83: cauteum.control.v1.ListSandboxesRequest.LabelsEntry
+	nil,                                        // 84: cauteum.control.v1.CreateSandboxRequest.LabelsEntry
+	nil,                                        // 85: cauteum.control.v1.SandboxSummary.LabelsEntry
 }
 var file_cauteum_control_v1_console_proto_depIdxs = []int32{
 	14, // 0: cauteum.control.v1.ListSandboxPolicyRevisionsResponse.revisions:type_name -> cauteum.control.v1.PolicyRevisionSummary
 	14, // 1: cauteum.control.v1.GetSandboxPolicyRevisionResponse.revision:type_name -> cauteum.control.v1.PolicyRevisionSummary
-	80, // 2: cauteum.control.v1.UpdateProviderCredentialsRequest.credentials:type_name -> cauteum.control.v1.UpdateProviderCredentialsRequest.CredentialsEntry
+	82, // 2: cauteum.control.v1.UpdateProviderCredentialsRequest.credentials:type_name -> cauteum.control.v1.UpdateProviderCredentialsRequest.CredentialsEntry
 	18, // 3: cauteum.control.v1.ListProviderProfilesResponse.profiles:type_name -> cauteum.control.v1.ProviderProfileSummary
-	81, // 4: cauteum.control.v1.ListSandboxesRequest.labels:type_name -> cauteum.control.v1.ListSandboxesRequest.LabelsEntry
+	83, // 4: cauteum.control.v1.ListSandboxesRequest.labels:type_name -> cauteum.control.v1.ListSandboxesRequest.LabelsEntry
 	61, // 5: cauteum.control.v1.ListSandboxesResponse.sandboxes:type_name -> cauteum.control.v1.SandboxSummary
 	61, // 6: cauteum.control.v1.GetSandboxResponse.sandbox:type_name -> cauteum.control.v1.SandboxSummary
 	0,  // 7: cauteum.control.v1.WatchSandboxesResponse.kind:type_name -> cauteum.control.v1.SandboxWatchEventKind
@@ -5441,95 +5535,97 @@ var file_cauteum_control_v1_console_proto_depIdxs = []int32{
 	44, // 9: cauteum.control.v1.GetSandboxLogsResponse.lines:type_name -> cauteum.control.v1.SandboxLogLine
 	1,  // 10: cauteum.control.v1.WatchSandboxLogsResponse.kind:type_name -> cauteum.control.v1.SandboxLogWatchKind
 	44, // 11: cauteum.control.v1.WatchSandboxLogsResponse.line:type_name -> cauteum.control.v1.SandboxLogLine
-	82, // 12: cauteum.control.v1.CreateSandboxRequest.labels:type_name -> cauteum.control.v1.CreateSandboxRequest.LabelsEntry
+	84, // 12: cauteum.control.v1.CreateSandboxRequest.labels:type_name -> cauteum.control.v1.CreateSandboxRequest.LabelsEntry
 	61, // 13: cauteum.control.v1.CreateSandboxResponse.sandbox:type_name -> cauteum.control.v1.SandboxSummary
 	61, // 14: cauteum.control.v1.StartSandboxResponse.sandbox:type_name -> cauteum.control.v1.SandboxSummary
 	61, // 15: cauteum.control.v1.StopSandboxResponse.sandbox:type_name -> cauteum.control.v1.SandboxSummary
 	59, // 16: cauteum.control.v1.GetOperationResponse.operation:type_name -> cauteum.control.v1.OperationSummary
 	59, // 17: cauteum.control.v1.ListOperationsResponse.operations:type_name -> cauteum.control.v1.OperationSummary
 	60, // 18: cauteum.control.v1.ListAuditEventsResponse.events:type_name -> cauteum.control.v1.AuditEventSummary
-	83, // 19: cauteum.control.v1.SandboxSummary.labels:type_name -> cauteum.control.v1.SandboxSummary.LabelsEntry
+	85, // 19: cauteum.control.v1.SandboxSummary.labels:type_name -> cauteum.control.v1.SandboxSummary.LabelsEntry
 	64, // 20: cauteum.control.v1.ListServicesResponse.services:type_name -> cauteum.control.v1.ServiceSummary
 	67, // 21: cauteum.control.v1.ListTemplatesResponse.templates:type_name -> cauteum.control.v1.TemplateSummary
 	72, // 22: cauteum.control.v1.ListWorkspacesResponse.workspaces:type_name -> cauteum.control.v1.WorkspaceSummary
 	72, // 23: cauteum.control.v1.GetWorkspaceResponse.workspace:type_name -> cauteum.control.v1.WorkspaceSummary
-	79, // 24: cauteum.control.v1.ListPolicyProposalsResponse.proposals:type_name -> cauteum.control.v1.PolicyProposalSummary
-	79, // 25: cauteum.control.v1.GetPolicyProposalResponse.proposal:type_name -> cauteum.control.v1.PolicyProposalSummary
-	28, // 26: cauteum.control.v1.ConsoleService.GetViewer:input_type -> cauteum.control.v1.GetViewerRequest
-	30, // 27: cauteum.control.v1.ConsoleService.GetConsoleCapabilities:input_type -> cauteum.control.v1.GetConsoleCapabilitiesRequest
-	32, // 28: cauteum.control.v1.ConsoleService.GetOverview:input_type -> cauteum.control.v1.GetOverviewRequest
-	34, // 29: cauteum.control.v1.SandboxService.ListSandboxes:input_type -> cauteum.control.v1.ListSandboxesRequest
-	36, // 30: cauteum.control.v1.SandboxService.GetSandbox:input_type -> cauteum.control.v1.GetSandboxRequest
-	38, // 31: cauteum.control.v1.SandboxService.WatchSandboxes:input_type -> cauteum.control.v1.WatchSandboxesRequest
-	40, // 32: cauteum.control.v1.SandboxService.GetSandboxLogs:input_type -> cauteum.control.v1.GetSandboxLogsRequest
-	42, // 33: cauteum.control.v1.SandboxService.WatchSandboxLogs:input_type -> cauteum.control.v1.WatchSandboxLogsRequest
-	45, // 34: cauteum.control.v1.SandboxService.CreateSandbox:input_type -> cauteum.control.v1.CreateSandboxRequest
-	47, // 35: cauteum.control.v1.SandboxService.StartSandbox:input_type -> cauteum.control.v1.StartSandboxRequest
-	49, // 36: cauteum.control.v1.SandboxService.StopSandbox:input_type -> cauteum.control.v1.StopSandboxRequest
-	51, // 37: cauteum.control.v1.SandboxService.DeleteSandbox:input_type -> cauteum.control.v1.DeleteSandboxRequest
-	53, // 38: cauteum.control.v1.OperationsService.GetOperation:input_type -> cauteum.control.v1.GetOperationRequest
-	55, // 39: cauteum.control.v1.OperationsService.ListOperations:input_type -> cauteum.control.v1.ListOperationsRequest
-	57, // 40: cauteum.control.v1.OperationsService.ListAuditEvents:input_type -> cauteum.control.v1.ListAuditEventsRequest
-	62, // 41: cauteum.control.v1.CatalogService.ListServices:input_type -> cauteum.control.v1.ListServicesRequest
-	65, // 42: cauteum.control.v1.CatalogService.ListTemplates:input_type -> cauteum.control.v1.ListTemplatesRequest
-	68, // 43: cauteum.control.v1.CatalogService.ListWorkspaces:input_type -> cauteum.control.v1.ListWorkspacesRequest
-	70, // 44: cauteum.control.v1.CatalogService.GetWorkspace:input_type -> cauteum.control.v1.GetWorkspaceRequest
-	2,  // 45: cauteum.control.v1.PolicyService.GetGlobalPolicy:input_type -> cauteum.control.v1.GetGlobalPolicyRequest
-	4,  // 46: cauteum.control.v1.PolicyService.UpdateGlobalPolicy:input_type -> cauteum.control.v1.UpdateGlobalPolicyRequest
-	6,  // 47: cauteum.control.v1.PolicyService.GetSandboxPolicy:input_type -> cauteum.control.v1.GetSandboxPolicyRequest
-	8,  // 48: cauteum.control.v1.PolicyService.UpdateSandboxPolicy:input_type -> cauteum.control.v1.UpdateSandboxPolicyRequest
-	10, // 49: cauteum.control.v1.PolicyService.ListSandboxPolicyRevisions:input_type -> cauteum.control.v1.ListSandboxPolicyRevisionsRequest
-	12, // 50: cauteum.control.v1.PolicyService.GetSandboxPolicyRevision:input_type -> cauteum.control.v1.GetSandboxPolicyRevisionRequest
-	73, // 51: cauteum.control.v1.PolicyService.ListPolicyProposals:input_type -> cauteum.control.v1.ListPolicyProposalsRequest
-	75, // 52: cauteum.control.v1.PolicyService.GetPolicyProposal:input_type -> cauteum.control.v1.GetPolicyProposalRequest
-	77, // 53: cauteum.control.v1.PolicyService.ApprovePolicyProposal:input_type -> cauteum.control.v1.ApprovePolicyProposalRequest
-	78, // 54: cauteum.control.v1.PolicyService.RejectPolicyProposal:input_type -> cauteum.control.v1.RejectPolicyProposalRequest
-	17, // 55: cauteum.control.v1.ProviderProfileService.ListProviderProfiles:input_type -> cauteum.control.v1.ListProviderProfilesRequest
-	20, // 56: cauteum.control.v1.ProviderProfileService.GetProviderProfile:input_type -> cauteum.control.v1.GetProviderProfileRequest
-	22, // 57: cauteum.control.v1.ProviderProfileService.ImportProviderProfile:input_type -> cauteum.control.v1.ImportProviderProfileRequest
-	24, // 58: cauteum.control.v1.ProviderProfileService.UpdateProviderProfile:input_type -> cauteum.control.v1.UpdateProviderProfileRequest
-	26, // 59: cauteum.control.v1.ProviderProfileService.DeleteProviderProfile:input_type -> cauteum.control.v1.DeleteProviderProfileRequest
-	15, // 60: cauteum.control.v1.ProviderCredentialService.UpdateProviderCredentials:input_type -> cauteum.control.v1.UpdateProviderCredentialsRequest
-	29, // 61: cauteum.control.v1.ConsoleService.GetViewer:output_type -> cauteum.control.v1.GetViewerResponse
-	31, // 62: cauteum.control.v1.ConsoleService.GetConsoleCapabilities:output_type -> cauteum.control.v1.GetConsoleCapabilitiesResponse
-	33, // 63: cauteum.control.v1.ConsoleService.GetOverview:output_type -> cauteum.control.v1.GetOverviewResponse
-	35, // 64: cauteum.control.v1.SandboxService.ListSandboxes:output_type -> cauteum.control.v1.ListSandboxesResponse
-	37, // 65: cauteum.control.v1.SandboxService.GetSandbox:output_type -> cauteum.control.v1.GetSandboxResponse
-	39, // 66: cauteum.control.v1.SandboxService.WatchSandboxes:output_type -> cauteum.control.v1.WatchSandboxesResponse
-	41, // 67: cauteum.control.v1.SandboxService.GetSandboxLogs:output_type -> cauteum.control.v1.GetSandboxLogsResponse
-	43, // 68: cauteum.control.v1.SandboxService.WatchSandboxLogs:output_type -> cauteum.control.v1.WatchSandboxLogsResponse
-	46, // 69: cauteum.control.v1.SandboxService.CreateSandbox:output_type -> cauteum.control.v1.CreateSandboxResponse
-	48, // 70: cauteum.control.v1.SandboxService.StartSandbox:output_type -> cauteum.control.v1.StartSandboxResponse
-	50, // 71: cauteum.control.v1.SandboxService.StopSandbox:output_type -> cauteum.control.v1.StopSandboxResponse
-	52, // 72: cauteum.control.v1.SandboxService.DeleteSandbox:output_type -> cauteum.control.v1.DeleteSandboxResponse
-	54, // 73: cauteum.control.v1.OperationsService.GetOperation:output_type -> cauteum.control.v1.GetOperationResponse
-	56, // 74: cauteum.control.v1.OperationsService.ListOperations:output_type -> cauteum.control.v1.ListOperationsResponse
-	58, // 75: cauteum.control.v1.OperationsService.ListAuditEvents:output_type -> cauteum.control.v1.ListAuditEventsResponse
-	63, // 76: cauteum.control.v1.CatalogService.ListServices:output_type -> cauteum.control.v1.ListServicesResponse
-	66, // 77: cauteum.control.v1.CatalogService.ListTemplates:output_type -> cauteum.control.v1.ListTemplatesResponse
-	69, // 78: cauteum.control.v1.CatalogService.ListWorkspaces:output_type -> cauteum.control.v1.ListWorkspacesResponse
-	71, // 79: cauteum.control.v1.CatalogService.GetWorkspace:output_type -> cauteum.control.v1.GetWorkspaceResponse
-	3,  // 80: cauteum.control.v1.PolicyService.GetGlobalPolicy:output_type -> cauteum.control.v1.GetGlobalPolicyResponse
-	5,  // 81: cauteum.control.v1.PolicyService.UpdateGlobalPolicy:output_type -> cauteum.control.v1.UpdateGlobalPolicyResponse
-	7,  // 82: cauteum.control.v1.PolicyService.GetSandboxPolicy:output_type -> cauteum.control.v1.GetSandboxPolicyResponse
-	9,  // 83: cauteum.control.v1.PolicyService.UpdateSandboxPolicy:output_type -> cauteum.control.v1.UpdateSandboxPolicyResponse
-	11, // 84: cauteum.control.v1.PolicyService.ListSandboxPolicyRevisions:output_type -> cauteum.control.v1.ListSandboxPolicyRevisionsResponse
-	13, // 85: cauteum.control.v1.PolicyService.GetSandboxPolicyRevision:output_type -> cauteum.control.v1.GetSandboxPolicyRevisionResponse
-	74, // 86: cauteum.control.v1.PolicyService.ListPolicyProposals:output_type -> cauteum.control.v1.ListPolicyProposalsResponse
-	76, // 87: cauteum.control.v1.PolicyService.GetPolicyProposal:output_type -> cauteum.control.v1.GetPolicyProposalResponse
-	76, // 88: cauteum.control.v1.PolicyService.ApprovePolicyProposal:output_type -> cauteum.control.v1.GetPolicyProposalResponse
-	76, // 89: cauteum.control.v1.PolicyService.RejectPolicyProposal:output_type -> cauteum.control.v1.GetPolicyProposalResponse
-	19, // 90: cauteum.control.v1.ProviderProfileService.ListProviderProfiles:output_type -> cauteum.control.v1.ListProviderProfilesResponse
-	21, // 91: cauteum.control.v1.ProviderProfileService.GetProviderProfile:output_type -> cauteum.control.v1.GetProviderProfileResponse
-	23, // 92: cauteum.control.v1.ProviderProfileService.ImportProviderProfile:output_type -> cauteum.control.v1.ImportProviderProfileResponse
-	25, // 93: cauteum.control.v1.ProviderProfileService.UpdateProviderProfile:output_type -> cauteum.control.v1.UpdateProviderProfileResponse
-	27, // 94: cauteum.control.v1.ProviderProfileService.DeleteProviderProfile:output_type -> cauteum.control.v1.DeleteProviderProfileResponse
-	16, // 95: cauteum.control.v1.ProviderCredentialService.UpdateProviderCredentials:output_type -> cauteum.control.v1.UpdateProviderCredentialsResponse
-	61, // [61:96] is the sub-list for method output_type
-	26, // [26:61] is the sub-list for method input_type
-	26, // [26:26] is the sub-list for extension type_name
-	26, // [26:26] is the sub-list for extension extendee
-	0,  // [0:26] is the sub-list for field type_name
+	81, // 24: cauteum.control.v1.ListPolicyProposalsResponse.proposals:type_name -> cauteum.control.v1.PolicyProposalSummary
+	81, // 25: cauteum.control.v1.GetPolicyProposalResponse.proposal:type_name -> cauteum.control.v1.PolicyProposalSummary
+	81, // 26: cauteum.control.v1.ApprovePolicyProposalResponse.proposal:type_name -> cauteum.control.v1.PolicyProposalSummary
+	81, // 27: cauteum.control.v1.RejectPolicyProposalResponse.proposal:type_name -> cauteum.control.v1.PolicyProposalSummary
+	28, // 28: cauteum.control.v1.ConsoleService.GetViewer:input_type -> cauteum.control.v1.GetViewerRequest
+	30, // 29: cauteum.control.v1.ConsoleService.GetConsoleCapabilities:input_type -> cauteum.control.v1.GetConsoleCapabilitiesRequest
+	32, // 30: cauteum.control.v1.ConsoleService.GetOverview:input_type -> cauteum.control.v1.GetOverviewRequest
+	34, // 31: cauteum.control.v1.SandboxService.ListSandboxes:input_type -> cauteum.control.v1.ListSandboxesRequest
+	36, // 32: cauteum.control.v1.SandboxService.GetSandbox:input_type -> cauteum.control.v1.GetSandboxRequest
+	38, // 33: cauteum.control.v1.SandboxService.WatchSandboxes:input_type -> cauteum.control.v1.WatchSandboxesRequest
+	40, // 34: cauteum.control.v1.SandboxService.GetSandboxLogs:input_type -> cauteum.control.v1.GetSandboxLogsRequest
+	42, // 35: cauteum.control.v1.SandboxService.WatchSandboxLogs:input_type -> cauteum.control.v1.WatchSandboxLogsRequest
+	45, // 36: cauteum.control.v1.SandboxService.CreateSandbox:input_type -> cauteum.control.v1.CreateSandboxRequest
+	47, // 37: cauteum.control.v1.SandboxService.StartSandbox:input_type -> cauteum.control.v1.StartSandboxRequest
+	49, // 38: cauteum.control.v1.SandboxService.StopSandbox:input_type -> cauteum.control.v1.StopSandboxRequest
+	51, // 39: cauteum.control.v1.SandboxService.DeleteSandbox:input_type -> cauteum.control.v1.DeleteSandboxRequest
+	53, // 40: cauteum.control.v1.OperationsService.GetOperation:input_type -> cauteum.control.v1.GetOperationRequest
+	55, // 41: cauteum.control.v1.OperationsService.ListOperations:input_type -> cauteum.control.v1.ListOperationsRequest
+	57, // 42: cauteum.control.v1.OperationsService.ListAuditEvents:input_type -> cauteum.control.v1.ListAuditEventsRequest
+	62, // 43: cauteum.control.v1.CatalogService.ListServices:input_type -> cauteum.control.v1.ListServicesRequest
+	65, // 44: cauteum.control.v1.CatalogService.ListTemplates:input_type -> cauteum.control.v1.ListTemplatesRequest
+	68, // 45: cauteum.control.v1.CatalogService.ListWorkspaces:input_type -> cauteum.control.v1.ListWorkspacesRequest
+	70, // 46: cauteum.control.v1.CatalogService.GetWorkspace:input_type -> cauteum.control.v1.GetWorkspaceRequest
+	2,  // 47: cauteum.control.v1.PolicyService.GetGlobalPolicy:input_type -> cauteum.control.v1.GetGlobalPolicyRequest
+	4,  // 48: cauteum.control.v1.PolicyService.UpdateGlobalPolicy:input_type -> cauteum.control.v1.UpdateGlobalPolicyRequest
+	6,  // 49: cauteum.control.v1.PolicyService.GetSandboxPolicy:input_type -> cauteum.control.v1.GetSandboxPolicyRequest
+	8,  // 50: cauteum.control.v1.PolicyService.UpdateSandboxPolicy:input_type -> cauteum.control.v1.UpdateSandboxPolicyRequest
+	10, // 51: cauteum.control.v1.PolicyService.ListSandboxPolicyRevisions:input_type -> cauteum.control.v1.ListSandboxPolicyRevisionsRequest
+	12, // 52: cauteum.control.v1.PolicyService.GetSandboxPolicyRevision:input_type -> cauteum.control.v1.GetSandboxPolicyRevisionRequest
+	73, // 53: cauteum.control.v1.PolicyService.ListPolicyProposals:input_type -> cauteum.control.v1.ListPolicyProposalsRequest
+	75, // 54: cauteum.control.v1.PolicyService.GetPolicyProposal:input_type -> cauteum.control.v1.GetPolicyProposalRequest
+	79, // 55: cauteum.control.v1.PolicyService.ApprovePolicyProposal:input_type -> cauteum.control.v1.ApprovePolicyProposalRequest
+	80, // 56: cauteum.control.v1.PolicyService.RejectPolicyProposal:input_type -> cauteum.control.v1.RejectPolicyProposalRequest
+	17, // 57: cauteum.control.v1.ProviderProfileService.ListProviderProfiles:input_type -> cauteum.control.v1.ListProviderProfilesRequest
+	20, // 58: cauteum.control.v1.ProviderProfileService.GetProviderProfile:input_type -> cauteum.control.v1.GetProviderProfileRequest
+	22, // 59: cauteum.control.v1.ProviderProfileService.ImportProviderProfile:input_type -> cauteum.control.v1.ImportProviderProfileRequest
+	24, // 60: cauteum.control.v1.ProviderProfileService.UpdateProviderProfile:input_type -> cauteum.control.v1.UpdateProviderProfileRequest
+	26, // 61: cauteum.control.v1.ProviderProfileService.DeleteProviderProfile:input_type -> cauteum.control.v1.DeleteProviderProfileRequest
+	15, // 62: cauteum.control.v1.ProviderCredentialService.UpdateProviderCredentials:input_type -> cauteum.control.v1.UpdateProviderCredentialsRequest
+	29, // 63: cauteum.control.v1.ConsoleService.GetViewer:output_type -> cauteum.control.v1.GetViewerResponse
+	31, // 64: cauteum.control.v1.ConsoleService.GetConsoleCapabilities:output_type -> cauteum.control.v1.GetConsoleCapabilitiesResponse
+	33, // 65: cauteum.control.v1.ConsoleService.GetOverview:output_type -> cauteum.control.v1.GetOverviewResponse
+	35, // 66: cauteum.control.v1.SandboxService.ListSandboxes:output_type -> cauteum.control.v1.ListSandboxesResponse
+	37, // 67: cauteum.control.v1.SandboxService.GetSandbox:output_type -> cauteum.control.v1.GetSandboxResponse
+	39, // 68: cauteum.control.v1.SandboxService.WatchSandboxes:output_type -> cauteum.control.v1.WatchSandboxesResponse
+	41, // 69: cauteum.control.v1.SandboxService.GetSandboxLogs:output_type -> cauteum.control.v1.GetSandboxLogsResponse
+	43, // 70: cauteum.control.v1.SandboxService.WatchSandboxLogs:output_type -> cauteum.control.v1.WatchSandboxLogsResponse
+	46, // 71: cauteum.control.v1.SandboxService.CreateSandbox:output_type -> cauteum.control.v1.CreateSandboxResponse
+	48, // 72: cauteum.control.v1.SandboxService.StartSandbox:output_type -> cauteum.control.v1.StartSandboxResponse
+	50, // 73: cauteum.control.v1.SandboxService.StopSandbox:output_type -> cauteum.control.v1.StopSandboxResponse
+	52, // 74: cauteum.control.v1.SandboxService.DeleteSandbox:output_type -> cauteum.control.v1.DeleteSandboxResponse
+	54, // 75: cauteum.control.v1.OperationsService.GetOperation:output_type -> cauteum.control.v1.GetOperationResponse
+	56, // 76: cauteum.control.v1.OperationsService.ListOperations:output_type -> cauteum.control.v1.ListOperationsResponse
+	58, // 77: cauteum.control.v1.OperationsService.ListAuditEvents:output_type -> cauteum.control.v1.ListAuditEventsResponse
+	63, // 78: cauteum.control.v1.CatalogService.ListServices:output_type -> cauteum.control.v1.ListServicesResponse
+	66, // 79: cauteum.control.v1.CatalogService.ListTemplates:output_type -> cauteum.control.v1.ListTemplatesResponse
+	69, // 80: cauteum.control.v1.CatalogService.ListWorkspaces:output_type -> cauteum.control.v1.ListWorkspacesResponse
+	71, // 81: cauteum.control.v1.CatalogService.GetWorkspace:output_type -> cauteum.control.v1.GetWorkspaceResponse
+	3,  // 82: cauteum.control.v1.PolicyService.GetGlobalPolicy:output_type -> cauteum.control.v1.GetGlobalPolicyResponse
+	5,  // 83: cauteum.control.v1.PolicyService.UpdateGlobalPolicy:output_type -> cauteum.control.v1.UpdateGlobalPolicyResponse
+	7,  // 84: cauteum.control.v1.PolicyService.GetSandboxPolicy:output_type -> cauteum.control.v1.GetSandboxPolicyResponse
+	9,  // 85: cauteum.control.v1.PolicyService.UpdateSandboxPolicy:output_type -> cauteum.control.v1.UpdateSandboxPolicyResponse
+	11, // 86: cauteum.control.v1.PolicyService.ListSandboxPolicyRevisions:output_type -> cauteum.control.v1.ListSandboxPolicyRevisionsResponse
+	13, // 87: cauteum.control.v1.PolicyService.GetSandboxPolicyRevision:output_type -> cauteum.control.v1.GetSandboxPolicyRevisionResponse
+	74, // 88: cauteum.control.v1.PolicyService.ListPolicyProposals:output_type -> cauteum.control.v1.ListPolicyProposalsResponse
+	76, // 89: cauteum.control.v1.PolicyService.GetPolicyProposal:output_type -> cauteum.control.v1.GetPolicyProposalResponse
+	77, // 90: cauteum.control.v1.PolicyService.ApprovePolicyProposal:output_type -> cauteum.control.v1.ApprovePolicyProposalResponse
+	78, // 91: cauteum.control.v1.PolicyService.RejectPolicyProposal:output_type -> cauteum.control.v1.RejectPolicyProposalResponse
+	19, // 92: cauteum.control.v1.ProviderProfileService.ListProviderProfiles:output_type -> cauteum.control.v1.ListProviderProfilesResponse
+	21, // 93: cauteum.control.v1.ProviderProfileService.GetProviderProfile:output_type -> cauteum.control.v1.GetProviderProfileResponse
+	23, // 94: cauteum.control.v1.ProviderProfileService.ImportProviderProfile:output_type -> cauteum.control.v1.ImportProviderProfileResponse
+	25, // 95: cauteum.control.v1.ProviderProfileService.UpdateProviderProfile:output_type -> cauteum.control.v1.UpdateProviderProfileResponse
+	27, // 96: cauteum.control.v1.ProviderProfileService.DeleteProviderProfile:output_type -> cauteum.control.v1.DeleteProviderProfileResponse
+	16, // 97: cauteum.control.v1.ProviderCredentialService.UpdateProviderCredentials:output_type -> cauteum.control.v1.UpdateProviderCredentialsResponse
+	63, // [63:98] is the sub-list for method output_type
+	28, // [28:63] is the sub-list for method input_type
+	28, // [28:28] is the sub-list for extension type_name
+	28, // [28:28] is the sub-list for extension extendee
+	0,  // [0:28] is the sub-list for field type_name
 }
 
 func init() { file_cauteum_control_v1_console_proto_init() }
@@ -5543,7 +5639,7 @@ func file_cauteum_control_v1_console_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_cauteum_control_v1_console_proto_rawDesc), len(file_cauteum_control_v1_console_proto_rawDesc)),
 			NumEnums:      2,
-			NumMessages:   82,
+			NumMessages:   84,
 			NumExtensions: 0,
 			NumServices:   7,
 		},

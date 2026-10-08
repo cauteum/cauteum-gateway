@@ -86,7 +86,7 @@ func (a *controlAPI) GetPolicyProposal(ctx context.Context, req *connect.Request
 	return connect.NewResponse(&controlv1.GetPolicyProposalResponse{Proposal: policyProposalSummary(proposal)}), nil
 }
 
-func (a *controlAPI) ApprovePolicyProposal(ctx context.Context, req *connect.Request[controlv1.ApprovePolicyProposalRequest]) (*connect.Response[controlv1.GetPolicyProposalResponse], error) {
+func (a *controlAPI) ApprovePolicyProposal(ctx context.Context, req *connect.Request[controlv1.ApprovePolicyProposalRequest]) (*connect.Response[controlv1.ApprovePolicyProposalResponse], error) {
 	workspace, err := a.requireWorkspace(ctx, req.Msg.GetWorkspace())
 	if err != nil {
 		return nil, err
@@ -103,10 +103,10 @@ func (a *controlAPI) ApprovePolicyProposal(ctx context.Context, req *connect.Req
 		return nil, connect.NewError(connect.CodeFailedPrecondition, err)
 	}
 	updated, _ := a.store.GetProposal(id)
-	return connect.NewResponse(&controlv1.GetPolicyProposalResponse{Proposal: policyProposalSummary(updated)}), nil
+	return connect.NewResponse(&controlv1.ApprovePolicyProposalResponse{Proposal: policyProposalSummary(updated)}), nil
 }
 
-func (a *controlAPI) RejectPolicyProposal(ctx context.Context, req *connect.Request[controlv1.RejectPolicyProposalRequest]) (*connect.Response[controlv1.GetPolicyProposalResponse], error) {
+func (a *controlAPI) RejectPolicyProposal(ctx context.Context, req *connect.Request[controlv1.RejectPolicyProposalRequest]) (*connect.Response[controlv1.RejectPolicyProposalResponse], error) {
 	workspace, err := a.requireWorkspace(ctx, req.Msg.GetWorkspace())
 	if err != nil {
 		return nil, err
@@ -126,7 +126,7 @@ func (a *controlAPI) RejectPolicyProposal(ctx context.Context, req *connect.Requ
 	if err != nil {
 		return nil, connect.NewError(connect.CodeFailedPrecondition, err)
 	}
-	return connect.NewResponse(&controlv1.GetPolicyProposalResponse{Proposal: policyProposalSummary(updated)}), nil
+	return connect.NewResponse(&controlv1.RejectPolicyProposalResponse{Proposal: policyProposalSummary(updated)}), nil
 }
 
 func policyProposalSummary(proposal store.Proposal) *controlv1.PolicyProposalSummary {

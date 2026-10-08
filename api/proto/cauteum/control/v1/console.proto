@@ -65,8 +65,8 @@ service PolicyService {
   rpc GetSandboxPolicyRevision(GetSandboxPolicyRevisionRequest) returns (GetSandboxPolicyRevisionResponse);
   rpc ListPolicyProposals(ListPolicyProposalsRequest) returns (ListPolicyProposalsResponse);
   rpc GetPolicyProposal(GetPolicyProposalRequest) returns (GetPolicyProposalResponse);
-  rpc ApprovePolicyProposal(ApprovePolicyProposalRequest) returns (GetPolicyProposalResponse);
-  rpc RejectPolicyProposal(RejectPolicyProposalRequest) returns (GetPolicyProposalResponse);
+  rpc ApprovePolicyProposal(ApprovePolicyProposalRequest) returns (ApprovePolicyProposalResponse);
+  rpc RejectPolicyProposal(RejectPolicyProposalRequest) returns (RejectPolicyProposalResponse);
 }
 
 message GetGlobalPolicyRequest {}
@@ -566,6 +566,14 @@ message GetPolicyProposalRequest {
 }
 
 message GetPolicyProposalResponse {
+  PolicyProposalSummary proposal = 1;
+}
+
+message ApprovePolicyProposalResponse {
+  PolicyProposalSummary proposal = 1;
+}
+
+message RejectPolicyProposalResponse {
   PolicyProposalSummary proposal = 1;
 }
 
