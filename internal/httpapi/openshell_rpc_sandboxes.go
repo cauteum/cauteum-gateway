@@ -7,7 +7,7 @@ import (
 
 	datamodelv1 "github.com/NVIDIA/OpenShell/sdk/go/proto/datamodelv1"
 	openshellv1 "github.com/NVIDIA/OpenShell/sdk/go/proto/openshellv1"
-	"github.com/whaleshell/whaleshell-gateway/internal/storage/store"
+	"github.com/cauteum/cauteum-gateway/internal/storage/store"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/encoding/protojson"
@@ -113,6 +113,10 @@ func (s *openShellRPC) ListSandboxes(ctx context.Context, req *openshellv1.ListS
 }
 
 func (s *openShellRPC) requireSandboxReadWorkspace(ctx context.Context, workspace string) error {
+	return requireSandboxReadWorkspace(ctx, s.runtime.st, workspace)
+}
+
+func requireSandboxReadWorkspace(ctx context.Context, st *store.Store, workspace string) error {
 	p := PrincipalFrom(ctx)
 	if p.Kind != PrincipalUser {
 		return status.Error(codes.Unauthenticated, "authenticated user required")
@@ -123,7 +127,7 @@ func (s *openShellRPC) requireSandboxReadWorkspace(ctx context.Context, workspac
 	if !containsString(p.Scopes, "sandbox:read") && !containsString(p.Scopes, "openshell:all") {
 		return status.Error(codes.PermissionDenied, "sandbox:read scope required")
 	}
-	ws, ok := s.runtime.st.GetWorkspace(workspace)
+	ws, ok := st.GetWorkspace(workspace)
 	if !ok {
 		return status.Error(codes.NotFound, "workspace not found")
 	}

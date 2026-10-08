@@ -8,8 +8,8 @@ import (
 	"strings"
 
 	openshellv1 "github.com/NVIDIA/OpenShell/sdk/go/proto/openshellv1"
-	"github.com/whaleshell/whaleshell-gateway/internal/storage/store"
-	"github.com/whaleshell/whaleshell-providers/provider"
+	"github.com/cauteum/cauteum-gateway/internal/storage/store"
+	"github.com/cauteum/cauteum-providers/provider"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/encoding/protojson"
@@ -222,6 +222,18 @@ func profileToYAML(profile *openshellv1.ProviderProfile) (string, error) {
 		return "", fmt.Errorf("profile is required")
 	}
 	b, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(profile)
+	if err != nil {
+		return "", err
+	}
+	var values map[string]any
+	if err := json.Unmarshal(b, &values); err != nil {
+		return "", err
+	}
+	if category, ok := values["category"].(string); ok {
+		category = strings.TrimPrefix(category, "PROVIDER_PROFILE_CATEGORY_")
+		values["category"] = strings.ToLower(category)
+	}
+	b, err = json.Marshal(values)
 	if err != nil {
 		return "", err
 	}

@@ -92,9 +92,34 @@ func (h *Hub) Tail(sandbox string, limit int) ([]Line, uint64) {
 	return h.buf(sandbox).tail(limit)
 }
 
+// TailFiltered returns the newest matching lines and the current buffer cursor
+// from one atomic snapshot.
+func (h *Hub) TailFiltered(sandbox string, limit int, since time.Time, source, level string) ([]Line, uint64) {
+	return h.buf(sandbox).tailFiltered(limit, since, source, level)
+}
+
 // After returns buffered lines appended after sequence.
 func (h *Hub) After(sandbox string, sequence uint64) []Line {
 	return h.buf(sandbox).after(sequence)
+}
+
+// ReadAfter reports whether a cursor has fallen outside the retained ring.
+// Lines, latest cursor and gap status are read under one buffer lock.
+func (h *Hub) ReadAfter(sandbox string, sequence uint64) ([]Line, uint64, bool) {
+	b := h.buf(sandbox)
+	b.mu.Lock()
+	defer b.mu.Unlock()
+	expired := sequence > b.sequence || (len(b.lines) > 0 && sequence < b.lines[0].Sequence-1)
+	if expired {
+		return nil, b.sequence, true
+	}
+	var out []Line
+	for _, line := range b.lines {
+		if line.Sequence > sequence {
+			out = append(out, line)
+		}
+	}
+	return out, b.sequence, false
 }
 
 // Names returns sandboxes that have any buffered lines.
@@ -159,6 +184,21 @@ func (b *Buffer) tail(limit int) ([]Line, uint64) {
 	return append([]Line(nil), b.lines[start:]...), b.sequence
 }
 
+func (b *Buffer) tailFiltered(limit int, since time.Time, source, level string) ([]Line, uint64) {
+	b.mu.Lock()
+	defer b.mu.Unlock()
+	var out []Line
+	for _, line := range b.lines {
+		if Matches(line, since, source, level) {
+			out = append(out, line)
+		}
+	}
+	if limit > 0 && len(out) > limit {
+		out = out[len(out)-limit:]
+	}
+	return append([]Line(nil), out...), b.sequence
+}
+
 func (b *Buffer) after(sequence uint64) []Line {
 	b.mu.Lock()
 	defer b.mu.Unlock()
@@ -184,13 +224,7 @@ func (b *Buffer) snapshot(since time.Time, source, level string, limit int) []Li
 	defer b.mu.Unlock()
 	var out []Line
 	for _, ln := range b.lines {
-		if !since.IsZero() && ln.TS.Before(since) {
-			continue
-		}
-		if source != "" && ln.Source != source {
-			continue
-		}
-		if level != "" && !levelMatch(ln.Level, level) {
+		if !Matches(ln, since, source, level) {
 			continue
 		}
 		out = append(out, ln)
@@ -199,6 +233,17 @@ func (b *Buffer) snapshot(since time.Time, source, level string, limit int) []Li
 		out = out[len(out)-limit:]
 	}
 	return append([]Line{}, out...)
+}
+
+// Matches reports whether a line satisfies the same filters as Snapshot.
+func Matches(line Line, since time.Time, source, level string) bool {
+	if !since.IsZero() && line.TS.Before(since) {
+		return false
+	}
+	if source != "" && line.Source != source {
+		return false
+	}
+	return level == "" || levelMatch(line.Level, level)
 }
 
 func levelMatch(got, want string) bool {

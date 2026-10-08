@@ -8,7 +8,7 @@
 
 ### Changed
 
-- Use `whaleshell-core` v0.1.0-beta.1 and `whaleshell-runtime` v0.1.0-beta.1.
+- Use `cauteum-core` v0.1.0-beta.1 and `cauteum-runtime` v0.1.0-beta.1.
 - Update AWS SDK, go-jose, and SPIFFE dependencies to their latest compatible releases.
 
 ### Fixed

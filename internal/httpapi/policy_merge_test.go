@@ -6,7 +6,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/whaleshell/whaleshell-gateway/internal/storage/store"
+	"github.com/cauteum/cauteum-gateway/internal/storage/store"
 )
 
 func TestSetSandboxBasePolicyPreservesProviders(t *testing.T) {
@@ -61,7 +61,7 @@ network_policies:
         protocol: rest
         tls: terminate
         rules:
-          - allow: { method: POST, path: "/whaleshell/**/git-receive-pack" }
+          - allow: { method: POST, path: "/cauteum/**/git-receive-pack" }
 `
 	// Accidental full dump: include a provider.* rule — must be stripped from base.
 	fullish := `
@@ -75,7 +75,7 @@ network_policies:
         protocol: rest
         tls: terminate
         rules:
-          - allow: { method: POST, path: "/whaleshell/**/git-receive-pack" }
+          - allow: { method: POST, path: "/cauteum/**/git-receive-pack" }
   provider.gh.git:
     name: provider.gh.git
     endpoints:

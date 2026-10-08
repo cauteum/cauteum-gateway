@@ -1,4 +1,4 @@
-// Package logger wraps slogx for the whaleshell-gateway process.
+// Package logger wraps slogx for the cauteum-gateway process.
 package logger
 
 import (
@@ -8,13 +8,13 @@ import (
 	"os"
 	"strings"
 
-	"github.com/whaleshell/slogx"
+	"github.com/cauteum/slogx"
 )
 
 const (
-	EnvLogLevel     = "WHALESHELL_LOG_LEVEL"
-	EnvLogFormat    = "WHALESHELL_LOG_FORMAT"
-	EnvLogLevelAddr = "WHALESHELL_LOG_LEVEL_ADDR"
+	EnvLogLevel     = "CAUTEUM_LOG_LEVEL"
+	EnvLogFormat    = "CAUTEUM_LOG_FORMAT"
+	EnvLogLevelAddr = "CAUTEUM_LOG_LEVEL_ADDR"
 )
 
 // Options tweak Setup.

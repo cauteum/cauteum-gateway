@@ -17,11 +17,11 @@ import (
 
 	openshellv1 "github.com/NVIDIA/OpenShell/sdk/go/proto/openshellv1"
 	sandboxv1 "github.com/NVIDIA/OpenShell/sdk/go/proto/sandboxv1"
-	"github.com/whaleshell/whaleshell-core/defaults"
-	coreenv "github.com/whaleshell/whaleshell-core/env"
-	"github.com/whaleshell/whaleshell-core/policy"
-	"github.com/whaleshell/whaleshell-driver/driver"
-	"github.com/whaleshell/whaleshell-providers/provider"
+	"github.com/cauteum/cauteum-core/defaults"
+	coreenv "github.com/cauteum/cauteum-core/env"
+	"github.com/cauteum/cauteum-core/policy"
+	"github.com/cauteum/cauteum-driver/driver"
+	"github.com/cauteum/cauteum-providers/provider"
 	"google.golang.org/protobuf/encoding/protojson"
 	"google.golang.org/protobuf/types/known/structpb"
 	"gopkg.in/yaml.v3"
@@ -136,19 +136,19 @@ func (s *openShellRPC) prepareSandboxRuntime(req *openshellv1.CreateSandboxReque
 	if err = os.WriteFile(out.policyPath, out.effectiveYAML, 0o600); err != nil {
 		return out, fmt.Errorf("sandbox policy storage unavailable")
 	}
-	for _, helper := range []string{"whaleshell", "whaleshell-init", "whaleshell-sshd", "whaleshell-supervisor"} {
+	for _, helper := range []string{"cauteum", "cauteum-init", "cauteum-sshd", "cauteum-supervisor"} {
 		path, err := sandboxHelperPath(helper)
 		if err != nil {
 			return out, err
 		}
 		switch helper {
-		case "whaleshell":
+		case "cauteum":
 			out.proxyBin = path
-		case "whaleshell-init":
+		case "cauteum-init":
 			out.initBin = path
-		case "whaleshell-sshd":
+		case "cauteum-sshd":
 			out.sshBin = path
-		case "whaleshell-supervisor":
+		case "cauteum-supervisor":
 			out.supervisorBin = path
 		}
 	}
@@ -218,7 +218,7 @@ func (s *openShellRPC) prepareSandboxRuntime(req *openshellv1.CreateSandboxReque
 		if e != nil {
 			return out, fmt.Errorf("token grant configuration is invalid")
 		}
-		out.proxyEnv = append(out.proxyEnv, "WHALESHELL_TOKEN_GRANTS="+string(b))
+		out.proxyEnv = append(out.proxyEnv, "CAUTEUM_TOKEN_GRANTS="+string(b))
 	}
 	out.proxyEnv = append(out.proxyEnv, middlewareEnv...)
 	sort.Strings(out.env)
@@ -279,7 +279,7 @@ func (s *openShellRPC) supervisorMiddlewareProxyEnv(policy *sandboxv1.SandboxPol
 	if err != nil {
 		return nil, fmt.Errorf("serialize supervisor middleware configuration: %w", err)
 	}
-	return []string{"WHALESHELL_SUPERVISOR_MIDDLEWARES=" + string(encoded)}, nil
+	return []string{"CAUTEUM_SUPERVISOR_MIDDLEWARES=" + string(encoded)}, nil
 }
 
 func parseGlobalPolicyYAML(source string) (policy.Document, error) {
@@ -339,8 +339,8 @@ func enrichProxyBaselineFilesystemWith(doc *policy.Document, exists func(string)
 	// The Engine adapter mounts a persistent home/data volume at this path;
 	// supervisor-created profile files and agent installs must remain usable
 	// under the workload's Landlock domain.
-	if !containsString(fs.ReadOnly, "/whaleshell/data") && !containsString(fs.ReadWrite, "/whaleshell/data") {
-		fs.ReadWrite = append(fs.ReadWrite, "/whaleshell/data")
+	if !containsString(fs.ReadOnly, "/cauteum/data") && !containsString(fs.ReadWrite, "/cauteum/data") {
+		fs.ReadWrite = append(fs.ReadWrite, "/cauteum/data")
 	}
 	return nil
 }
@@ -399,20 +399,20 @@ func parseOpenShellSandboxPolicy(src *sandboxv1.SandboxPolicy) (policy.Document,
 }
 
 func sandboxHelperPath(name string) (string, error) {
-	root := strings.TrimSpace(os.Getenv("WHALESHELL_HELPERS_DIR"))
+	root := strings.TrimSpace(os.Getenv("CAUTEUM_HELPERS_DIR"))
 	if root == "" {
-		root = filepath.Join("/usr/local/lib/whaleshell", "linux-"+runtime.GOARCH)
+		root = filepath.Join("/usr/local/lib/cauteum", "linux-"+runtime.GOARCH)
 	}
 	path := filepath.Join(root, name)
 	info, err := os.Stat(path)
 	if err != nil || !sandboxHelperExecutable(info) {
-		return "", fmt.Errorf("gateway helper %s is unavailable; install gateway helper bundle or set WHALESHELL_HELPERS_DIR", name)
+		return "", fmt.Errorf("gateway helper %s is unavailable; install gateway helper bundle or set CAUTEUM_HELPERS_DIR", name)
 	}
 	return path, nil
 }
 
 func sandboxGatewayURL(opt Options, driverConfig map[string]any) (string, error) {
-	for _, value := range []any{driverConfig["grpc_endpoint"], os.Getenv("OPENSHELL_GATEWAY_URL"), os.Getenv("WHALESHELL_GATEWAY_URL")} {
+	for _, value := range []any{driverConfig["grpc_endpoint"], os.Getenv("OPENSHELL_GATEWAY_URL"), os.Getenv("CAUTEUM_GATEWAY_URL")} {
 		raw, ok := value.(string)
 		if !ok || strings.TrimSpace(raw) == "" {
 			continue

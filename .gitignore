@@ -2,6 +2,6 @@
 *.test
 *.out
 /osg
-/whaleshell-init
-/whaleshell-gateway
+/cauteum-init
+/cauteum-gateway
 .DS_Store

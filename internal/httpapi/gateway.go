@@ -20,18 +20,18 @@ import (
 	"time"
 
 	sandboxv1 "github.com/NVIDIA/OpenShell/sdk/go/proto/sandboxv1"
-	"github.com/whaleshell/whaleshell-gateway/internal/gatewayconfig"
+	"github.com/cauteum/cauteum-gateway/internal/gatewayconfig"
 	"google.golang.org/grpc"
 
-	"github.com/whaleshell/slogx"
-	"github.com/whaleshell/whaleshell-core/defaults"
-	"github.com/whaleshell/whaleshell-core/policy"
-	"github.com/whaleshell/whaleshell-core/relayproto"
-	"github.com/whaleshell/whaleshell-gateway/internal/logbuf"
-	"github.com/whaleshell/whaleshell-gateway/internal/logger"
-	"github.com/whaleshell/whaleshell-gateway/internal/sshrelay"
-	"github.com/whaleshell/whaleshell-gateway/internal/storage/store"
-	"github.com/whaleshell/whaleshell-runtime/secrets"
+	"github.com/cauteum/cauteum-core/defaults"
+	"github.com/cauteum/cauteum-core/relayproto"
+	"github.com/cauteum/cauteum-gateway/internal/logbuf"
+	"github.com/cauteum/cauteum-gateway/internal/logger"
+	"github.com/cauteum/cauteum-gateway/internal/service"
+	"github.com/cauteum/cauteum-gateway/internal/sshrelay"
+	"github.com/cauteum/cauteum-gateway/internal/storage/store"
+	"github.com/cauteum/cauteum-runtime/secrets"
+	"github.com/cauteum/slogx"
 )
 
 // DriverConfigs maps a driver name to its decoded configuration table.
@@ -78,10 +78,10 @@ type Options struct {
 }
 
 // EnvAllowUnauthenticated enables Options.AllowUnauthenticated (unsafe, dev only).
-const EnvAllowUnauthenticated = "WHALESHELL_GATEWAY_ALLOW_UNAUTHENTICATED"
+const EnvAllowUnauthenticated = "CAUTEUM_GATEWAY_ALLOW_UNAUTHENTICATED"
 
 // EnvSSHSessionTTL overrides the SSH session TTL in seconds (0 = no expiry).
-const EnvSSHSessionTTL = "WHALESHELL_SSH_SESSION_TTL_SECS"
+const EnvSSHSessionTTL = "CAUTEUM_SSH_SESSION_TTL_SECS"
 
 // Run starts the gateway until context cancel / signal via ListenAndServe.
 func Run(args []string) error {
@@ -102,7 +102,7 @@ func Run(args []string) error {
 			return fmt.Errorf("gateway log_level filter is not supported")
 		}
 	}
-	log := logger.Setup(ctx, logger.Options{Service: "whaleshell-gateway", Level: level, LevelSet: opt.LogLevel != ""})
+	log := logger.Setup(ctx, logger.Options{Service: "cauteum-gateway", Level: level, LevelSet: opt.LogLevel != ""})
 	if opt.Name != "" {
 		log = log.With("openshell.gateway.name", opt.Name)
 	}
@@ -246,7 +246,7 @@ func resolveGatewayOptions(args []string) (Options, error) {
 		case "--allow-unauthenticated-users=false":
 			opt.AllowUnauthenticated = false
 		case "-h", "--help":
-			fmt.Fprintf(os.Stderr, "usage: whaleshell-gateway [--config TOML] [--name NAME] [--listen ADDR] [--data-dir DIR]\n")
+			fmt.Fprintf(os.Stderr, "usage: cauteum-gateway [--config TOML] [--name NAME] [--listen ADDR] [--data-dir DIR]\n")
 			fmt.Fprintf(os.Stderr, "                 [--bind-address IP] [--port N] [--log-level LEVEL] [--disable-tls]\n")
 			fmt.Fprintf(os.Stderr, "                 [--health-port N] [--metrics-port N]\n")
 			fmt.Fprintf(os.Stderr, "                 [--tls-cert FILE] [--tls-key FILE] [--tls-client-ca FILE]\n")
@@ -303,13 +303,13 @@ func parseTTLSecs(s string) (time.Duration, error) {
 
 func defaultDataDir() string {
 	if xdg := os.Getenv("XDG_STATE_HOME"); xdg != "" {
-		return filepath.Join(xdg, "whaleshell", "gateway")
+		return filepath.Join(xdg, "cauteum", "gateway")
 	}
 	home, err := os.UserHomeDir()
 	if err != nil {
-		return filepath.Join(os.TempDir(), "whaleshell-gateway")
+		return filepath.Join(os.TempDir(), "cauteum-gateway")
 	}
-	return filepath.Join(home, ".local", "state", "whaleshell", "gateway")
+	return filepath.Join(home, ".local", "state", "cauteum", "gateway")
 }
 
 func configuredDriverStatus(names []string, configs DriverConfigs) []map[string]string {
@@ -392,7 +392,7 @@ func validateUnauthenticatedListen(listen string, allowed bool) error {
 	if ip := net.ParseIP(host); ip != nil && ip.IsLoopback() {
 		return nil
 	}
-	return fmt.Errorf("refusing allow_unauthenticated on non-loopback %q (use whaleshell gateway login)", listen)
+	return fmt.Errorf("refusing allow_unauthenticated on non-loopback %q (use cauteum gateway login)", listen)
 }
 
 // NewHandler builds the authenticated gateway HTTP handler and starts the SSH
@@ -479,6 +479,8 @@ func NewHandler(ctx context.Context, opt Options) (http.Handler, error) {
 		return nil, fmt.Errorf("mTLS authentication requires a TLS client CA")
 	}
 	mux := http.NewServeMux()
+	consoleReader := service.ConsoleReader{Store: st}
+	mountControlAPI(mux, st, logs, opt, oidcValidator)
 	ssh.mount(mux)
 	mux.Handle("/debug/loglevel", log.LevelHTTPHandler())
 	mux.Handle("/debug/loglevel/", log.LevelHTTPHandler())
@@ -507,11 +509,11 @@ func NewHandler(ctx context.Context, opt Options) (http.Handler, error) {
 			"data_dir":                  opt.DataDir,
 			"auth_mode":                 authMode,
 			"compute_drivers":           configuredDriverStatus(opt.ComputeDriverNames, opt.ComputeDriverConfigs),
-			"credential_drivers":        opt.CredentialDriverNames,
+			"credential_drivers":        append([]string{}, opt.CredentialDriverNames...),
 			"default_credential_driver": opt.DefaultCredentialDriver,
 			"allow_unauthenticated":     opt.AllowUnauthenticated,
 			"oidc_issuer":               opt.OIDC.Issuer,
-			"host_osg_internal":         "host.whaleshell.internal → host-gateway (Docker)",
+			"host_osg_internal":         "host.cauteum.internal → host-gateway (Docker)",
 			"relay":                     "supervisor relay: " + relayproto.PathSupervisorConnect + " + " + relayproto.PathSSHConnect,
 			"ssh_session_ttl_s":         int64(ttl / time.Second),
 			"secrets_kek": map[string]any{
@@ -529,11 +531,7 @@ func NewHandler(ctx context.Context, opt Options) (http.Handler, error) {
 		log := logger.FromContext(r.Context()).With(slog.String("op", op))
 		switch r.Method {
 		case http.MethodGet:
-			s := st.Snapshot()
-			list := make([]store.Sandbox, 0, len(s.Sandboxes))
-			for _, sb := range s.Sandboxes {
-				list = append(list, sb)
-			}
+			list := consoleReader.ListRecords()
 			log.Info("listed sandboxes", slog.Int("count", len(list)))
 			w.Header().Set("Content-Type", "application/json")
 			_ = json.NewEncoder(w).Encode(map[string]any{"sandboxes": list})
@@ -564,7 +562,7 @@ func NewHandler(ctx context.Context, opt Options) (http.Handler, error) {
 		case http.MethodGet:
 			const op = "gateway.sandboxes.get"
 			log := logger.FromContext(r.Context()).With(slog.String("op", op), slog.String("sandbox", name))
-			sb, ok := st.GetSandbox(name)
+			sb, ok := consoleReader.GetRecord(name)
 			if !ok {
 				log.Info("sandbox not found")
 				http.Error(w, "not found", http.StatusNotFound)
@@ -574,6 +572,10 @@ func NewHandler(ctx context.Context, opt Options) (http.Handler, error) {
 			w.Header().Set("Content-Type", "application/json")
 			_ = json.NewEncoder(w).Encode(sb)
 		case http.MethodPut:
+			if opt.grpcRuntime != nil {
+				opt.grpcRuntime.sandboxMu.Lock()
+				defer opt.grpcRuntime.sandboxMu.Unlock()
+			}
 			const op = "gateway.sandboxes.upsert"
 			log := logger.FromContext(r.Context()).With(slog.String("op", op), slog.String("sandbox", name))
 			log.Info("upserting sandbox")
@@ -592,6 +594,10 @@ func NewHandler(ctx context.Context, opt Options) (http.Handler, error) {
 			log.Info("sandbox upserted")
 			w.WriteHeader(http.StatusNoContent)
 		case http.MethodDelete:
+			if opt.grpcRuntime != nil {
+				opt.grpcRuntime.sandboxMu.Lock()
+				defer opt.grpcRuntime.sandboxMu.Unlock()
+			}
 			const op = "gateway.sandboxes.delete"
 			log := logger.FromContext(r.Context()).With(slog.String("op", op), slog.String("sandbox", name))
 			log.Info("deleting sandbox")
@@ -665,7 +671,7 @@ func NewHandler(ctx context.Context, opt Options) (http.Handler, error) {
 				}
 			}
 		}
-		var all []map[string]any
+		all := make([]map[string]any, 0)
 		for _, n := range names {
 			for _, ln := range logs.Snapshot(n, time.Time{}, "", "", 200) {
 				all = append(all, map[string]any{"sandbox": n, "line": ln})
@@ -674,49 +680,6 @@ func NewHandler(ctx context.Context, opt Options) (http.Handler, error) {
 		w.Header().Set("Content-Type", "application/json")
 		_ = json.NewEncoder(w).Encode(map[string]any{"lines": all})
 	})
-	mux.HandleFunc("/v1/policy/global", func(w http.ResponseWriter, r *http.Request) {
-		switch r.Method {
-		case http.MethodGet:
-			const op = "gateway.policy.global.get"
-			log := logger.FromContext(r.Context()).With(slog.String("op", op))
-			yaml := st.GetGlobalPolicy()
-			log.Info("global policy fetched", slog.Int("bytes", len(yaml)))
-			w.Header().Set("Content-Type", "application/yaml")
-			w.WriteHeader(http.StatusOK)
-			_, _ = w.Write([]byte(yaml))
-		case http.MethodPut:
-			const op = "gateway.policy.global.set"
-			log := logger.FromContext(r.Context()).With(slog.String("op", op))
-			log.Info("setting global policy")
-			body, err := io.ReadAll(io.LimitReader(r.Body, 1<<20))
-			if err != nil {
-				log.Error("failed to read global policy body", slogx.Err(err))
-				http.Error(w, err.Error(), http.StatusBadRequest)
-				return
-			}
-			doc, err := policy.Parse(body)
-			if err != nil {
-				log.Error("failed to parse global policy", slogx.Err(err))
-				http.Error(w, "invalid policy: "+err.Error(), http.StatusBadRequest)
-				return
-			}
-			if err := doc.Validate(); err != nil {
-				log.Error("global policy validation failed", slogx.Err(err))
-				http.Error(w, "invalid policy: "+err.Error(), http.StatusBadRequest)
-				return
-			}
-			if err := st.SetGlobalPolicy(string(body)); err != nil {
-				log.Error("failed to store global policy", slogx.Err(err))
-				http.Error(w, err.Error(), http.StatusInternalServerError)
-				return
-			}
-			log.Info("global policy set", slog.Int("bytes", len(body)))
-			w.WriteHeader(http.StatusNoContent)
-		default:
-			http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
-		}
-	})
-
 	auth := withAuth(mux, st, AuthOptions{
 		OIDC:                 oidcValidator,
 		OIDCSettings:         opt.OIDC,
@@ -756,7 +719,7 @@ func listenAndServe(ctx context.Context, opt Options, handler http.Handler) erro
 		opt.RegisterGRPC(grpcServer)
 	}
 	combinedHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if r.ProtoMajor == 2 && strings.HasPrefix(strings.ToLower(r.Header.Get("Content-Type")), "application/grpc") {
+		if r.ProtoMajor == 2 && strings.HasPrefix(strings.ToLower(r.Header.Get("Content-Type")), "application/grpc") && !strings.HasPrefix(r.URL.Path, controlAPIPathPrefix) {
 			grpcServer.ServeHTTP(w, r)
 			return
 		}
@@ -783,7 +746,7 @@ func listenAndServe(ctx context.Context, opt Options, handler http.Handler) erro
 	}
 	if opt.AllowUnauthenticated && !ln.Addr().(*net.TCPAddr).IP.IsLoopback() {
 		_ = ln.Close()
-		return fmt.Errorf("refusing allow_unauthenticated on non-loopback %q (use whaleshell gateway login)", ln.Addr())
+		return fmt.Errorf("refusing allow_unauthenticated on non-loopback %q (use cauteum gateway login)", ln.Addr())
 	}
 	auxiliary := make([]*http.Server, 0, 2)
 	for _, endpoint := range []struct {
@@ -907,7 +870,7 @@ func gatewayMetricsHandler() http.Handler {
 			return
 		}
 		w.Header().Set("Content-Type", "text/plain; version=0.0.4; charset=utf-8")
-		_, _ = io.WriteString(w, "# HELP whaleshell_gateway_up Whether the gateway process is serving.\n# TYPE whaleshell_gateway_up gauge\nwhaleshell_gateway_up 1\n")
+		_, _ = io.WriteString(w, "# HELP cauteum_gateway_up Whether the gateway process is serving.\n# TYPE cauteum_gateway_up gauge\ncauteum_gateway_up 1\n")
 	})
 	return mux
 }

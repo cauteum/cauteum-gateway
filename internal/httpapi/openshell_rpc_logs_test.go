@@ -7,8 +7,8 @@ import (
 	"time"
 
 	openshellv1 "github.com/NVIDIA/OpenShell/sdk/go/proto/openshellv1"
-	"github.com/whaleshell/whaleshell-gateway/internal/logbuf"
-	"github.com/whaleshell/whaleshell-gateway/internal/storage/store"
+	"github.com/cauteum/cauteum-gateway/internal/logbuf"
+	"github.com/cauteum/cauteum-gateway/internal/storage/store"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/metadata"
 )

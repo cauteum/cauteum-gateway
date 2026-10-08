@@ -6,8 +6,8 @@ import (
 
 	datamodelv1 "github.com/NVIDIA/OpenShell/sdk/go/proto/datamodelv1"
 	openshellv1 "github.com/NVIDIA/OpenShell/sdk/go/proto/openshellv1"
-	"github.com/whaleshell/whaleshell-gateway/internal/storage/store"
-	"github.com/whaleshell/whaleshell-runtime/secrets"
+	"github.com/cauteum/cauteum-gateway/internal/storage/store"
+	"github.com/cauteum/cauteum-runtime/secrets"
 )
 
 func TestOpenShellProviderLifecycle(t *testing.T) {

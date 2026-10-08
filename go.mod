@@ -1,8 +1,9 @@
-module github.com/whaleshell/whaleshell-gateway
+module github.com/cauteum/cauteum-gateway
 
 go 1.27.0
 
 require (
+	connectrpc.com/connect v1.21.0
 	github.com/NVIDIA/OpenShell/sdk/go v0.0.0-20260909233434-a0814443f19c
 	github.com/aws/aws-sdk-go-v2 v1.47.1
 	github.com/aws/aws-sdk-go-v2/config v1.33.7
@@ -11,12 +12,13 @@ require (
 	github.com/go-jose/go-jose/v4 v4.1.5
 	github.com/pelletier/go-toml/v2 v2.4.3
 	github.com/spiffe/go-spiffe/v2 v2.9.0
-	github.com/whaleshell/slogx v0.1.0-alpha.2
-	github.com/whaleshell/whaleshell-core v0.1.0-beta.1
-	github.com/whaleshell/whaleshell-driver v0.1.0-alpha.2
-	github.com/whaleshell/whaleshell-providers v0.1.0-alpha.2
-	github.com/whaleshell/whaleshell-runtime v0.1.0-beta.1
+	github.com/cauteum/slogx v0.1.0-alpha.2
+	github.com/cauteum/cauteum-core v0.1.0-beta.1
+	github.com/cauteum/cauteum-driver v0.1.0-alpha.2
+	github.com/cauteum/cauteum-providers v0.1.0-alpha.2
+	github.com/cauteum/cauteum-runtime v0.1.0-beta.1
 	golang.org/x/crypto v0.57.0
+	golang.org/x/net v0.58.0
 	golang.org/x/sys v0.48.0
 	google.golang.org/grpc v1.84.0
 	google.golang.org/protobuf v1.36.12
@@ -57,10 +59,16 @@ require (
 	go.opentelemetry.io/otel/log v1.47.0 // indirect
 	go.opentelemetry.io/otel/metric v1.47.0 // indirect
 	go.opentelemetry.io/otel/trace v1.47.0 // indirect
-	golang.org/x/net v0.58.0 // indirect
 	golang.org/x/oauth2 v0.36.0 // indirect
 	golang.org/x/sync v0.23.0 // indirect
 	golang.org/x/term v0.46.0 // indirect
 	golang.org/x/text v0.42.0 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20260706201446-f0a921348800 // indirect
+	google.golang.org/grpc/cmd/protoc-gen-go-grpc v1.5.1 // indirect
+)
+
+tool (
+	connectrpc.com/connect/cmd/protoc-gen-connect-go
+	google.golang.org/grpc/cmd/protoc-gen-go-grpc
+	google.golang.org/protobuf/cmd/protoc-gen-go
 )

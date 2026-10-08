@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: Copyright (c) 2026 the whaleshell authors
+# SPDX-FileCopyrightText: Copyright (c) 2026 the cauteum authors
 # SPDX-License-Identifier: Apache-2.0
 #
 # gogpu-style CI: format, lint, cross-platform build + test
@@ -19,65 +19,115 @@ permissions:
   id-token: write  # Codecov OIDC
 
 jobs:
+  api-contract:
+    name: API contracts
+    runs-on: ubuntu-latest
+    env:
+      GOWORK: "off"
+    defaults:
+      run:
+        working-directory: cauteum-gateway
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: cauteum-gateway
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Lint OpenAPI document
+        run: npx --yes @redocly/cli@2.60.0 lint api/openapi.yaml --config api/redocly.yaml
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.27"
+          cache-dependency-path: cauteum-gateway/go.sum
+      - name: Install pinned Buf CLI
+        run: go install github.com/bufbuild/buf/cmd/buf@v1.66.0
+      - name: Lint and regenerate Control API
+        run: |
+          buf lint
+          buf generate
+          if [[ -n "$(git status --porcelain -- api/gen)" ]]; then
+            echo "generated Control API code is stale"
+            git status --short -- api/gen
+            exit 1
+          fi
+      - name: Build generated TypeScript client
+        run: |
+          npm ci --prefix api/typescript
+          npm run check --prefix api/typescript
+          if [[ -n "$(git status --porcelain -- api/typescript/src/gen)" ]]; then
+            echo "generated TypeScript client is stale"
+            git status --short -- api/typescript/src/gen
+            exit 1
+          fi
+      - name: Check Control API compatibility
+        if: github.event_name == 'pull_request'
+        run: |
+          git fetch origin main:refs/heads/main
+          if git cat-file -e main:buf.yaml 2>/dev/null; then
+            buf breaking --against '.git#branch=main'
+          fi
+
   formatting:
     name: Formatting
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: whaleshell-gateway
+        working-directory: cauteum-gateway
     steps:
 
-      - name: Checkout whaleshell-gateway
+      - name: Checkout cauteum-gateway
         uses: actions/checkout@v4
         with:
-          path: whaleshell-gateway
+          path: cauteum-gateway
 
-      - name: Checkout whaleshell-cli
+      - name: Checkout cauteum-cli
         uses: actions/checkout@v4
         with:
-          repository: whaleshell/whaleshell-cli
-          path: whaleshell-cli
+          repository: cauteum/cauteum-cli
+          path: cauteum-cli
           ref: main
 
-      - name: Checkout whaleshell-core
+      - name: Checkout cauteum-core
         uses: actions/checkout@v4
         with:
-          repository: whaleshell/whaleshell-core
-          path: whaleshell-core
+          repository: cauteum/cauteum-core
+          path: cauteum-core
           ref: main
 
-      - name: Checkout whaleshell-providers
+      - name: Checkout cauteum-providers
         uses: actions/checkout@v4
         with:
-          repository: whaleshell/whaleshell-providers
-          path: whaleshell-providers
+          repository: cauteum/cauteum-providers
+          path: cauteum-providers
           ref: main
 
-      - name: Checkout whaleshell-runtime
+      - name: Checkout cauteum-runtime
         uses: actions/checkout@v4
         with:
-          repository: whaleshell/whaleshell-runtime
-          path: whaleshell-runtime
+          repository: cauteum/cauteum-runtime
+          path: cauteum-runtime
           ref: main
 
-      - name: Checkout whaleshell-driver
+      - name: Checkout cauteum-driver
         uses: actions/checkout@v4
         with:
-          repository: whaleshell/whaleshell-driver
-          path: whaleshell-driver
+          repository: cauteum/cauteum-driver
+          path: cauteum-driver
           ref: main
 
-      - name: Checkout whaleshell-proxy
+      - name: Checkout cauteum-proxy
         uses: actions/checkout@v4
         with:
-          repository: whaleshell/whaleshell-proxy
-          path: whaleshell-proxy
+          repository: cauteum/cauteum-proxy
+          path: cauteum-proxy
           ref: main
 
       - name: Checkout slogx
         uses: actions/checkout@v4
         with:
-          repository: whaleshell/slogx
+          repository: cauteum/slogx
           path: slogx
       - name: Write go.work
         working-directory: ${{ github.workspace }}
@@ -87,24 +137,24 @@ jobs:
           {
             echo 'go 1.27.0'
             echo 'use ('
-            for d in whaleshell-* slogx; do
-              [[ "$d" == whaleshell-cli || "$d" == whaleshell-display ]] && continue
+            for d in cauteum-* slogx; do
+              [[ "$d" == cauteum-cli || "$d" == cauteum-display ]] && continue
               if [[ -d "$d" ]]; then
                 echo "  ./$d"
               fi
             done
             echo ')'
             echo 'replace ('
-            for d in whaleshell-*; do
-              [[ "$d" == whaleshell-cli || "$d" == whaleshell-display ]] && continue
+            for d in cauteum-*; do
+              [[ "$d" == cauteum-cli || "$d" == cauteum-display ]] && continue
               if [[ -d "$d" ]]; then
-                echo "  github.com/whaleshell/${d} v0.1.0-alpha.1 => ./$d"
-                echo "  github.com/whaleshell/${d} v0.1.0-alpha.2 => ./$d"
+                echo "  github.com/cauteum/${d} v0.1.0-alpha.1 => ./$d"
+                echo "  github.com/cauteum/${d} v0.1.0-alpha.2 => ./$d"
               fi
             done
             if [[ -d slogx ]]; then
-              echo '  github.com/whaleshell/slogx v0.1.0-alpha.1 => ./slogx'
-              echo '  github.com/whaleshell/slogx v0.1.0-alpha.2 => ./slogx'
+              echo '  github.com/cauteum/slogx v0.1.0-alpha.1 => ./slogx'
+              echo '  github.com/cauteum/slogx v0.1.0-alpha.2 => ./slogx'
             fi
             echo ')'
           } > "${{ github.workspace }}/go.work"
@@ -115,7 +165,7 @@ jobs:
           go-version: "1.27"
           cache: true
           cache-dependency-path: |
-            whaleshell-*/go.sum
+            cauteum-*/go.sum
             slogx/go.sum
       - name: Check gofmt
         run: |
@@ -133,60 +183,60 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: whaleshell-gateway
+        working-directory: cauteum-gateway
     steps:
 
-      - name: Checkout whaleshell-gateway
+      - name: Checkout cauteum-gateway
         uses: actions/checkout@v4
         with:
-          path: whaleshell-gateway
+          path: cauteum-gateway
 
-      - name: Checkout whaleshell-cli
+      - name: Checkout cauteum-cli
         uses: actions/checkout@v4
         with:
-          repository: whaleshell/whaleshell-cli
-          path: whaleshell-cli
+          repository: cauteum/cauteum-cli
+          path: cauteum-cli
           ref: main
 
-      - name: Checkout whaleshell-core
+      - name: Checkout cauteum-core
         uses: actions/checkout@v4
         with:
-          repository: whaleshell/whaleshell-core
-          path: whaleshell-core
+          repository: cauteum/cauteum-core
+          path: cauteum-core
           ref: main
 
-      - name: Checkout whaleshell-providers
+      - name: Checkout cauteum-providers
         uses: actions/checkout@v4
         with:
-          repository: whaleshell/whaleshell-providers
-          path: whaleshell-providers
+          repository: cauteum/cauteum-providers
+          path: cauteum-providers
           ref: main
 
-      - name: Checkout whaleshell-runtime
+      - name: Checkout cauteum-runtime
         uses: actions/checkout@v4
         with:
-          repository: whaleshell/whaleshell-runtime
-          path: whaleshell-runtime
+          repository: cauteum/cauteum-runtime
+          path: cauteum-runtime
           ref: main
 
-      - name: Checkout whaleshell-driver
+      - name: Checkout cauteum-driver
         uses: actions/checkout@v4
         with:
-          repository: whaleshell/whaleshell-driver
-          path: whaleshell-driver
+          repository: cauteum/cauteum-driver
+          path: cauteum-driver
           ref: main
 
-      - name: Checkout whaleshell-proxy
+      - name: Checkout cauteum-proxy
         uses: actions/checkout@v4
         with:
-          repository: whaleshell/whaleshell-proxy
-          path: whaleshell-proxy
+          repository: cauteum/cauteum-proxy
+          path: cauteum-proxy
           ref: main
 
       - name: Checkout slogx
         uses: actions/checkout@v4
         with:
-          repository: whaleshell/slogx
+          repository: cauteum/slogx
           path: slogx
       - name: Write go.work
         working-directory: ${{ github.workspace }}
@@ -196,24 +246,24 @@ jobs:
           {
             echo 'go 1.27.0'
             echo 'use ('
-            for d in whaleshell-* slogx; do
-              [[ "$d" == whaleshell-cli || "$d" == whaleshell-display ]] && continue
+            for d in cauteum-* slogx; do
+              [[ "$d" == cauteum-cli || "$d" == cauteum-display ]] && continue
               if [[ -d "$d" ]]; then
                 echo "  ./$d"
               fi
             done
             echo ')'
             echo 'replace ('
-            for d in whaleshell-*; do
-              [[ "$d" == whaleshell-cli || "$d" == whaleshell-display ]] && continue
+            for d in cauteum-*; do
+              [[ "$d" == cauteum-cli || "$d" == cauteum-display ]] && continue
               if [[ -d "$d" ]]; then
-                echo "  github.com/whaleshell/${d} v0.1.0-alpha.1 => ./$d"
-                echo "  github.com/whaleshell/${d} v0.1.0-alpha.2 => ./$d"
+                echo "  github.com/cauteum/${d} v0.1.0-alpha.1 => ./$d"
+                echo "  github.com/cauteum/${d} v0.1.0-alpha.2 => ./$d"
               fi
             done
             if [[ -d slogx ]]; then
-              echo '  github.com/whaleshell/slogx v0.1.0-alpha.1 => ./slogx'
-              echo '  github.com/whaleshell/slogx v0.1.0-alpha.2 => ./slogx'
+              echo '  github.com/cauteum/slogx v0.1.0-alpha.1 => ./slogx'
+              echo '  github.com/cauteum/slogx v0.1.0-alpha.2 => ./slogx'
             fi
             echo ')'
           } > "${{ github.workspace }}/go.work"
@@ -224,13 +274,13 @@ jobs:
           go-version: "1.27"
           cache: true
           cache-dependency-path: |
-            whaleshell-*/go.sum
+            cauteum-*/go.sum
             slogx/go.sum
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v8
         with:
           version: v2.14.0
-          working-directory: whaleshell-gateway
+          working-directory: cauteum-gateway
           args: --timeout=5m
 
   build:
@@ -242,60 +292,60 @@ jobs:
         os: [ubuntu-latest, macos-latest, windows-latest]
     defaults:
       run:
-        working-directory: whaleshell-gateway
+        working-directory: cauteum-gateway
     steps:
 
-      - name: Checkout whaleshell-gateway
+      - name: Checkout cauteum-gateway
         uses: actions/checkout@v4
         with:
-          path: whaleshell-gateway
+          path: cauteum-gateway
 
-      - name: Checkout whaleshell-cli
+      - name: Checkout cauteum-cli
         uses: actions/checkout@v4
         with:
-          repository: whaleshell/whaleshell-cli
-          path: whaleshell-cli
+          repository: cauteum/cauteum-cli
+          path: cauteum-cli
           ref: main
 
-      - name: Checkout whaleshell-core
+      - name: Checkout cauteum-core
         uses: actions/checkout@v4
         with:
-          repository: whaleshell/whaleshell-core
-          path: whaleshell-core
+          repository: cauteum/cauteum-core
+          path: cauteum-core
           ref: main
 
-      - name: Checkout whaleshell-providers
+      - name: Checkout cauteum-providers
         uses: actions/checkout@v4
         with:
-          repository: whaleshell/whaleshell-providers
-          path: whaleshell-providers
+          repository: cauteum/cauteum-providers
+          path: cauteum-providers
           ref: main
 
-      - name: Checkout whaleshell-runtime
+      - name: Checkout cauteum-runtime
         uses: actions/checkout@v4
         with:
-          repository: whaleshell/whaleshell-runtime
-          path: whaleshell-runtime
+          repository: cauteum/cauteum-runtime
+          path: cauteum-runtime
           ref: main
 
-      - name: Checkout whaleshell-driver
+      - name: Checkout cauteum-driver
         uses: actions/checkout@v4
         with:
-          repository: whaleshell/whaleshell-driver
-          path: whaleshell-driver
+          repository: cauteum/cauteum-driver
+          path: cauteum-driver
           ref: main
 
-      - name: Checkout whaleshell-proxy
+      - name: Checkout cauteum-proxy
         uses: actions/checkout@v4
         with:
-          repository: whaleshell/whaleshell-proxy
-          path: whaleshell-proxy
+          repository: cauteum/cauteum-proxy
+          path: cauteum-proxy
           ref: main
 
       - name: Checkout slogx
         uses: actions/checkout@v4
         with:
-          repository: whaleshell/slogx
+          repository: cauteum/slogx
           path: slogx
       - name: Write go.work
         working-directory: ${{ github.workspace }}
@@ -305,24 +355,24 @@ jobs:
           {
             echo 'go 1.27.0'
             echo 'use ('
-            for d in whaleshell-* slogx; do
-              [[ "$d" == whaleshell-cli || "$d" == whaleshell-display ]] && continue
+            for d in cauteum-* slogx; do
+              [[ "$d" == cauteum-cli || "$d" == cauteum-display ]] && continue
               if [[ -d "$d" ]]; then
                 echo "  ./$d"
               fi
             done
             echo ')'
             echo 'replace ('
-            for d in whaleshell-*; do
-              [[ "$d" == whaleshell-cli || "$d" == whaleshell-display ]] && continue
+            for d in cauteum-*; do
+              [[ "$d" == cauteum-cli || "$d" == cauteum-display ]] && continue
               if [[ -d "$d" ]]; then
-                echo "  github.com/whaleshell/${d} v0.1.0-alpha.1 => ./$d"
-                echo "  github.com/whaleshell/${d} v0.1.0-alpha.2 => ./$d"
+                echo "  github.com/cauteum/${d} v0.1.0-alpha.1 => ./$d"
+                echo "  github.com/cauteum/${d} v0.1.0-alpha.2 => ./$d"
               fi
             done
             if [[ -d slogx ]]; then
-              echo '  github.com/whaleshell/slogx v0.1.0-alpha.1 => ./slogx'
-              echo '  github.com/whaleshell/slogx v0.1.0-alpha.2 => ./slogx'
+              echo '  github.com/cauteum/slogx v0.1.0-alpha.1 => ./slogx'
+              echo '  github.com/cauteum/slogx v0.1.0-alpha.2 => ./slogx'
             fi
             echo ')'
           } > "${{ github.workspace }}/go.work"
@@ -333,7 +383,7 @@ jobs:
           go-version: "1.27"
           cache: true
           cache-dependency-path: |
-            whaleshell-*/go.sum
+            cauteum-*/go.sum
             slogx/go.sum
       - name: Download modules
         run: go mod download
@@ -349,60 +399,60 @@ jobs:
         os: [ubuntu-latest, macos-latest, windows-latest]
     defaults:
       run:
-        working-directory: whaleshell-gateway
+        working-directory: cauteum-gateway
     steps:
 
-      - name: Checkout whaleshell-gateway
+      - name: Checkout cauteum-gateway
         uses: actions/checkout@v4
         with:
-          path: whaleshell-gateway
+          path: cauteum-gateway
 
-      - name: Checkout whaleshell-cli
+      - name: Checkout cauteum-cli
         uses: actions/checkout@v4
         with:
-          repository: whaleshell/whaleshell-cli
-          path: whaleshell-cli
+          repository: cauteum/cauteum-cli
+          path: cauteum-cli
           ref: main
 
-      - name: Checkout whaleshell-core
+      - name: Checkout cauteum-core
         uses: actions/checkout@v4
         with:
-          repository: whaleshell/whaleshell-core
-          path: whaleshell-core
+          repository: cauteum/cauteum-core
+          path: cauteum-core
           ref: main
 
-      - name: Checkout whaleshell-providers
+      - name: Checkout cauteum-providers
         uses: actions/checkout@v4
         with:
-          repository: whaleshell/whaleshell-providers
-          path: whaleshell-providers
+          repository: cauteum/cauteum-providers
+          path: cauteum-providers
           ref: main
 
-      - name: Checkout whaleshell-runtime
+      - name: Checkout cauteum-runtime
         uses: actions/checkout@v4
         with:
-          repository: whaleshell/whaleshell-runtime
-          path: whaleshell-runtime
+          repository: cauteum/cauteum-runtime
+          path: cauteum-runtime
           ref: main
 
-      - name: Checkout whaleshell-driver
+      - name: Checkout cauteum-driver
         uses: actions/checkout@v4
         with:
-          repository: whaleshell/whaleshell-driver
-          path: whaleshell-driver
+          repository: cauteum/cauteum-driver
+          path: cauteum-driver
           ref: main
 
-      - name: Checkout whaleshell-proxy
+      - name: Checkout cauteum-proxy
         uses: actions/checkout@v4
         with:
-          repository: whaleshell/whaleshell-proxy
-          path: whaleshell-proxy
+          repository: cauteum/cauteum-proxy
+          path: cauteum-proxy
           ref: main
 
       - name: Checkout slogx
         uses: actions/checkout@v4
         with:
-          repository: whaleshell/slogx
+          repository: cauteum/slogx
           path: slogx
       - name: Write go.work
         working-directory: ${{ github.workspace }}
@@ -412,24 +462,24 @@ jobs:
           {
             echo 'go 1.27.0'
             echo 'use ('
-            for d in whaleshell-* slogx; do
-              [[ "$d" == whaleshell-cli || "$d" == whaleshell-display ]] && continue
+            for d in cauteum-* slogx; do
+              [[ "$d" == cauteum-cli || "$d" == cauteum-display ]] && continue
               if [[ -d "$d" ]]; then
                 echo "  ./$d"
               fi
             done
             echo ')'
             echo 'replace ('
-            for d in whaleshell-*; do
-              [[ "$d" == whaleshell-cli || "$d" == whaleshell-display ]] && continue
+            for d in cauteum-*; do
+              [[ "$d" == cauteum-cli || "$d" == cauteum-display ]] && continue
               if [[ -d "$d" ]]; then
-                echo "  github.com/whaleshell/${d} v0.1.0-alpha.1 => ./$d"
-                echo "  github.com/whaleshell/${d} v0.1.0-alpha.2 => ./$d"
+                echo "  github.com/cauteum/${d} v0.1.0-alpha.1 => ./$d"
+                echo "  github.com/cauteum/${d} v0.1.0-alpha.2 => ./$d"
               fi
             done
             if [[ -d slogx ]]; then
-              echo '  github.com/whaleshell/slogx v0.1.0-alpha.1 => ./slogx'
-              echo '  github.com/whaleshell/slogx v0.1.0-alpha.2 => ./slogx'
+              echo '  github.com/cauteum/slogx v0.1.0-alpha.1 => ./slogx'
+              echo '  github.com/cauteum/slogx v0.1.0-alpha.2 => ./slogx'
             fi
             echo ')'
           } > "${{ github.workspace }}/go.work"
@@ -440,7 +490,7 @@ jobs:
           go-version: "1.27"
           cache: true
           cache-dependency-path: |
-            whaleshell-*/go.sum
+            cauteum-*/go.sum
             slogx/go.sum
       - name: Download modules
         run: go mod download
@@ -468,7 +518,7 @@ jobs:
         uses: codecov/codecov-action@v5
         with:
           use_oidc: true
-          files: ./whaleshell-gateway/coverage.txt
+          files: ./cauteum-gateway/coverage.txt
           flags: unittests
-          name: codecov-whaleshell-gateway
+          name: codecov-cauteum-gateway
           fail_ci_if_error: false

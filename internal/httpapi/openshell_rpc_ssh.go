@@ -106,7 +106,7 @@ func (s *openShellRPC) sshGatewayEndpoint(driverName string) (host string, port 
 	// The explicit public URL wins. Driver grpc_endpoint is the gateway address
 	// advertised to the sandbox and is the closest equivalent when no separate
 	// user-facing address is configured.
-	for _, raw := range []string{os.Getenv("OPENSHELL_GATEWAY_URL"), os.Getenv("WHALESHELL_GATEWAY_URL")} {
+	for _, raw := range []string{os.Getenv("OPENSHELL_GATEWAY_URL"), os.Getenv("CAUTEUM_GATEWAY_URL")} {
 		if strings.TrimSpace(raw) == "" {
 			continue
 		}

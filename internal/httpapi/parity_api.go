@@ -9,9 +9,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/whaleshell/whaleshell-gateway/internal/storage/store"
-	"github.com/whaleshell/whaleshell-runtime/idp"
-	"github.com/whaleshell/whaleshell-runtime/secrets"
+	"github.com/cauteum/cauteum-gateway/internal/storage/store"
+	"github.com/cauteum/cauteum-runtime/idp"
+	"github.com/cauteum/cauteum-runtime/secrets"
 )
 
 // mountParityAPI registers inference, settings, templates, whoami, and local auth.
@@ -182,7 +182,7 @@ func mountParityAPI(mux *http.ServeMux, st *store.Store, oidcValidator *idp.OIDC
 			"subject":    p.Subject,
 			"auth":       auth,
 			"roles":      roles,
-			"scopes":     p.Scopes,
+			"scopes":     append([]string{}, p.Scopes...),
 			"idp":        p.IDP,
 			"sandbox":    p.Sandbox,
 			"gateway_id": st.Snapshot().GatewayID,
@@ -193,7 +193,7 @@ func mountParityAPI(mux *http.ServeMux, st *store.Store, oidcValidator *idp.OIDC
 	// Remote operators use OIDC or the owner-only <data-dir>/auth_token file.
 	mux.HandleFunc("/v1/auth/login", func(w http.ResponseWriter, r *http.Request) {
 		if !isLoopbackRequest(r) {
-			http.Error(w, "local login is only available from loopback; use OIDC or `whaleshell gateway login --token $(cat <data-dir>/auth_token)`", http.StatusForbidden)
+			http.Error(w, "local login is only available from loopback; use OIDC or `cauteum gateway login --token $(cat <data-dir>/auth_token)`", http.StatusForbidden)
 			return
 		}
 		redirect := r.URL.Query().Get("redirect_uri")

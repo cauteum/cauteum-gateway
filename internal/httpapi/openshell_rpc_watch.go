@@ -9,9 +9,9 @@ import (
 	"time"
 
 	openshellv1 "github.com/NVIDIA/OpenShell/sdk/go/proto/openshellv1"
-	"github.com/whaleshell/whaleshell-gateway/internal/logbuf"
-	"github.com/whaleshell/whaleshell-gateway/internal/storage/store"
-	computev1 "github.com/whaleshell/whaleshell-gateway/internal/upstreamproto/computev1"
+	"github.com/cauteum/cauteum-gateway/internal/logbuf"
+	"github.com/cauteum/cauteum-gateway/internal/storage/store"
+	computev1 "github.com/cauteum/cauteum-gateway/internal/upstreamproto/computev1"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"

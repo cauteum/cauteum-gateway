@@ -10,7 +10,7 @@ import (
 	datamodelv1 "github.com/NVIDIA/OpenShell/sdk/go/proto/datamodelv1"
 	openshellv1 "github.com/NVIDIA/OpenShell/sdk/go/proto/openshellv1"
 	sandboxv1 "github.com/NVIDIA/OpenShell/sdk/go/proto/sandboxv1"
-	"github.com/whaleshell/whaleshell-gateway/internal/storage/store"
+	"github.com/cauteum/cauteum-gateway/internal/storage/store"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/structpb"
@@ -66,12 +66,12 @@ func TestSandboxTemplateCRUDIsWorkspaceScoped(t *testing.T) {
 
 func TestCreateSandboxResolvesWorkspaceTemplateAndGovernanceOverrides(t *testing.T) {
 	helperDir := t.TempDir()
-	for _, name := range []string{"whaleshell", "whaleshell-init", "whaleshell-sshd", "whaleshell-supervisor"} {
+	for _, name := range []string{"cauteum", "cauteum-init", "cauteum-sshd", "cauteum-supervisor"} {
 		if err := os.WriteFile(filepath.Join(helperDir, name), []byte("test"), 0o755); err != nil {
 			t.Fatal(err)
 		}
 	}
-	t.Setenv("WHALESHELL_HELPERS_DIR", helperDir)
+	t.Setenv("CAUTEUM_HELPERS_DIR", helperDir)
 	st, err := store.Open(t.TempDir(), "gw-template-resolve")
 	if err != nil {
 		t.Fatal(err)

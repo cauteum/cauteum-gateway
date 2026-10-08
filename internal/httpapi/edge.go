@@ -9,16 +9,16 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/whaleshell/whaleshell-gateway/internal/sshrelay"
-	"github.com/whaleshell/whaleshell-gateway/internal/storage/store"
+	"github.com/cauteum/cauteum-gateway/internal/sshrelay"
+	"github.com/cauteum/cauteum-gateway/internal/storage/store"
 )
 
 const (
 	edgeSuffixOpenShell = ".openshell.localhost"
-	edgeSuffixOSG       = ".whaleshell.localhost"
+	edgeSuffixOSG       = ".cauteum.localhost"
 )
 
-// withEdgeRouter proxies Host *.openshell.localhost / *.whaleshell.localhost to registered services.
+// withEdgeRouter proxies Host *.openshell.localhost / *.cauteum.localhost to registered services.
 // Other requests fall through to the control-plane mux (.localhost resolves to 127.0.0.1).
 func withEdgeRouter(next http.Handler, st *store.Store, relays ...*sshrelay.Hub) http.Handler {
 	var relay *sshrelay.Hub

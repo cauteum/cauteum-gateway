@@ -1,4 +1,4 @@
-// Package store persists whaleshell-gateway registry state as JSON on disk.
+// Package store persists cauteum-gateway registry state as JSON on disk.
 package store
 
 import (
@@ -38,7 +38,11 @@ type State struct {
 	// SandboxTokens holds sha256(supervisor token) per sandbox name.
 	SandboxTokens map[string]SandboxToken `json:"sandbox_tokens,omitempty"`
 	// SSHSessions is keyed by session id; tokens are stored as sha256 only.
-	SSHSessions map[string]SSHSession `json:"ssh_sessions,omitempty"`
+	SSHSessions     map[string]SSHSession `json:"ssh_sessions,omitempty"`
+	AuditEvents     []AuditEvent          `json:"audit_events,omitempty"`
+	AuditNextID     uint64                `json:"audit_next_id,omitempty"`
+	Operations      map[string]Operation  `json:"operations,omitempty"`
+	OperationNextID uint64                `json:"operation_next_id,omitempty"`
 }
 
 // InferenceRoute is the gateway-scoped inference.local backend (OpenShell inference set).
@@ -498,6 +502,7 @@ func Open(dataDir, gatewayID string) (*Store, error) {
 			Services:   map[string]ServiceRecord{},
 			Workspaces: map[string]WorkspaceRecord{},
 			Proposals:  map[string]Proposal{},
+			Operations: map[string]Operation{},
 
 			SandboxTokens: map[string]SandboxToken{},
 			SSHSessions:   map[string]SSHSession{},
@@ -552,6 +557,16 @@ func Open(dataDir, gatewayID string) (*Store, error) {
 		}
 		if s.state.Proposals == nil {
 			s.state.Proposals = map[string]Proposal{}
+		}
+		if s.state.Operations == nil {
+			s.state.Operations = map[string]Operation{}
+		}
+		for id, operation := range s.state.Operations {
+			if operation.State == OperationRunning {
+				operation.State = OperationUncertain
+				operation.UpdatedAt = time.Now().UTC()
+				s.state.Operations[id] = operation
+			}
 		}
 		if s.state.SandboxTokens == nil {
 			s.state.SandboxTokens = map[string]SandboxToken{}
@@ -610,6 +625,8 @@ func (s *Store) Snapshot() State {
 	}
 	out.Labels = maps.Clone(s.state.Labels)
 	out.GlobalPolicyRevisions = clonePolicyRevisions(s.state.GlobalPolicyRevisions)
+	out.AuditEvents = slices.Clone(s.state.AuditEvents)
+	out.Operations = maps.Clone(s.state.Operations)
 	out.Proposals = maps.Clone(s.state.Proposals)
 	for id, proposal := range out.Proposals {
 		out.Proposals[id] = cloneProposal(proposal)
@@ -711,11 +728,20 @@ func (s *Store) RecordMainProcessExit(name, instanceID string, exitCode int32) (
 // BeginSandboxStart clears the previous process result before a restarted
 // runtime can report an early exit under its new supervisor instance.
 func (s *Store) BeginSandboxStart(name string) (Sandbox, error) {
+	return s.BeginSandboxStartCAS(name, 0)
+}
+
+// BeginSandboxStartCAS rejects a stale UI transition atomically with the
+// registry's starting transition. Zero retains OpenShell's legacy behavior.
+func (s *Store) BeginSandboxStartCAS(name string, expectedVersion uint64) (Sandbox, error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	sb, ok := s.state.Sandboxes[name]
 	if !ok {
 		return Sandbox{}, fmt.Errorf("sandbox %q not found", name)
+	}
+	if expectedVersion != 0 && sb.ResourceVersion != expectedVersion {
+		return Sandbox{}, ErrResourceVersionConflict
 	}
 	sb.Status = "starting"
 	sb.SupervisorInstanceID = ""
@@ -777,16 +803,49 @@ func (s *Store) MarkSandboxRunning(name string) (Sandbox, error) {
 // Persisting the intermediate state lets recovery/watchers distinguish an
 // intentional stop from a daemon outage or an unexpected process exit.
 func (s *Store) BeginSandboxStop(name string) (Sandbox, error) {
+	return s.BeginSandboxStopCAS(name, 0)
+}
+
+// BeginSandboxStopCAS checks the expected version under the store lock.
+func (s *Store) BeginSandboxStopCAS(name string, expectedVersion uint64) (Sandbox, error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	sb, ok := s.state.Sandboxes[name]
 	if !ok {
 		return Sandbox{}, fmt.Errorf("sandbox %q not found", name)
 	}
+	if expectedVersion != 0 && sb.ResourceVersion != expectedVersion {
+		return Sandbox{}, ErrResourceVersionConflict
+	}
 	if strings.EqualFold(sb.Status, "stopping") {
 		return Sandbox{}, fmt.Errorf("sandbox %q is already stopping", name)
 	}
 	sb.Status = "stopping"
+	sb.ResourceVersion++
+	sb.UpdatedAt = time.Now().UTC()
+	s.state.Sandboxes[name] = cloneSandbox(sb)
+	if err := s.flushLocked(); err != nil {
+		return Sandbox{}, err
+	}
+	return cloneSandbox(sb), nil
+}
+
+// BeginSandboxDeleteCAS reserves a deletion before backend side effects.
+// Zero expectedVersion retains OpenShell's legacy unversioned behavior.
+func (s *Store) BeginSandboxDeleteCAS(name string, expectedVersion uint64) (Sandbox, error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	sb, ok := s.state.Sandboxes[name]
+	if !ok {
+		return Sandbox{}, fmt.Errorf("sandbox %q not found", name)
+	}
+	if expectedVersion != 0 && sb.ResourceVersion != expectedVersion {
+		return Sandbox{}, ErrResourceVersionConflict
+	}
+	if strings.EqualFold(sb.Status, "deleting") {
+		return Sandbox{}, fmt.Errorf("sandbox %q is already deleting", name)
+	}
+	sb.Status = "deleting"
 	sb.ResourceVersion++
 	sb.UpdatedAt = time.Now().UTC()
 	s.state.Sandboxes[name] = cloneSandbox(sb)
@@ -927,6 +986,41 @@ func (s *Store) SetBasePolicy(sandbox, yaml string) error {
 	return s.flushLocked()
 }
 
+// SetBasePolicyIfRevision stores the policy only when the observed revision is current.
+func (s *Store) SetBasePolicyIfRevision(sandbox, yaml string, expected int) (int, bool, error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	sb, ok := s.state.Sandboxes[sandbox]
+	if !ok {
+		return 0, false, fmt.Errorf("sandbox %q not found", sandbox)
+	}
+	if sb.PolicyRev != expected {
+		return sb.PolicyRev, false, nil
+	}
+	if sb.BasePolicyYAML == yaml && sb.PolicyRev > 0 && len(sb.PolicyRevisions) > 0 {
+		return sb.PolicyRev, true, nil
+	}
+	if sb.ResourceVersion == ^uint64(0) || sb.PolicyRev == int(^uint(0)>>1) {
+		return sb.PolicyRev, false, fmt.Errorf("sandbox policy revision overflow")
+	}
+	previous := cloneSandbox(sb)
+	sb.ResourceVersion++
+	sb.BasePolicyYAML = yaml
+	sb.UpdatedAt = time.Now().UTC()
+	sb.PolicyRev++
+	revision := PolicyRevision{Rev: sb.PolicyRev, UpdatedAt: sb.UpdatedAt, Bytes: len(yaml), Status: PolicyStatusPending, YAML: yaml}
+	sb.PolicyRevisions = append(sb.PolicyRevisions, revision)
+	if len(sb.PolicyRevisions) > MaxPolicyRevisions {
+		sb.PolicyRevisions = sb.PolicyRevisions[len(sb.PolicyRevisions)-MaxPolicyRevisions:]
+	}
+	s.state.Sandboxes[sandbox] = sb
+	if err := s.flushLocked(); err != nil {
+		s.state.Sandboxes[sandbox] = previous
+		return 0, false, err
+	}
+	return sb.PolicyRev, true, nil
+}
+
 // ListPolicyRevisions returns revision metadata (newest last).
 func (s *Store) ListPolicyRevisions(sandbox string) ([]PolicyRevision, error) {
 	s.mu.Lock()
@@ -991,6 +1085,38 @@ func (s *Store) SetGlobalPolicy(yaml string) error {
 		s.state.GlobalPolicyRevisions = s.state.GlobalPolicyRevisions[len(s.state.GlobalPolicyRevisions)-MaxPolicyRevisions:]
 	}
 	return s.flushLocked()
+}
+
+// SetGlobalPolicyIfRevision atomically compares the current version and stores a new policy.
+func (s *Store) SetGlobalPolicyIfRevision(yaml string, expected uint64) (uint64, bool, error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	if s.state.GlobalPolicyRevision != expected {
+		return s.state.GlobalPolicyRevision, false, nil
+	}
+	if s.state.GlobalPolicyYAML == yaml {
+		return s.state.GlobalPolicyRevision, true, nil
+	}
+	if s.state.GlobalPolicyRevision == ^uint64(0) || s.state.GlobalPolicyRevision >= uint64(int(^uint(0)>>1)) {
+		return s.state.GlobalPolicyRevision, false, fmt.Errorf("global policy revision overflow")
+	}
+	previousYAML := s.state.GlobalPolicyYAML
+	previousRevision := s.state.GlobalPolicyRevision
+	previousHistory := clonePolicyRevisions(s.state.GlobalPolicyRevisions)
+	s.state.GlobalPolicyYAML = yaml
+	s.state.GlobalPolicyRevision++
+	updatedAt := time.Now().UTC()
+	s.state.GlobalPolicyRevisions = append(s.state.GlobalPolicyRevisions, PolicyRevision{Rev: int(s.state.GlobalPolicyRevision), UpdatedAt: updatedAt, Bytes: len(yaml), Status: PolicyStatusLoaded, YAML: yaml})
+	if len(s.state.GlobalPolicyRevisions) > MaxPolicyRevisions {
+		s.state.GlobalPolicyRevisions = s.state.GlobalPolicyRevisions[len(s.state.GlobalPolicyRevisions)-MaxPolicyRevisions:]
+	}
+	if err := s.flushLocked(); err != nil {
+		s.state.GlobalPolicyYAML = previousYAML
+		s.state.GlobalPolicyRevision = previousRevision
+		s.state.GlobalPolicyRevisions = previousHistory
+		return 0, false, err
+	}
+	return s.state.GlobalPolicyRevision, true, nil
 }
 
 // GlobalPolicyHistory returns a detached oldest-first snapshot of retained global revisions.

@@ -9,9 +9,9 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/whaleshell/whaleshell-core/relayproto"
-	"github.com/whaleshell/whaleshell-gateway/internal/storage/store"
-	"github.com/whaleshell/whaleshell-runtime/idp"
+	"github.com/cauteum/cauteum-core/relayproto"
+	"github.com/cauteum/cauteum-gateway/internal/storage/store"
+	"github.com/cauteum/cauteum-runtime/idp"
 )
 
 // PrincipalKind distinguishes operators from sandbox supervisors.
@@ -198,6 +198,11 @@ func withAuth(next http.Handler, st *store.Store, opt AuthOptions) http.Handler 
 		log = slog.Default()
 	}
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if strings.HasPrefix(r.URL.Path, controlAPIPathPrefix) {
+			// Control RPC mounts its own principal resolver and method checks.
+			next.ServeHTTP(w, r)
+			return
+		}
 		if isPublicRoute(r.URL.Path) {
 			next.ServeHTTP(w, r)
 			return
@@ -216,7 +221,7 @@ func withAuth(next http.Handler, st *store.Store, opt AuthOptions) http.Handler 
 		if p.Kind == PrincipalNone {
 			if !opt.AllowUnauthenticated {
 				w.Header().Set("WWW-Authenticate", "Bearer")
-				http.Error(w, "authentication required (whaleshell gateway login)", http.StatusUnauthorized)
+				http.Error(w, "authentication required (cauteum gateway login)", http.StatusUnauthorized)
 				return
 			}
 			p = Principal{Kind: PrincipalUser, Subject: "local-dev", IDP: "local_dev", Roles: []string{"platform_admin", "platform-admin", "user"}}
@@ -277,7 +282,7 @@ func oidcRouteAuthorized(principal Principal, method string, target *url.URL, se
 	if !adminOnly {
 		// These reads expose gateway-wide credentials, sessions, or mutable policy state.
 		switch target.Path {
-		case "/v1/ssh-sessions", "/v1/policy/global", "/v1/providers":
+		case "/v1/ssh-sessions", "/v1/providers":
 			adminOnly = true
 		}
 		if strings.HasPrefix(target.Path, "/v1/providers/") {
@@ -309,12 +314,12 @@ func oidcRouteScope(method, path string) string {
 		return "workspace:write"
 	case path == "/v1/whoami":
 		return "scope:none"
-	case path == "/v1/providers" || strings.HasPrefix(path, "/v1/providers/") || path == "/v1/profiles" || strings.HasPrefix(path, "/v1/profiles/"):
+	case path == "/v1/providers" || strings.HasPrefix(path, "/v1/providers/"):
 		if read {
 			return "provider:read"
 		}
 		return "provider:write"
-	case path == "/v1/settings" || strings.HasPrefix(path, "/v1/settings/") || path == "/v1/policy/global" || path == "/v1/info" || path == "/debug/loglevel" || strings.HasPrefix(path, "/debug/loglevel/"):
+	case path == "/v1/settings" || strings.HasPrefix(path, "/v1/settings/") || path == "/v1/info" || path == "/debug/loglevel" || strings.HasPrefix(path, "/debug/loglevel/"):
 		if read {
 			return "config:read"
 		}
@@ -351,8 +356,6 @@ func sandboxRouteAllowed(method string, u *url.URL, sandbox string) bool {
 		return method == http.MethodGet
 	case len(parts) == 1 && parts[0] == "logs":
 		return method == http.MethodPost
-	case len(parts) == 1 && (parts[0] == "policy" || parts[0] == "effective-policy"):
-		return method == http.MethodGet
 	case len(parts) == 1 && parts[0] == "proposals":
 		return method == http.MethodPost
 	case len(parts) == 2 && parts[0] == "proposals":

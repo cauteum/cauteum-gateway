@@ -12,8 +12,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/whaleshell/whaleshell-core/defaults"
-	"github.com/whaleshell/whaleshell-gateway/internal/gatewayconfig"
+	"github.com/cauteum/cauteum-core/defaults"
+	"github.com/cauteum/cauteum-gateway/internal/gatewayconfig"
 )
 
 // configStartup resolves file values and environment before command flags.
@@ -203,7 +203,7 @@ func configStartup(args []string) (Options, *gatewayconfig.File, error) {
 		}
 	}
 	// Existing aliases remain below flags; pinned env names override local aliases.
-	if value, present := os.LookupEnv("WHALESHELL_LOG_LEVEL"); present && !explicit["--log-level"] {
+	if value, present := os.LookupEnv("CAUTEUM_LOG_LEVEL"); present && !explicit["--log-level"] {
 		opt.LogLevel = value
 	}
 	oidcFromEnvAndFlags(&opt)

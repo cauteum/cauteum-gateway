@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/whaleshell/whaleshell-gateway/internal/storage/store"
+	"github.com/cauteum/cauteum-gateway/internal/storage/store"
 	"google.golang.org/grpc"
 )
 

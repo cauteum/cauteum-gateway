@@ -11,8 +11,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/whaleshell/whaleshell-gateway/internal/sshrelay"
-	"github.com/whaleshell/whaleshell-gateway/internal/storage/store"
+	"github.com/cauteum/cauteum-gateway/internal/sshrelay"
+	"github.com/cauteum/cauteum-gateway/internal/storage/store"
 )
 
 func TestEdgeServiceName(t *testing.T) {
@@ -20,7 +20,7 @@ func TestEdgeServiceName(t *testing.T) {
 	if !ok || name != "web" {
 		t.Fatalf("got %q %v", name, ok)
 	}
-	name, ok = edgeServiceName("api.whaleshell.localhost")
+	name, ok = edgeServiceName("api.cauteum.localhost")
 	if !ok || name != "api" {
 		t.Fatalf("got %q %v", name, ok)
 	}

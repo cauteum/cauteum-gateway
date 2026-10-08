@@ -8,9 +8,9 @@ import (
 	"strconv"
 	"strings"
 
-	core "github.com/whaleshell/whaleshell-core"
-	"github.com/whaleshell/whaleshell-driver/driver"
-	computev1 "github.com/whaleshell/whaleshell-gateway/internal/upstreamproto/computev1"
+	core "github.com/cauteum/cauteum-core"
+	"github.com/cauteum/cauteum-driver/driver"
+	computev1 "github.com/cauteum/cauteum-gateway/internal/upstreamproto/computev1"
 	"google.golang.org/protobuf/types/known/structpb"
 )
 

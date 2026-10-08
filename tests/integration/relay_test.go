@@ -14,10 +14,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/whaleshell/whaleshell-core/relayproto"
-	"github.com/whaleshell/whaleshell-gateway/internal/httpapi"
-	"github.com/whaleshell/whaleshell-runtime/relayclient"
-	"github.com/whaleshell/whaleshell-runtime/sshserver"
+	"github.com/cauteum/cauteum-core/relayproto"
+	"github.com/cauteum/cauteum-gateway/internal/httpapi"
+	"github.com/cauteum/cauteum-runtime/relayclient"
+	"github.com/cauteum/cauteum-runtime/sshserver"
 	"golang.org/x/crypto/ssh"
 )
 
@@ -25,7 +25,7 @@ import (
 // dialing out to the gateway, like the proxy sidecar does.
 func (g *testGateway) startSupervisor(name, token string) {
 	g.t.Helper()
-	initPath := filepath.Join(g.t.TempDir(), "whaleshell-init")
+	initPath := filepath.Join(g.t.TempDir(), "cauteum-init")
 	if err := os.WriteFile(initPath, []byte("#!/bin/sh\n[ \"$1\" = \"--\" ] || exit 99\nshift\nexec \"$@\"\n"), 0o700); err != nil {
 		g.t.Fatal(err)
 	}

@@ -2,6 +2,7 @@ package httpapi
 
 import (
 	"context"
+	"crypto/tls"
 	"fmt"
 	"io"
 	"net"
@@ -11,8 +12,9 @@ import (
 	"time"
 
 	openshellv1 "github.com/NVIDIA/OpenShell/sdk/go/proto/openshellv1"
-	"github.com/whaleshell/whaleshell-gateway/internal/sshrelay"
-	"github.com/whaleshell/whaleshell-gateway/internal/storage/store"
+	"github.com/cauteum/cauteum-gateway/internal/sshrelay"
+	"github.com/cauteum/cauteum-gateway/internal/storage/store"
+	"golang.org/x/net/http2"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/credentials/insecure"
@@ -43,7 +45,7 @@ func TestHTTPAndGRPCShareCleartextListener(t *testing.T) {
 				close(grpcStarted)
 			},
 		}, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			if r.URL.Path != "/rest-probe" {
+			if r.URL.Path != "/rest-probe" && r.URL.Path != controlAPIPathPrefix+"ConsoleService/GetViewer" {
 				http.NotFound(w, r)
 				return
 			}
@@ -76,6 +78,27 @@ func TestHTTPAndGRPCShareCleartextListener(t *testing.T) {
 	_ = httpResp.Body.Close()
 	if httpResp.StatusCode != http.StatusNoContent {
 		t.Fatalf("REST status = %d, want %d", httpResp.StatusCode, http.StatusNoContent)
+	}
+	// The control service's native gRPC requests must reach its Connect
+	// handler; OpenShell's grpc-go server owns other gRPC paths.
+	h2client := &http.Client{Transport: &http2.Transport{
+		AllowHTTP: true,
+		DialTLSContext: func(ctx context.Context, network, address string, _ *tls.Config) (net.Conn, error) {
+			return (&net.Dialer{}).DialContext(ctx, network, address)
+		},
+	}}
+	controlReq, err := http.NewRequest(http.MethodPost, "http://"+addr+controlAPIPathPrefix+"ConsoleService/GetViewer", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	controlReq.Header.Set("Content-Type", "application/grpc")
+	controlResp, err := h2client.Do(controlReq)
+	if err != nil {
+		t.Fatal(err)
+	}
+	_ = controlResp.Body.Close()
+	if controlResp.StatusCode != http.StatusNoContent {
+		t.Fatalf("control gRPC path status = %d, want 204", controlResp.StatusCode)
 	}
 
 	callCtx, callCancel := context.WithTimeout(context.Background(), 2*time.Second)

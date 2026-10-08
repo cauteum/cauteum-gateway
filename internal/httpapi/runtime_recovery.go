@@ -6,9 +6,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/whaleshell/slogx"
-	"github.com/whaleshell/whaleshell-driver/driver"
-	"github.com/whaleshell/whaleshell-gateway/internal/storage/store"
+	"github.com/cauteum/cauteum-driver/driver"
+	"github.com/cauteum/cauteum-gateway/internal/storage/store"
+	"github.com/cauteum/slogx"
 )
 
 // reconcileRuntimeState repairs the durable gateway view after a gateway or

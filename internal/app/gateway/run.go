@@ -2,10 +2,10 @@
 package gateway
 
 import (
-	"github.com/whaleshell/whaleshell-gateway/internal/httpapi"
+	"github.com/cauteum/cauteum-gateway/internal/httpapi"
 )
 
-// Run is the composition root for whaleshell-gateway.
+// Run is the composition root for cauteum-gateway.
 func Run(args []string) error {
 	return httpapi.Run(args)
 }

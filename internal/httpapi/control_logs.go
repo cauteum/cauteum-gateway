@@ -1,0 +1,217 @@
+package httpapi
+
+import (
+	"context"
+	"errors"
+	"strings"
+	"time"
+
+	"connectrpc.com/connect"
+	controlv1 "github.com/cauteum/cauteum-gateway/api/gen/cauteum/control/v1"
+	"github.com/cauteum/cauteum-gateway/internal/logbuf"
+)
+
+const maxConsoleLogLines = 1000
+
+func (a *controlAPI) logTarget(ctx context.Context, workspace, name string) (string, error) {
+	workspace, err := a.requireWorkspace(ctx, workspace)
+	if err != nil {
+		return "", err
+	}
+	name = strings.TrimSpace(name)
+	if name == "" {
+		return "", connect.NewError(connect.CodeInvalidArgument, errors.New("sandbox name required"))
+	}
+	if _, ok := a.reader.GetWorkspace(workspace, name); !ok {
+		return "", connect.NewError(connect.CodeNotFound, errors.New("sandbox not found"))
+	}
+	return workspace, nil
+}
+
+func consoleLogLimit(requested uint32) int {
+	if requested == 0 {
+		return 200
+	}
+	if requested > maxConsoleLogLines {
+		return maxConsoleLogLines
+	}
+	return int(requested)
+}
+
+func consoleLogLine(line logbuf.Line) *controlv1.SandboxLogLine {
+	return &controlv1.SandboxLogLine{
+		Cursor: line.Sequence, TimestampUnixMs: line.TS.UnixMilli(),
+		Source: boundedLogText(line.Source, 64), Level: boundedLogText(line.Level, 64),
+		Target: boundedLogText(line.Target, 256), Message: boundedLogText(line.Text, 64<<10),
+	}
+}
+
+func boundedLogText(value string, maxBytes int) string {
+	value = strings.ToValidUTF8(value, "�")
+	if len(value) <= maxBytes {
+		return value
+	}
+	cut := 0
+	for index := range value {
+		if index > maxBytes {
+			break
+		}
+		cut = index
+	}
+	return value[:cut]
+}
+
+func (a *controlAPI) GetSandboxLogs(ctx context.Context, req *connect.Request[controlv1.GetSandboxLogsRequest]) (*connect.Response[controlv1.GetSandboxLogsResponse], error) {
+	if _, err := a.logTarget(ctx, req.Msg.GetWorkspace(), req.Msg.GetName()); err != nil {
+		return nil, err
+	}
+	if req.Msg.GetSinceUnixMs() < 0 || len(req.Msg.GetSource()) > 64 || len(req.Msg.GetLevel()) > 64 {
+		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("invalid log filter"))
+	}
+	var since time.Time
+	if req.Msg.GetSinceUnixMs() > 0 {
+		since = time.UnixMilli(req.Msg.GetSinceUnixMs())
+	}
+	name := strings.TrimSpace(req.Msg.GetName())
+	lines := a.logs.Snapshot(name, since, req.Msg.GetSource(), req.Msg.GetLevel(), consoleLogLimit(req.Msg.GetLimit()))
+	_, cursor := a.logs.Tail(name, 0)
+	response := &controlv1.GetSandboxLogsResponse{Lines: make([]*controlv1.SandboxLogLine, 0, len(lines)), Cursor: cursor}
+	for _, line := range lines {
+		response.Lines = append(response.Lines, consoleLogLine(line))
+	}
+	return connect.NewResponse(response), nil
+}
+
+func (a *controlAPI) WatchSandboxLogs(ctx context.Context, req *connect.Request[controlv1.WatchSandboxLogsRequest], stream *connect.ServerStream[controlv1.WatchSandboxLogsResponse]) error {
+	workspace, err := a.logTarget(ctx, req.Msg.GetWorkspace(), req.Msg.GetName())
+	if err != nil {
+		return err
+	}
+	if req.Msg.GetSinceUnixMs() < 0 || len(req.Msg.GetSource()) > 64 || len(req.Msg.GetLevel()) > 64 {
+		return connect.NewError(connect.CodeInvalidArgument, errors.New("invalid log filter"))
+	}
+	select {
+	case a.watchSlots <- struct{}{}:
+		defer func() { <-a.watchSlots }()
+	default:
+		return connect.NewError(connect.CodeResourceExhausted, errors.New("too many watches"))
+	}
+	name := strings.TrimSpace(req.Msg.GetName())
+	var since time.Time
+	if req.Msg.GetSinceUnixMs() > 0 {
+		since = time.UnixMilli(req.Msg.GetSinceUnixMs())
+	}
+	source, level := req.Msg.GetSource(), req.Msg.GetLevel()
+	notified, cancel := a.logs.Watch(name)
+	defer cancel()
+	send := func(kind controlv1.SandboxLogWatchKind, line *controlv1.SandboxLogLine, cursor uint64) error {
+		return stream.Send(&controlv1.WatchSandboxLogsResponse{
+			Kind: kind, Line: line, Cursor: cursor, ObservedAtUnixMs: time.Now().UTC().UnixMilli(),
+		})
+	}
+	cursor := req.Msg.GetAfterCursor()
+	sendTail := func() error {
+		lines, latest := a.logs.TailFiltered(name, consoleLogLimit(req.Msg.GetInitialLimit()), since, source, level)
+		resetCursor := latest
+		if len(lines) > 0 {
+			resetCursor = lines[0].Sequence - 1
+		}
+		if err := send(controlv1.SandboxLogWatchKind_SANDBOX_LOG_WATCH_KIND_RESET, nil, resetCursor); err != nil {
+			return err
+		}
+		cursor = resetCursor
+		for _, line := range lines {
+			if err := send(controlv1.SandboxLogWatchKind_SANDBOX_LOG_WATCH_KIND_LINE, consoleLogLine(line), line.Sequence); err != nil {
+				return err
+			}
+			cursor = line.Sequence
+		}
+		if cursor < latest {
+			if err := send(controlv1.SandboxLogWatchKind_SANDBOX_LOG_WATCH_KIND_HEARTBEAT, nil, latest); err != nil {
+				return err
+			}
+		}
+		cursor = latest
+		return nil
+	}
+	if cursor == 0 {
+		if err := sendTail(); err != nil {
+			return err
+		}
+	} else {
+		fresh, latest, expired := a.logs.ReadAfter(name, cursor)
+		if expired || len(fresh) > maxConsoleLogLines {
+			if err := sendTail(); err != nil {
+				return err
+			}
+		} else {
+			emitted := false
+			for _, line := range fresh {
+				cursor = line.Sequence
+				if !logbuf.Matches(line, since, source, level) {
+					continue
+				}
+				if err := send(controlv1.SandboxLogWatchKind_SANDBOX_LOG_WATCH_KIND_LINE, consoleLogLine(line), line.Sequence); err != nil {
+					return err
+				}
+				emitted = true
+			}
+			if !emitted || cursor < latest {
+				if err := send(controlv1.SandboxLogWatchKind_SANDBOX_LOG_WATCH_KIND_HEARTBEAT, nil, latest); err != nil {
+					return err
+				}
+			}
+			cursor = latest
+		}
+	}
+	heartbeat := time.NewTicker(15 * time.Second)
+	defer heartbeat.Stop()
+	poll := time.NewTicker(2 * time.Second)
+	defer poll.Stop()
+	maxAge := time.NewTimer(30 * time.Minute)
+	defer maxAge.Stop()
+	for {
+		select {
+		case <-ctx.Done():
+			return ctx.Err()
+		case <-maxAge.C:
+			return nil
+		case <-notified:
+		case <-poll.C:
+		case <-heartbeat.C:
+			if _, err := a.logTarget(ctx, workspace, name); err != nil {
+				return err
+			}
+			if err := send(controlv1.SandboxLogWatchKind_SANDBOX_LOG_WATCH_KIND_HEARTBEAT, nil, cursor); err != nil {
+				return err
+			}
+			continue
+		}
+		if _, err := a.logTarget(ctx, workspace, name); err != nil {
+			return err
+		}
+		fresh, latest, expired := a.logs.ReadAfter(name, cursor)
+		if expired || len(fresh) > maxConsoleLogLines {
+			if err := sendTail(); err != nil {
+				return err
+			}
+			continue
+		}
+		emitted := false
+		for _, line := range fresh {
+			cursor = line.Sequence
+			if logbuf.Matches(line, since, source, level) {
+				if err := send(controlv1.SandboxLogWatchKind_SANDBOX_LOG_WATCH_KIND_LINE, consoleLogLine(line), line.Sequence); err != nil {
+					return err
+				}
+				emitted = true
+			}
+		}
+		if len(fresh) > 0 && (!emitted || cursor < latest) {
+			if err := send(controlv1.SandboxLogWatchKind_SANDBOX_LOG_WATCH_KIND_HEARTBEAT, nil, latest); err != nil {
+				return err
+			}
+		}
+		cursor = latest
+	}
+}

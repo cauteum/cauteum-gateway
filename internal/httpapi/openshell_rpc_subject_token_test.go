@@ -18,14 +18,14 @@ import (
 	"time"
 
 	openshellv1 "github.com/NVIDIA/OpenShell/sdk/go/proto/openshellv1"
+	"github.com/cauteum/cauteum-gateway/internal/storage/store"
+	"github.com/cauteum/cauteum-runtime/secrets"
 	"github.com/go-jose/go-jose/v4"
 	"github.com/spiffe/go-spiffe/v2/bundle/jwtbundle"
 	"github.com/spiffe/go-spiffe/v2/proto/spiffe/workload"
 	"github.com/spiffe/go-spiffe/v2/spiffeid"
 	"github.com/spiffe/go-spiffe/v2/svid/jwtsvid"
 	"github.com/spiffe/go-spiffe/v2/workloadapi"
-	"github.com/whaleshell/whaleshell-gateway/internal/storage/store"
-	"github.com/whaleshell/whaleshell-runtime/secrets"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -173,7 +173,7 @@ credentials:
 		t.Fatal(err)
 	}
 	t.Setenv("OPENSHELL_GATEWAY_SPIFFE_WORKLOAD_API_SOCKET", "")
-	t.Setenv("WHALESHELL_GATEWAY_SPIFFE_WORKLOAD_API_SOCKET", socket)
+	t.Setenv("CAUTEUM_GATEWAY_SPIFFE_WORKLOAD_API_SOCKET", socket)
 	rpc := &openShellRPC{runtime: &grpcRuntime{st: st, sec: sec, opt: Options{ProviderProfileSources: []string{"user"}}}}
 	ctx := withPrincipal(context.Background(), Principal{Kind: PrincipalSandbox, Sandbox: "sandbox-id"})
 	response, err := rpc.ExchangeProviderSubjectToken(ctx, &openshellv1.ExchangeProviderSubjectTokenRequest{SandboxId: "sandbox-id", Provider: "provider", CredentialKey: "access", SupervisorJwtSvid: supervisorSVID})

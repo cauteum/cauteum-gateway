@@ -14,8 +14,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/whaleshell/whaleshell-gateway/internal/storage/store"
-	"github.com/whaleshell/whaleshell-runtime/secrets"
+	"github.com/cauteum/cauteum-gateway/internal/storage/store"
+	"github.com/cauteum/cauteum-runtime/secrets"
 )
 
 var providerCredentialRefreshMu sync.Mutex

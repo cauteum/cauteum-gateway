@@ -9,8 +9,8 @@ import (
 	"strings"
 
 	openshellv1 "github.com/NVIDIA/OpenShell/sdk/go/proto/openshellv1"
-	corepolicy "github.com/whaleshell/whaleshell-core/policy"
-	"github.com/whaleshell/whaleshell-gateway/internal/storage/store"
+	corepolicy "github.com/cauteum/cauteum-core/policy"
+	"github.com/cauteum/cauteum-gateway/internal/storage/store"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/proto"

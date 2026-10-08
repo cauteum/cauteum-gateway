@@ -3,7 +3,7 @@ package store_test
 import (
 	"testing"
 
-	"github.com/whaleshell/whaleshell-gateway/internal/storage/store"
+	"github.com/cauteum/cauteum-gateway/internal/storage/store"
 )
 
 func TestStoreOwnsMutableRecords(t *testing.T) {

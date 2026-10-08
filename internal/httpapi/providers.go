@@ -10,15 +10,14 @@ import (
 	"os"
 	"path/filepath"
 	"sort"
-	"strconv"
 	"strings"
 	"time"
 
-	"github.com/whaleshell/whaleshell-core/policy"
-	"github.com/whaleshell/whaleshell-gateway/internal/logbuf"
-	"github.com/whaleshell/whaleshell-gateway/internal/storage/store"
-	"github.com/whaleshell/whaleshell-providers/provider"
-	"github.com/whaleshell/whaleshell-runtime/secrets"
+	"github.com/cauteum/cauteum-core/policy"
+	"github.com/cauteum/cauteum-gateway/internal/logbuf"
+	"github.com/cauteum/cauteum-gateway/internal/storage/store"
+	"github.com/cauteum/cauteum-providers/provider"
+	"github.com/cauteum/cauteum-runtime/secrets"
 	"gopkg.in/yaml.v3"
 )
 
@@ -41,123 +40,6 @@ func mountProviderAPI(mux *http.ServeMux, st *store.Store, sec *secrets.LocalEnc
 
 func mountProviderAPIWithSources(mux *http.ServeMux, st *store.Store, sec *secrets.LocalEncrypted, builtinDir string, profileSources []string) {
 	profileSources = effectiveProviderProfileSources(profileSources)
-	mux.HandleFunc("/v1/profiles", func(w http.ResponseWriter, r *http.Request) {
-		if r.Method != http.MethodGet {
-			http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
-			return
-		}
-		scope, workspace, err := profileRequestScope(r)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusBadRequest)
-			return
-		}
-		if !authorizeProfileScope(w, r, st, scope, workspace, false) {
-			return
-		}
-		list := listProfilesWithSources(st, builtinDir, workspace, profileSources)
-		w.Header().Set("Content-Type", "application/json")
-		_ = json.NewEncoder(w).Encode(map[string]any{"profiles": list})
-	})
-	mux.HandleFunc("/v1/profiles/", func(w http.ResponseWriter, r *http.Request) {
-		id := strings.Trim(strings.TrimPrefix(r.URL.Path, "/v1/profiles/"), "/")
-		if id == "" || strings.Contains(id, "/") {
-			http.Error(w, "bad id", http.StatusBadRequest)
-			return
-		}
-		scope, workspace, err := profileRequestScope(r)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusBadRequest)
-			return
-		}
-		if !authorizeProfileScope(w, r, st, scope, workspace, r.Method != http.MethodGet) {
-			return
-		}
-		switch r.Method {
-		case http.MethodGet:
-			p, src, err := resolveProfileForWorkspaceWithSources(st, builtinDir, id, workspace, profileSources)
-			if err != nil {
-				http.Error(w, err.Error(), http.StatusNotFound)
-				return
-			}
-			if src == "custom" {
-				rec, ok := st.GetProfileInScope(scope, workspace, id)
-				if !ok && workspace != "" {
-					rec, ok = st.GetProfileInScope("global", "", id)
-				}
-				if ok {
-					p.ResourceVersion = rec.Version
-					w.Header().Set("ETag", `"`+rec.ResourceVersion+`"`)
-				}
-			}
-			w.Header().Set("Content-Type", "application/json")
-			_ = json.NewEncoder(w).Encode(map[string]any{"profile": p, "source": src})
-		case http.MethodPut:
-			expected := strings.Trim(r.Header.Get("If-Match"), `"`)
-			if expected == "" {
-				http.Error(w, "If-Match resource version required", http.StatusPreconditionRequired)
-				return
-			}
-			body, err := io.ReadAll(io.LimitReader(r.Body, 1<<20))
-			if err != nil {
-				http.Error(w, err.Error(), http.StatusBadRequest)
-				return
-			}
-			p, err := provider.ParseYAML(body)
-			if err != nil {
-				http.Error(w, err.Error(), http.StatusBadRequest)
-				return
-			}
-			if p.ID != id {
-				http.Error(w, "id mismatch", http.StatusBadRequest)
-				return
-			}
-			if p.ResourceVersion == 0 {
-				http.Error(w, "resource_version required; export the current profile before updating", http.StatusPreconditionRequired)
-				return
-			}
-			if strconv.FormatUint(p.ResourceVersion, 10) != expected {
-				http.Error(w, "resource_version does not match If-Match", http.StatusConflict)
-				return
-			}
-			if err := st.ReplaceProfileIfVersionScoped(scope, workspace, id, string(body), expected); err != nil {
-				status := http.StatusConflict
-				if strings.Contains(err.Error(), "not found") {
-					status = http.StatusNotFound
-				}
-				http.Error(w, err.Error(), status)
-				return
-			}
-			w.WriteHeader(http.StatusNoContent)
-		case http.MethodPost:
-			body, err := io.ReadAll(io.LimitReader(r.Body, 1<<20))
-			if err != nil {
-				http.Error(w, err.Error(), http.StatusBadRequest)
-				return
-			}
-			p, err := provider.ParseYAML(body)
-			if err != nil {
-				http.Error(w, err.Error(), http.StatusBadRequest)
-				return
-			}
-			if p.ID != id {
-				http.Error(w, "id mismatch", http.StatusBadRequest)
-				return
-			}
-			if err := st.CreateProfileScoped(scope, workspace, id, string(body)); err != nil {
-				http.Error(w, err.Error(), http.StatusConflict)
-				return
-			}
-			w.WriteHeader(http.StatusCreated)
-		case http.MethodDelete:
-			if err := st.DeleteProfileScoped(scope, workspace, id); err != nil {
-				http.Error(w, err.Error(), http.StatusInternalServerError)
-				return
-			}
-			w.WriteHeader(http.StatusNoContent)
-		default:
-			http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
-		}
-	})
 
 	mux.HandleFunc("/v1/providers", func(w http.ResponseWriter, r *http.Request) {
 		switch r.Method {
@@ -279,54 +161,6 @@ func mountProviderAPIWithSources(mux *http.ServeMux, st *store.Store, sec *secre
 func handleSandboxSubpath(w http.ResponseWriter, r *http.Request, st *store.Store, sec *secrets.LocalEncrypted, logs *logbuf.Hub, builtinDir string, profileSources []string, name, rest string) {
 	parts := strings.Split(strings.Trim(rest, "/"), "/")
 	switch {
-	case len(parts) == 1 && parts[0] == "effective-policy" && r.Method == http.MethodGet:
-		doc, err := effectivePolicyWithSources(st, builtinDir, name, profileSources)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusBadRequest)
-			return
-		}
-		b, err := yaml.Marshal(doc)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-		w.Header().Set("Content-Type", "application/yaml")
-		_, _ = w.Write(b)
-	case len(parts) == 1 && parts[0] == "policy":
-		handleSandboxPolicy(w, r, st, builtinDir, profileSources, name)
-	case len(parts) == 1 && parts[0] == "policy-revisions" && r.Method == http.MethodGet:
-		if revStr := strings.TrimSpace(r.URL.Query().Get("rev")); revStr != "" {
-			var rev int
-			if _, err := fmt.Sscanf(revStr, "%d", &rev); err != nil || rev <= 0 {
-				http.Error(w, "invalid rev", http.StatusBadRequest)
-				return
-			}
-			rec, err := st.GetPolicyRevision(name, rev)
-			if err != nil {
-				http.Error(w, err.Error(), http.StatusNotFound)
-				return
-			}
-			w.Header().Set("Content-Type", "application/yaml")
-			_, _ = w.Write([]byte(rec.YAML))
-			return
-		}
-		revs, err := st.ListPolicyRevisions(name)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusNotFound)
-			return
-		}
-		type row struct {
-			Rev       int       `json:"rev"`
-			UpdatedAt time.Time `json:"updated_at"`
-			Bytes     int       `json:"bytes"`
-			Status    string    `json:"status"`
-		}
-		out := make([]row, 0, len(revs))
-		for _, r := range revs {
-			out = append(out, row{Rev: r.Rev, UpdatedAt: r.UpdatedAt, Bytes: r.Bytes, Status: r.Status})
-		}
-		w.Header().Set("Content-Type", "application/json")
-		_ = json.NewEncoder(w).Encode(map[string]any{"revisions": out})
 	case len(parts) == 1 && parts[0] == "providers" && r.Method == http.MethodGet:
 		sb, ok := st.GetSandbox(name)
 		if !ok {
@@ -349,9 +183,6 @@ func handleSandboxSubpath(w http.ResponseWriter, r *http.Request, st *store.Stor
 		}
 		w.Header().Set("Content-Type", "application/json")
 		_ = json.NewEncoder(w).Encode(map[string]any{"providers": list})
-	case len(parts) == 1 && parts[0] == "base-policy" && r.Method == http.MethodGet:
-		// Alias for OpenShell-style policy get --base.
-		handleSandboxPolicy(w, r, st, builtinDir, profileSources, name)
 	case len(parts) == 1 && parts[0] == "secrets" && r.Method == http.MethodGet:
 		// Sidecar resolve: return KEY=VAL map for all attached providers (never logged).
 		out, err := resolveSandboxSecretsWithSources(r.Context(), st, sec, builtinDir, name, profileSources)
@@ -406,71 +237,6 @@ func handleSandboxSubpath(w http.ResponseWriter, r *http.Request, st *store.Stor
 	}
 }
 
-// handleSandboxPolicy implements OpenShell-style base/full policy get and set.
-//
-//	GET  /v1/sandboxes/{name}/policy?view=base|full   (default full)
-//	PUT  /v1/sandboxes/{name}/policy                  body = base YAML
-//
-// PUT stores the editable base layer, then validates EffectivePolicy(base, providers, global).
-// On compose/validate failure the previous base is kept (fail-closed). Response body
-// is the effective YAML so clients can write it to the sandbox policy bind.
-func handleSandboxPolicy(w http.ResponseWriter, r *http.Request, st *store.Store, builtinDir string, profileSources []string, name string) {
-	switch r.Method {
-	case http.MethodGet:
-		view := strings.ToLower(strings.TrimSpace(r.URL.Query().Get("view")))
-		if view == "" {
-			// /base-policy path → base; /policy default → full
-			if strings.HasSuffix(r.URL.Path, "/base-policy") {
-				view = "base"
-			} else {
-				view = "full"
-			}
-		}
-		sb, ok := st.GetSandbox(name)
-		if !ok {
-			http.Error(w, "sandbox not found", http.StatusNotFound)
-			return
-		}
-		w.Header().Set("Content-Type", "application/yaml")
-		switch view {
-		case "base":
-			_, _ = w.Write([]byte(sb.BasePolicyYAML))
-		case "full", "effective":
-			doc, err := effectivePolicyWithSources(st, builtinDir, name, profileSources)
-			if err != nil {
-				http.Error(w, err.Error(), http.StatusBadRequest)
-				return
-			}
-			b, err := yaml.Marshal(doc)
-			if err != nil {
-				http.Error(w, err.Error(), http.StatusInternalServerError)
-				return
-			}
-			_, _ = w.Write(b)
-		default:
-			http.Error(w, `view must be "base" or "full"`, http.StatusBadRequest)
-		}
-	case http.MethodPut, http.MethodPost:
-		body, err := io.ReadAll(io.LimitReader(r.Body, 4<<20))
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusBadRequest)
-			return
-		}
-		eff, stripped, err := setSandboxBasePolicyWithSources(st, builtinDir, name, body, profileSources)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusBadRequest)
-			return
-		}
-		w.Header().Set("Content-Type", "application/yaml")
-		if stripped > 0 {
-			w.Header().Set("X-Whaleshell-Stripped-Provider-Rules", fmt.Sprintf("%d", stripped))
-		}
-		_, _ = w.Write(eff)
-	default:
-		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
-	}
-}
-
 // setSandboxBasePolicy validates and stores base YAML, then returns effective YAML.
 func setSandboxBasePolicy(st *store.Store, builtinDir, name string, body []byte) (effective []byte, stripped int, err error) {
 	return setSandboxBasePolicyWithSources(st, builtinDir, name, body, nil)
@@ -511,6 +277,46 @@ func setSandboxBasePolicyWithSources(st *store.Store, builtinDir, name string, b
 		return nil, 0, err
 	}
 	return b, stripped, nil
+}
+
+func setSandboxBasePolicyWithSourcesExpected(st *store.Store, builtinDir, name string, body []byte, profileSources []string, expected int) (effective []byte, stripped int, revision int, err error) {
+	if _, ok := st.GetSandbox(name); !ok {
+		return nil, 0, 0, fmt.Errorf("sandbox %q not found", name)
+	}
+	doc, err := policy.Parse(body)
+	if err != nil {
+		return nil, 0, 0, fmt.Errorf("base policy: %w", err)
+	}
+	doc, stripped = provider.OmitProviderComposed(doc)
+	if err := doc.Validate(); err != nil {
+		return nil, 0, 0, fmt.Errorf("base policy: %w", err)
+	}
+	storeYAML := body
+	if stripped > 0 {
+		storeYAML, err = yaml.Marshal(doc)
+		if err != nil {
+			return nil, 0, 0, err
+		}
+	}
+	previous, _ := st.GetSandbox(name)
+	newRevision, updated, err := st.SetBasePolicyIfRevision(name, string(storeYAML), expected)
+	if err != nil {
+		return nil, 0, 0, err
+	}
+	if !updated {
+		return nil, 0, newRevision, fmt.Errorf("sandbox policy revision changed")
+	}
+	effectiveDoc, err := effectivePolicyWithSources(st, builtinDir, name, profileSources)
+	if err != nil {
+		_ = st.SetBasePolicy(name, previous.BasePolicyYAML)
+		return nil, 0, 0, fmt.Errorf("effective policy: %w", err)
+	}
+	effective, err = yaml.Marshal(effectiveDoc)
+	if err != nil {
+		_ = st.SetBasePolicy(name, previous.BasePolicyYAML)
+		return nil, 0, 0, err
+	}
+	return effective, stripped, newRevision, nil
 }
 
 func resolveSandboxSecrets(ctx context.Context, st *store.Store, sec *secrets.LocalEncrypted, builtinDir, sandbox string) (map[string]string, error) {
@@ -702,31 +508,6 @@ func formatLogLine(ln logbuf.Line) string {
 	return fmt.Sprintf("[%s] %s", src, ln.Text)
 }
 
-func profileRequestScope(r *http.Request) (scope, workspace string, err error) {
-	scope = strings.TrimSpace(r.URL.Query().Get("scope"))
-	workspace = strings.TrimSpace(r.URL.Query().Get("workspace"))
-	if scope == "" {
-		if workspace != "" {
-			scope = "workspace"
-		} else {
-			scope = "global"
-		}
-	}
-	switch scope {
-	case "global":
-		if workspace != "" {
-			return "", "", fmt.Errorf("workspace cannot be set with global scope")
-		}
-	case "workspace":
-		if workspace == "" {
-			return "", "", fmt.Errorf("workspace name required for workspace scope")
-		}
-	default:
-		return "", "", fmt.Errorf("scope must be global or workspace")
-	}
-	return scope, workspace, nil
-}
-
 func authorizeProfileScope(w http.ResponseWriter, r *http.Request, st *store.Store, scope, workspace string, write bool) bool {
 	principal := PrincipalFrom(r.Context())
 	if principal.Kind == PrincipalNone || principal.IDP == "local" || principal.IDP == "local_dev" {
@@ -734,7 +515,7 @@ func authorizeProfileScope(w http.ResponseWriter, r *http.Request, st *store.Sto
 	}
 	if scope == "global" {
 		for _, role := range principal.Roles {
-			if role == "platform-admin" || role == "platform_admin" || role == "whaleshell:platform-admin" {
+			if role == "platform-admin" || role == "platform_admin" || role == "cauteum:platform-admin" {
 				return true
 			}
 		}
@@ -904,7 +685,7 @@ func effectivePolicyWithSources(st *store.Store, builtinDir, sandbox string, pro
 	return provider.EffectivePolicy(base, layers, suppress)
 }
 
-// BuiltinProvidersDir tries to locate whaleshell-cli/providers next to the module.
+// BuiltinProvidersDir tries to locate cauteum-cli/providers next to the module.
 func BuiltinProvidersDir() string {
 	return provider.FindBuiltinDir()
 }

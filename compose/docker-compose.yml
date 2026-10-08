@@ -1,43 +1,43 @@
-# Control plane: whaleshell-gateway (+ optional Dex OIDC via profile).
+# Control plane: cauteum-gateway (+ optional Dex OIDC via profile).
 #
 # Local-dev (default):
-#   docker compose -f whaleshell-gateway/compose/docker-compose.yml up -d --build
-#   whaleshell gateway add http://127.0.0.1:7443 --local --name local
+#   docker compose -f cauteum-gateway/compose/docker-compose.yml up -d --build
+#   cauteum gateway add http://127.0.0.1:7443 --local --name local
 #
 # With OIDC (Dex on :5556):
-#   docker compose -f whaleshell-gateway/compose/docker-compose.yml \
-#     -f whaleshell-gateway/compose/docker-compose.oidc.yml --profile oidc up -d --build
-#   whaleshell gateway add http://127.0.0.1:7443 --local --name local \
+#   docker compose -f cauteum-gateway/compose/docker-compose.yml \
+#     -f cauteum-gateway/compose/docker-compose.oidc.yml --profile oidc up -d --build
+#   cauteum gateway add http://127.0.0.1:7443 --local --name local \
 #     --oidc-issuer http://127.0.0.1:5556/dex \
-#     --oidc-client-id whaleshell-cli \
+#     --oidc-client-id cauteum-cli \
 #     --oidc-allow-insecure-http
-#   whaleshell gateway login   # admin@example.com / password
+#   cauteum gateway login   # admin@example.com / password
 #
 # Local control plane: durable state + optional OIDC gateway login.
 
 services:
-  whaleshell-gateway:
+  cauteum-gateway:
     build:
       context: ../..
-      dockerfile: whaleshell-gateway/Dockerfile
-    image: whaleshell-gateway:local
+      dockerfile: cauteum-gateway/Dockerfile
+    image: cauteum-gateway:local
     ports:
       - "127.0.0.1:7443:7443"
     volumes:
-      - whaleshell-gateway-data:/var/lib/whaleshell-gateway
+      - cauteum-gateway-data:/var/lib/cauteum-gateway
     environment:
-      WHALESHELL_GATEWAY_DATA: /var/lib/whaleshell-gateway
-      WHALESHELL_SECRETS_KEK: ${WHALESHELL_SECRETS_KEK:-}
-      WHALESHELL_OIDC_ISSUER: ${WHALESHELL_OIDC_ISSUER:-}
-      WHALESHELL_OIDC_CLIENT_ID: ${WHALESHELL_OIDC_CLIENT_ID:-}
-      WHALESHELL_OIDC_AUDIENCE: ${WHALESHELL_OIDC_AUDIENCE:-}
-      WHALESHELL_OIDC_ALLOW_INSECURE_HTTP: ${WHALESHELL_OIDC_ALLOW_INSECURE_HTTP:-}
+      CAUTEUM_GATEWAY_DATA: /var/lib/cauteum-gateway
+      CAUTEUM_SECRETS_KEK: ${CAUTEUM_SECRETS_KEK:-}
+      CAUTEUM_OIDC_ISSUER: ${CAUTEUM_OIDC_ISSUER:-}
+      CAUTEUM_OIDC_CLIENT_ID: ${CAUTEUM_OIDC_CLIENT_ID:-}
+      CAUTEUM_OIDC_AUDIENCE: ${CAUTEUM_OIDC_AUDIENCE:-}
+      CAUTEUM_OIDC_ALLOW_INSECURE_HTTP: ${CAUTEUM_OIDC_ALLOW_INSECURE_HTTP:-}
     restart: unless-stopped
     # OpenShell Linux parity: sandbox/sidecar callback via host-gateway aliases.
     extra_hosts:
-      - "host.whaleshell.internal:host-gateway"
+      - "host.cauteum.internal:host-gateway"
       - "host.docker.internal:host-gateway"
-    networks: [whaleshell]
+    networks: [cauteum]
     # HEALTHCHECK is optional; image may not ship wget — CLI uses /healthz via doctor.
   # Optional IdP for local OIDC login (profile: oidc).
   dex:
@@ -48,12 +48,12 @@ services:
       - "127.0.0.1:5556:5556"
     volumes:
       - ./dex/config.yaml:/etc/dex/config.yaml:ro
-    networks: [whaleshell]
+    networks: [cauteum]
     restart: unless-stopped
 
 networks:
-  whaleshell:
+  cauteum:
     driver: bridge
 
 volumes:
-  whaleshell-gateway-data:
+  cauteum-gateway-data:

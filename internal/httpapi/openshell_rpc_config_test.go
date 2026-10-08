@@ -11,9 +11,9 @@ import (
 
 	openshellv1 "github.com/NVIDIA/OpenShell/sdk/go/proto/openshellv1"
 	sandboxv1 "github.com/NVIDIA/OpenShell/sdk/go/proto/sandboxv1"
-	"github.com/whaleshell/whaleshell-gateway/internal/sshrelay"
-	"github.com/whaleshell/whaleshell-gateway/internal/storage/store"
-	"github.com/whaleshell/whaleshell-runtime/secrets"
+	"github.com/cauteum/cauteum-gateway/internal/sshrelay"
+	"github.com/cauteum/cauteum-gateway/internal/storage/store"
+	"github.com/cauteum/cauteum-runtime/secrets"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
@@ -150,7 +150,7 @@ func installConfigTestProfile(t *testing.T, st *store.Store, workspace, id strin
 		t.Fatal("resolve config test source")
 	}
 	root := filepath.Dir(filepath.Dir(filepath.Dir(filepath.Dir(source))))
-	profile, err := os.ReadFile(filepath.Join(root, "whaleshell-cli", "providers", id+".yaml"))
+	profile, err := os.ReadFile(filepath.Join(root, "cauteum-cli", "providers", id+".yaml"))
 	if err != nil {
 		t.Fatal(err)
 	}

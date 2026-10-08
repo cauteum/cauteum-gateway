@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2026 whaleshell
+// SPDX-FileCopyrightText: Copyright (c) 2026 cauteum
 // SPDX-License-Identifier: Apache-2.0
 
 package httpapi
@@ -12,10 +12,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/whaleshell/slogx"
-	"github.com/whaleshell/whaleshell-core/policy"
-	"github.com/whaleshell/whaleshell-gateway/internal/logger"
-	"github.com/whaleshell/whaleshell-gateway/internal/storage/store"
+	"github.com/cauteum/cauteum-core/policy"
+	"github.com/cauteum/cauteum-gateway/internal/logger"
+	"github.com/cauteum/cauteum-gateway/internal/storage/store"
+	"github.com/cauteum/slogx"
 	"gopkg.in/yaml.v3"
 )
 

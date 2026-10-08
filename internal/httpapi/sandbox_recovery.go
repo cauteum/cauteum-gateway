@@ -10,8 +10,8 @@ import (
 	"time"
 
 	openshellv1 "github.com/NVIDIA/OpenShell/sdk/go/proto/openshellv1"
-	"github.com/whaleshell/whaleshell-driver/driver"
-	"github.com/whaleshell/whaleshell-gateway/internal/storage/store"
+	"github.com/cauteum/cauteum-driver/driver"
+	"github.com/cauteum/cauteum-gateway/internal/storage/store"
 	"google.golang.org/protobuf/encoding/protojson"
 )
 
@@ -89,10 +89,10 @@ func (s *openShellRPC) recreateMissingSandboxRuntime(ctx context.Context, rec st
 		return fail(fmt.Errorf("sandbox supervisor token could not be issued"))
 	}
 	driverSpec.ProxyEnv = append(driverSpec.ProxyEnv,
-		"WHALESHELL_GATEWAY_URL="+inputs.gatewayURL,
-		"WHALESHELL_SANDBOX="+rec.Name,
-		"WHALESHELL_SANDBOX_TOKEN="+token,
-		"WHALESHELL_LOG_DIR=/var/log")
+		"CAUTEUM_GATEWAY_URL="+inputs.gatewayURL,
+		"CAUTEUM_SANDBOX="+rec.Name,
+		"CAUTEUM_SANDBOX_TOKEN="+token,
+		"CAUTEUM_LOG_DIR=/var/log")
 	handle, err = engine.Create(ctx, driverSpec)
 	if err != nil {
 		return fail(fmt.Errorf("sandbox create failed: %w", err))

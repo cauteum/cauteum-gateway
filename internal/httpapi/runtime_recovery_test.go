@@ -5,9 +5,9 @@ import (
 	"io"
 	"testing"
 
-	"github.com/whaleshell/whaleshell-core"
-	"github.com/whaleshell/whaleshell-driver/driver"
-	"github.com/whaleshell/whaleshell-gateway/internal/storage/store"
+	"github.com/cauteum/cauteum-core"
+	"github.com/cauteum/cauteum-driver/driver"
+	"github.com/cauteum/cauteum-gateway/internal/storage/store"
 	"log/slog"
 )
 

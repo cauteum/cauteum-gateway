@@ -16,7 +16,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/whaleshell/whaleshell-gateway/internal/storage/store"
+	"github.com/cauteum/cauteum-gateway/internal/storage/store"
 )
 
 func writeTestCertificate(t *testing.T, dir, prefix string, dnsNames []string, isCA bool) (string, string, *x509.Certificate) {

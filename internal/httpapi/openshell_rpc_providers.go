@@ -3,12 +3,13 @@ package httpapi
 import (
 	"context"
 	"sort"
+	"strconv"
 	"strings"
 
 	datamodelv1 "github.com/NVIDIA/OpenShell/sdk/go/proto/datamodelv1"
 	openshellv1 "github.com/NVIDIA/OpenShell/sdk/go/proto/openshellv1"
-	"github.com/whaleshell/whaleshell-gateway/internal/storage/store"
-	"github.com/whaleshell/whaleshell-runtime/secrets"
+	"github.com/cauteum/cauteum-gateway/internal/storage/store"
+	"github.com/cauteum/cauteum-runtime/secrets"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -183,6 +184,16 @@ func (s *openShellRPC) persistProvider(ctx context.Context, name, workspace stri
 		expires = cloneInt64Map(old.CredentialExpiresAtMS)
 	}
 	record := store.ProviderRecord{Name: name, Type: p.GetType(), Workspace: workspace, EnvVars: envVars, CredentialExpiresAtMS: expires, Config: cloneStringMap(p.GetConfig())}
+	if hasOld {
+		record.RuntimeCredentials = old.RuntimeCredentials
+	}
+	if raw := p.GetMetadata().GetAnnotations()["cauteum.io/runtime-credentials"]; raw != "" {
+		value, err := strconv.ParseBool(raw)
+		if err != nil {
+			return status.Error(codes.InvalidArgument, "runtime credential annotation must be boolean")
+		}
+		record.RuntimeCredentials = value
+	}
 	if credentials == nil && hasOld {
 		record.CredentialDriver = old.CredentialDriver
 		record.CredentialHandles = cloneCredentialHandles(old.CredentialHandles)

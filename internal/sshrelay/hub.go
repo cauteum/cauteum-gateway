@@ -17,8 +17,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/whaleshell/slogx"
-	"github.com/whaleshell/whaleshell-core/relayproto"
+	"github.com/cauteum/cauteum-core/relayproto"
+	"github.com/cauteum/slogx"
 )
 
 // ErrNotConnected means the sandbox supervisor has no live control stream.

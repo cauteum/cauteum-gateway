@@ -5,7 +5,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/whaleshell/whaleshell-gateway/internal/httpapi"
+	"github.com/cauteum/cauteum-gateway/internal/httpapi"
 )
 
 func TestAuthRequiredOnAPI(t *testing.T) {
@@ -53,7 +53,6 @@ func TestSandboxPrincipalScope(t *testing.T) {
 		{http.MethodGet, "/v1/ssh-sessions"},
 		{http.MethodGet, "/v1/info"},
 		{http.MethodGet, "/v1/supervisor/connect?sandbox=other"},
-		{http.MethodPut, "/v1/policy/global"},
 	}
 	for _, c := range denied {
 		if code, _ := g.do(c.method, c.path, token, nil); code != http.StatusForbidden {

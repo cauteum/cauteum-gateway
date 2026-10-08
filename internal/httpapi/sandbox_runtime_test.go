@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	sandboxv1 "github.com/NVIDIA/OpenShell/sdk/go/proto/sandboxv1"
-	"github.com/whaleshell/whaleshell-core/policy"
+	"github.com/cauteum/cauteum-core/policy"
 	"google.golang.org/protobuf/types/known/structpb"
 )
 
@@ -90,7 +90,7 @@ func TestEnrichProxyBaselineFilesystemUsesOnlyExistingPaths(t *testing.T) {
 		t.Fatal(err)
 	}
 	fs := doc.FilesystemPolicy
-	if len(fs.ReadOnly) != 1 || fs.ReadOnly[0] != "/usr" || len(fs.ReadWrite) != 2 || !containsString(fs.ReadWrite, "/tmp") || !containsString(fs.ReadWrite, "/whaleshell/data") || !fs.IncludeWorkdirEnabled() {
+	if len(fs.ReadOnly) != 1 || fs.ReadOnly[0] != "/usr" || len(fs.ReadWrite) != 2 || !containsString(fs.ReadWrite, "/tmp") || !containsString(fs.ReadWrite, "/cauteum/data") || !fs.IncludeWorkdirEnabled() {
 		t.Fatalf("unexpected baseline: %+v", fs)
 	}
 }

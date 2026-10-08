@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2026 whaleshell
+// SPDX-FileCopyrightText: Copyright (c) 2026 cauteum
 // SPDX-License-Identifier: Apache-2.0
 
 package httpapi
@@ -11,7 +11,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/whaleshell/whaleshell-gateway/internal/storage/store"
+	"github.com/cauteum/cauteum-gateway/internal/storage/store"
 )
 
 func TestProposalRiskFlagCannotBeClearedBySubmitter(t *testing.T) {

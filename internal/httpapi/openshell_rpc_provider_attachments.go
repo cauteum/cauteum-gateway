@@ -3,11 +3,12 @@ package httpapi
 import (
 	"context"
 	"errors"
+	"strconv"
 	"strings"
 
 	datamodelv1 "github.com/NVIDIA/OpenShell/sdk/go/proto/datamodelv1"
 	openshellv1 "github.com/NVIDIA/OpenShell/sdk/go/proto/openshellv1"
-	"github.com/whaleshell/whaleshell-gateway/internal/storage/store"
+	"github.com/cauteum/cauteum-gateway/internal/storage/store"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -133,8 +134,11 @@ func providerAttachmentToProto(record store.ProviderRecord) *datamodelv1.Provide
 		expires[key] = value
 	}
 	return &datamodelv1.Provider{
-		Metadata: &datamodelv1.ObjectMeta{Id: record.Name, Name: record.Name, Workspace: record.Workspace},
-		Type:     record.Type, Credentials: credentials, Config: cloneStringMap(record.Config),
+		Metadata: &datamodelv1.ObjectMeta{
+			Id: record.Name, Name: record.Name, Workspace: record.Workspace,
+			Annotations: map[string]string{"cauteum.io/runtime-credentials": strconv.FormatBool(record.RuntimeCredentials)},
+		},
+		Type: record.Type, Credentials: credentials, Config: cloneStringMap(record.Config),
 		CredentialExpiresAtMs: expires, ProfileWorkspace: record.Workspace,
 	}
 }

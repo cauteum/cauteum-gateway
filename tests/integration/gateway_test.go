@@ -12,8 +12,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/whaleshell/whaleshell-gateway/internal/httpapi"
-	"github.com/whaleshell/whaleshell-gateway/internal/storage/store"
+	"github.com/cauteum/cauteum-gateway/internal/httpapi"
+	"github.com/cauteum/cauteum-gateway/internal/storage/store"
 )
 
 type testGateway struct {

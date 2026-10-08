@@ -1,0 +1,6 @@
+extends:
+  - recommended
+rules:
+  # /healthz currently returns its JSON liveness payload for every method and
+  # does not produce a 4xx response.
+  operation-4xx-response: off

@@ -3,6 +3,7 @@ package httpapi
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -17,17 +18,17 @@ import (
 	datamodelv1 "github.com/NVIDIA/OpenShell/sdk/go/proto/datamodelv1"
 	openshellv1 "github.com/NVIDIA/OpenShell/sdk/go/proto/openshellv1"
 	sandboxv1 "github.com/NVIDIA/OpenShell/sdk/go/proto/sandboxv1"
+	"github.com/cauteum/cauteum-core"
+	"github.com/cauteum/cauteum-driver/driver"
+	_ "github.com/cauteum/cauteum-driver/driver/all"
+	"github.com/cauteum/cauteum-gateway/internal/logbuf"
+	"github.com/cauteum/cauteum-gateway/internal/sshrelay"
+	"github.com/cauteum/cauteum-gateway/internal/storage/store"
+	"github.com/cauteum/cauteum-providers/provider"
+	"github.com/cauteum/cauteum-runtime/idp"
+	"github.com/cauteum/cauteum-runtime/secrets"
 	"github.com/spiffe/go-spiffe/v2/svid/jwtsvid"
 	"github.com/spiffe/go-spiffe/v2/workloadapi"
-	"github.com/whaleshell/whaleshell-core"
-	"github.com/whaleshell/whaleshell-driver/driver"
-	_ "github.com/whaleshell/whaleshell-driver/driver/all"
-	"github.com/whaleshell/whaleshell-gateway/internal/logbuf"
-	"github.com/whaleshell/whaleshell-gateway/internal/sshrelay"
-	"github.com/whaleshell/whaleshell-gateway/internal/storage/store"
-	"github.com/whaleshell/whaleshell-providers/provider"
-	"github.com/whaleshell/whaleshell-runtime/idp"
-	"github.com/whaleshell/whaleshell-runtime/secrets"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -132,7 +133,7 @@ func (r *computeRegistry) isRemote(name string) bool {
 }
 
 func (s *openShellRPC) Health(context.Context, *openshellv1.HealthRequest) (*openshellv1.HealthResponse, error) {
-	return &openshellv1.HealthResponse{Status: openshellv1.ServiceStatus_SERVICE_STATUS_HEALTHY, Version: "whaleshell-alpha"}, nil
+	return &openshellv1.HealthResponse{Status: openshellv1.ServiceStatus_SERVICE_STATUS_HEALTHY, Version: "cauteum-alpha"}, nil
 }
 
 // ConnectSupervisor accepts the pinned OpenShell supervisor control protocol.
@@ -358,6 +359,11 @@ func (s *openShellRPC) RelayStream(stream grpc.BidiStreamingServer[openshellv1.R
 // CreateSandbox provisions a named workspace-backed sandbox through the selected
 // gateway compute engine and records the resulting runtime identity.
 func (s *openShellRPC) CreateSandbox(ctx context.Context, req *openshellv1.CreateSandboxRequest) (*openshellv1.SandboxResponse, error) {
+	return (&sandboxLifecycle{rpc: s}).Create(ctx, req)
+}
+
+func (l *sandboxLifecycle) Create(ctx context.Context, req *openshellv1.CreateSandboxRequest) (*openshellv1.SandboxResponse, error) {
+	s := l.rpc
 	if s.runtime == nil || s.runtime.st == nil || s.runtime.compute == nil {
 		return nil, status.Error(codes.Unavailable, "compute runtime is not initialized")
 	}
@@ -572,7 +578,7 @@ func (s *openShellRPC) CreateSandbox(ctx context.Context, req *openshellv1.Creat
 		_ = os.RemoveAll(filepath.Join(s.runtime.opt.DataDir, "sandboxes", name))
 		return nil, status.Error(codes.Internal, "sandbox lifecycle transition failed")
 	}
-	driverSpec.ProxyEnv = append(driverSpec.ProxyEnv, "WHALESHELL_GATEWAY_URL="+runtimeInputs.gatewayURL, "WHALESHELL_SANDBOX="+name, "WHALESHELL_SANDBOX_TOKEN="+token, "WHALESHELL_LOG_DIR=/var/log")
+	driverSpec.ProxyEnv = append(driverSpec.ProxyEnv, "CAUTEUM_GATEWAY_URL="+runtimeInputs.gatewayURL, "CAUTEUM_SANDBOX="+name, "CAUTEUM_SANDBOX_TOKEN="+token, "CAUTEUM_LOG_DIR=/var/log")
 	h, err := engine.Create(ctx, driverSpec)
 	if err != nil {
 		_ = s.runtime.st.DeleteSandbox(name)
@@ -667,7 +673,7 @@ func awaitProxySidecar(ctx context.Context, engine driver.Engine, sandbox string
 	ticker := time.NewTicker(100 * time.Millisecond)
 	defer ticker.Stop()
 	for {
-		info, err := engine.Inspect(ctx, "whaleshell-proxy-"+sandbox)
+		info, err := engine.Inspect(ctx, "cauteum-proxy-"+sandbox)
 		if err == nil {
 			state := strings.ToLower(strings.TrimSpace(info.Status))
 			if strings.Contains(state, "running") || strings.HasPrefix(state, "up ") {
@@ -765,7 +771,17 @@ func sandboxLifecycleResponse(rec store.Sandbox, phase openshellv1.SandboxPhase)
 	return &openshellv1.SandboxResponse{Sandbox: &openshellv1.Sandbox{Metadata: &datamodelv1.ObjectMeta{Id: rec.ID, Name: rec.Name, Labels: rec.Labels, Annotations: rec.Annotations, Workspace: rec.Workspace, ResourceVersion: rec.ResourceVersion}, Status: status}}
 }
 
+// sandboxLifecycle owns the runtime transitions shared by the OpenShell and
+// user-facing control transports. expectedVersion is zero only for legacy
+// OpenShell callers, whose pinned request schema has no version field.
+type sandboxLifecycle struct{ rpc *openShellRPC }
+
 func (s *openShellRPC) StartSandbox(ctx context.Context, req *openshellv1.StartSandboxRequest) (*openshellv1.SandboxResponse, error) {
+	return (&sandboxLifecycle{rpc: s}).Start(ctx, req, 0)
+}
+
+func (l *sandboxLifecycle) Start(ctx context.Context, req *openshellv1.StartSandboxRequest, expectedVersion uint64) (*openshellv1.SandboxResponse, error) {
+	s := l.rpc
 	if s.runtime == nil {
 		return nil, status.Error(codes.Unavailable, "compute runtime is not initialized")
 	}
@@ -774,6 +790,9 @@ func (s *openShellRPC) StartSandbox(ctx context.Context, req *openshellv1.StartS
 	rec, engine, err := s.loadSandboxForMutation(ctx, req.GetName(), req.GetWorkspace())
 	if err != nil {
 		return nil, err
+	}
+	if expectedVersion != 0 && rec.ResourceVersion != expectedVersion {
+		return nil, status.Error(codes.Aborted, "sandbox resource version changed")
 	}
 	if err := s.requireWorkspaceActive(rec.Workspace); err != nil {
 		return nil, err
@@ -785,8 +804,11 @@ func (s *openShellRPC) StartSandbox(ctx context.Context, req *openshellv1.StartS
 		}
 		return sandboxLifecycleResponse(rec, openshellv1.SandboxPhase_SANDBOX_PHASE_READY), nil
 	}
-	rec, err = s.runtime.st.BeginSandboxStart(rec.Name)
+	rec, err = s.runtime.st.BeginSandboxStartCAS(rec.Name, expectedVersion)
 	if err != nil {
+		if errors.Is(err, store.ErrResourceVersionConflict) {
+			return nil, status.Error(codes.Aborted, "sandbox resource version changed")
+		}
 		return nil, status.Error(codes.Internal, "sandbox registry update failed")
 	}
 	if err = engine.Start(ctx, core.ID(rec.RuntimeID)); err != nil {
@@ -817,6 +839,11 @@ func (s *openShellRPC) StartSandbox(ctx context.Context, req *openshellv1.StartS
 }
 
 func (s *openShellRPC) StopSandbox(ctx context.Context, req *openshellv1.StopSandboxRequest) (*openshellv1.SandboxResponse, error) {
+	return (&sandboxLifecycle{rpc: s}).Stop(ctx, req, 0)
+}
+
+func (l *sandboxLifecycle) Stop(ctx context.Context, req *openshellv1.StopSandboxRequest, expectedVersion uint64) (*openshellv1.SandboxResponse, error) {
+	s := l.rpc
 	if s.runtime == nil {
 		return nil, status.Error(codes.Unavailable, "compute runtime is not initialized")
 	}
@@ -826,10 +853,16 @@ func (s *openShellRPC) StopSandbox(ctx context.Context, req *openshellv1.StopSan
 	if err != nil {
 		return nil, err
 	}
+	if expectedVersion != 0 && rec.ResourceVersion != expectedVersion {
+		return nil, status.Error(codes.Aborted, "sandbox resource version changed")
+	}
 	if rec.RuntimeID == "" {
 		return nil, status.Error(codes.FailedPrecondition, "sandbox has no runtime identity")
 	}
-	if rec, err = s.runtime.st.BeginSandboxStop(rec.Name); err != nil {
+	if rec, err = s.runtime.st.BeginSandboxStopCAS(rec.Name, expectedVersion); err != nil {
+		if errors.Is(err, store.ErrResourceVersionConflict) {
+			return nil, status.Error(codes.Aborted, "sandbox resource version changed")
+		}
 		return nil, status.Error(codes.Internal, "sandbox registry update failed")
 	}
 	if err = engine.Stop(ctx, core.ID(rec.RuntimeID)); err != nil {
@@ -846,9 +879,19 @@ func (s *openShellRPC) StopSandbox(ctx context.Context, req *openshellv1.StopSan
 }
 
 func (s *openShellRPC) DeleteSandbox(ctx context.Context, req *openshellv1.DeleteSandboxRequest) (*openshellv1.DeleteSandboxResponse, error) {
+	return (&sandboxLifecycle{rpc: s}).Delete(ctx, req, 0)
+}
+
+func (l *sandboxLifecycle) Delete(ctx context.Context, req *openshellv1.DeleteSandboxRequest, expectedVersion uint64) (*openshellv1.DeleteSandboxResponse, error) {
+	s := l.rpc
 	if req == nil || strings.TrimSpace(req.GetName()) == "" {
 		return nil, status.Error(codes.InvalidArgument, "name is required")
 	}
+	if s.runtime == nil {
+		return nil, status.Error(codes.Unavailable, "compute runtime is not initialized")
+	}
+	s.runtime.sandboxMu.Lock()
+	defer s.runtime.sandboxMu.Unlock()
 	// Reconciliation may have marked a durable record as runtime-missing. It
 	// is already orphan-free, so allow an authorized operator to remove the
 	// record without trying to call a backend that no longer owns it.
@@ -858,6 +901,15 @@ func (s *openShellRPC) DeleteSandbox(ctx context.Context, req *openshellv1.Delet
 			if defaultWorkspace(orphan.Workspace) == workspace {
 				if err := s.requireSandboxWrite(ctx, workspace); err != nil {
 					return nil, err
+				}
+				if expectedVersion != 0 && orphan.ResourceVersion != expectedVersion {
+					return nil, status.Error(codes.Aborted, "sandbox resource version changed")
+				}
+				if _, err := s.runtime.st.BeginSandboxDeleteCAS(orphan.Name, expectedVersion); err != nil {
+					if errors.Is(err, store.ErrResourceVersionConflict) {
+						return nil, status.Error(codes.Aborted, "sandbox resource version changed")
+					}
+					return nil, status.Error(codes.FailedPrecondition, "sandbox deletion could not begin")
 				}
 				if err := s.runtime.st.DeleteSandbox(orphan.Name); err != nil {
 					return nil, status.Error(codes.Internal, "sandbox registry update failed")
@@ -874,8 +926,20 @@ func (s *openShellRPC) DeleteSandbox(ctx context.Context, req *openshellv1.Delet
 	if err != nil {
 		return nil, err
 	}
+	if expectedVersion != 0 && rec.ResourceVersion != expectedVersion {
+		return nil, status.Error(codes.Aborted, "sandbox resource version changed")
+	}
+	rec, err = s.runtime.st.BeginSandboxDeleteCAS(rec.Name, expectedVersion)
+	if err != nil {
+		if errors.Is(err, store.ErrResourceVersionConflict) {
+			return nil, status.Error(codes.Aborted, "sandbox resource version changed")
+		}
+		return nil, status.Error(codes.FailedPrecondition, "sandbox deletion could not begin")
+	}
 	_ = engine.Stop(ctx, core.ID(rec.RuntimeID))
 	if err = engine.Delete(ctx, core.ID(rec.RuntimeID)); err != nil {
+		rec.Status = "error"
+		_ = s.runtime.st.UpsertSandbox(rec)
 		return nil, status.Errorf(codes.FailedPrecondition, "sandbox delete failed: %v", err)
 	}
 	if s.runtime.relay != nil {
@@ -899,7 +963,7 @@ func (s *openShellRPC) GetCurrentUser(ctx context.Context, _ *openshellv1.GetCur
 func (s *openShellRPC) GetGatewayInfo(context.Context, *openshellv1.GetGatewayInfoRequest) (*openshellv1.GetGatewayInfoResponse, error) {
 	return &openshellv1.GetGatewayInfoResponse{
 		Status:         openshellv1.ServiceStatus_SERVICE_STATUS_DEGRADED,
-		GatewayVersion: "whaleshell-alpha",
+		GatewayVersion: "cauteum-alpha",
 		ComputeDrivers: rpcComputeDriverInfo(s.options),
 	}, nil
 }
@@ -1020,7 +1084,7 @@ func (s *openShellRPC) ExchangeProviderSubjectToken(ctx context.Context, req *op
 	}
 	socket := strings.TrimSpace(os.Getenv("OPENSHELL_GATEWAY_SPIFFE_WORKLOAD_API_SOCKET"))
 	if socket == "" {
-		socket = strings.TrimSpace(os.Getenv("WHALESHELL_GATEWAY_SPIFFE_WORKLOAD_API_SOCKET"))
+		socket = strings.TrimSpace(os.Getenv("CAUTEUM_GATEWAY_SPIFFE_WORKLOAD_API_SOCKET"))
 	}
 	if socket == "" {
 		return nil, status.Error(codes.FailedPrecondition, "SPIFFE Workload API socket is not configured")

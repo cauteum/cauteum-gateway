@@ -15,10 +15,10 @@ import (
 	"sync"
 	"time"
 
-	"github.com/whaleshell/slogx"
-	"github.com/whaleshell/whaleshell-core/relayproto"
-	"github.com/whaleshell/whaleshell-gateway/internal/sshrelay"
-	"github.com/whaleshell/whaleshell-gateway/internal/storage/store"
+	"github.com/cauteum/cauteum-core/relayproto"
+	"github.com/cauteum/cauteum-gateway/internal/sshrelay"
+	"github.com/cauteum/cauteum-gateway/internal/storage/store"
+	"github.com/cauteum/slogx"
 	"golang.org/x/crypto/ssh"
 )
 
@@ -270,7 +270,7 @@ func (a *sshAPI) handleLegacyRelay(w http.ResponseWriter, r *http.Request) {
 		}
 		a.exec(w, r, name)
 	case "poll", "result":
-		http.Error(w, "whaleshell-agent long-poll relay was removed; exec now runs over the supervisor SSH relay", http.StatusGone)
+		http.Error(w, "cauteum-agent long-poll relay was removed; exec now runs over the supervisor SSH relay", http.StatusGone)
 	default:
 		http.Error(w, "unknown action", http.StatusNotFound)
 	}

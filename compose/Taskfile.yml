@@ -2,7 +2,7 @@ version: "3"
 
 tasks:
   up:
-    desc: Build and start whaleshell-gateway compose stack
+    desc: Build and start cauteum-gateway compose stack
     cmds:
       - docker compose up -d --build
 
