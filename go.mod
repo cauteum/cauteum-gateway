@@ -9,14 +9,14 @@ require (
 	github.com/aws/aws-sdk-go-v2/config v1.33.7
 	github.com/aws/aws-sdk-go-v2/credentials v1.20.7
 	github.com/aws/aws-sdk-go-v2/service/sts v1.51.2
+	github.com/cauteum/cauteum-core v0.1.0-beta.1.0.20261008213715-9b32ff965bef
+	github.com/cauteum/cauteum-driver v0.1.0-beta.1.0.20261008214530-d244c3ac7e41
+	github.com/cauteum/cauteum-providers v0.1.0-alpha.2.0.20261008214532-1b3297f6bfe9
+	github.com/cauteum/cauteum-runtime v0.1.0-beta.1.0.20261008214610-c965139e3cb4
+	github.com/cauteum/slogx v0.1.0-alpha.2.0.20261008213740-b3c4da34847b
 	github.com/go-jose/go-jose/v4 v4.1.5
 	github.com/pelletier/go-toml/v2 v2.4.3
 	github.com/spiffe/go-spiffe/v2 v2.9.0
-	github.com/cauteum/slogx v0.1.0-alpha.2
-	github.com/cauteum/cauteum-core v0.1.0-beta.1
-	github.com/cauteum/cauteum-driver v0.1.0-alpha.2
-	github.com/cauteum/cauteum-providers v0.1.0-alpha.2
-	github.com/cauteum/cauteum-runtime v0.1.0-beta.1
 	golang.org/x/crypto v0.57.0
 	golang.org/x/net v0.58.0
 	golang.org/x/sys v0.48.0
