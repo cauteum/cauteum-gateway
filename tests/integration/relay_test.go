@@ -161,8 +161,8 @@ func TestRelaySSHSessionEndToEnd(t *testing.T) {
 	}
 	_ = client.Close()
 
-	client, _ := g.openShellClient()
-	revoked, err := client.RevokeSshSession(g.rpcContext(context.Background(), g.token), &openshellv1.RevokeSshSessionRequest{Token: s.Token})
+	rpcClient, _ := g.openShellClient()
+	revoked, err := rpcClient.RevokeSshSession(g.rpcContext(context.Background(), g.token), &openshellv1.RevokeSshSessionRequest{Token: s.Token})
 	if err != nil || !revoked.GetRevoked() {
 		t.Fatalf("revoke SSH session over OpenShell RPC: response=%v err=%v", revoked, err)
 	}
