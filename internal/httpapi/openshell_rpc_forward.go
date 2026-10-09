@@ -232,14 +232,22 @@ func bridgeForwardTCP(stream grpc.BidiStreamingServer[openshellv1.TcpForwardFram
 			}
 		}
 	}()
+	clientEOF, remoteEOF := false, false
 	for {
 		select {
 		case result := <-results:
 			if result.remoteEOF {
-				_ = conn.Close()
-				return nil
+				remoteEOF = true
+				if clientEOF {
+					return nil
+				}
+				continue
 			}
 			if result.fromClient && result.err == nil {
+				clientEOF = true
+				if remoteEOF {
+					return nil
+				}
 				continue // request half-closed; keep receiving the target response
 			}
 			if result.err == nil {

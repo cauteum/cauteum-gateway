@@ -39,6 +39,14 @@ type Principal struct {
 	BearerToken string
 }
 
+func bearerToken(r *http.Request) string {
+	header := r.Header.Get("Authorization")
+	if strings.HasPrefix(strings.ToLower(header), "bearer ") {
+		return strings.TrimSpace(header[7:])
+	}
+	return ""
+}
+
 type principalKey struct{}
 
 // PrincipalFrom returns the request principal set by the auth middleware.
@@ -319,7 +327,7 @@ func oidcRouteScope(method, path string) string {
 			return "provider:read"
 		}
 		return "provider:write"
-	case path == "/v1/settings" || strings.HasPrefix(path, "/v1/settings/") || path == "/v1/info" || path == "/debug/loglevel" || strings.HasPrefix(path, "/debug/loglevel/"):
+	case path == "/v1/settings" || strings.HasPrefix(path, "/v1/settings/") || path == "/debug/loglevel" || strings.HasPrefix(path, "/debug/loglevel/"):
 		if read {
 			return "config:read"
 		}

@@ -39,6 +39,7 @@ type Hub struct {
 	mu       sync.Mutex
 	sessions map[string]*session
 	pending  map[string]*pending
+	active   map[string]*activeRelay
 }
 
 type session struct {
@@ -71,10 +72,15 @@ func (h *Hub) RegisterOpenShellSupervisor(sandbox, instanceID string, open func(
 	s := &session{sandbox: sandbox, instanceID: instanceID, open: open, closeFn: closeFn, done: make(chan struct{})}
 	h.mu.Lock()
 	prev := h.sessions[sandbox]
+	var closing []*activeRelay
+	if prev != nil {
+		closing = h.takeActiveOpenShellRelaysLocked(sandbox)
+	}
 	h.sessions[sandbox] = s
 	h.mu.Unlock()
 	if prev != nil {
 		prev.close()
+		closeActiveRelays(closing)
 	}
 	go func() {
 		select {
@@ -85,11 +91,18 @@ func (h *Hub) RegisterOpenShellSupervisor(sandbox, instanceID string, open func(
 	}()
 	return func() {
 		h.mu.Lock()
+		removed := false
+		var closing []*activeRelay
 		if h.sessions[sandbox] == s {
 			delete(h.sessions, sandbox)
+			closing = h.takeActiveOpenShellRelaysLocked(sandbox)
+			removed = true
 		}
 		h.mu.Unlock()
 		s.close()
+		if removed {
+			closeActiveRelays(closing)
+		}
 	}
 }
 
@@ -115,15 +128,88 @@ func (h *Hub) AcceptOpenShellRelay(sandbox, channel string) (net.Conn, error) {
 		return nil, ErrOpenTimeout
 	}
 	delete(h.pending, channel)
-	h.mu.Unlock()
 	client, stream := newHalfPipePair()
+	if h.active == nil {
+		h.active = map[string]*activeRelay{}
+	}
+	h.active[channel] = &activeRelay{sandbox: sandbox, client: client, stream: stream}
+	h.mu.Unlock()
 	select {
 	case p.ready <- client:
 		return stream, nil
 	default:
+		h.removeActiveRelay(channel, stream)
 		_ = client.Close()
 		_ = stream.Close()
 		return nil, ErrOpenTimeout
+	}
+}
+
+type activeRelay struct {
+	sandbox string
+	client  net.Conn
+	stream  net.Conn
+}
+
+// CloseOpenShellRelay aborts an active channel, or rejects a not-yet-opened
+// channel. RelayClose is abortive: unlike CloseWrite it does not promise drain.
+func (h *Hub) CloseOpenShellRelay(sandbox, channel string, cause error) bool {
+	if channel == "" {
+		return false
+	}
+	if cause == nil {
+		cause = ErrNotConnected
+	}
+	h.mu.Lock()
+	active := h.active[channel]
+	if active != nil && active.sandbox == sandbox {
+		delete(h.active, channel)
+	} else {
+		active = nil
+	}
+	p := h.pending[channel]
+	if p != nil && p.sandbox == sandbox {
+		delete(h.pending, channel)
+	} else {
+		p = nil
+	}
+	h.mu.Unlock()
+	if active != nil {
+		_ = active.client.Close()
+		_ = active.stream.Close()
+	}
+	if p != nil {
+		select {
+		case p.failed <- cause:
+		default:
+		}
+	}
+	return active != nil || p != nil
+}
+
+func (h *Hub) removeActiveRelay(channel string, stream net.Conn) {
+	h.mu.Lock()
+	if active := h.active[channel]; active != nil && active.stream == stream {
+		delete(h.active, channel)
+	}
+	h.mu.Unlock()
+}
+
+func (h *Hub) takeActiveOpenShellRelaysLocked(sandbox string) []*activeRelay {
+	var closing []*activeRelay
+	for channel, active := range h.active {
+		if active.sandbox == sandbox {
+			closing = append(closing, active)
+			delete(h.active, channel)
+		}
+	}
+	return closing
+}
+
+func closeActiveRelays(closing []*activeRelay) {
+	for _, active := range closing {
+		_ = active.client.Close()
+		_ = active.stream.Close()
 	}
 }
 
@@ -163,6 +249,7 @@ func NewHub() *Hub {
 		KeepaliveTimeout:  relayproto.KeepaliveTimeout,
 		sessions:          map[string]*session{},
 		pending:           map[string]*pending{},
+		active:            map[string]*activeRelay{},
 	}
 }
 
@@ -213,10 +300,12 @@ func (h *Hub) Disconnect(sandbox string) {
 	h.mu.Lock()
 	s := h.sessions[sandbox]
 	delete(h.sessions, sandbox)
+	closing := h.takeActiveOpenShellRelaysLocked(sandbox)
 	h.mu.Unlock()
 	if s != nil {
 		s.close()
 	}
+	closeActiveRelays(closing)
 }
 
 // ServeSupervisor upgrades r into the control stream for an already
@@ -231,19 +320,27 @@ func (h *Hub) ServeSupervisor(w http.ResponseWriter, r *http.Request, sandbox st
 	s := &session{sandbox: sandbox, conn: conn, w: relayproto.NewMessageWriter(conn), done: make(chan struct{})}
 	h.mu.Lock()
 	prev := h.sessions[sandbox]
+	var closing []*activeRelay
+	if prev != nil {
+		closing = h.takeActiveOpenShellRelaysLocked(sandbox)
+	}
 	h.sessions[sandbox] = s
 	h.mu.Unlock()
 	if prev != nil {
 		prev.close()
+		closeActiveRelays(closing)
 	}
 	log.Info("supervisor connected")
 	defer func() {
 		h.mu.Lock()
+		var closing []*activeRelay
 		if h.sessions[sandbox] == s {
 			delete(h.sessions, sandbox)
+			closing = h.takeActiveOpenShellRelaysLocked(sandbox)
 		}
 		h.mu.Unlock()
 		s.close()
+		closeActiveRelays(closing)
 		log.Info("supervisor disconnected")
 	}()
 
@@ -378,6 +475,13 @@ func (h *Hub) ServeRelay(w http.ResponseWriter, r *http.Request, sandbox, channe
 		log.Debug("relay data upgrade rejected", slogx.Err(err))
 		return
 	}
+	h.mu.Lock()
+	if h.active == nil {
+		h.active = map[string]*activeRelay{}
+	}
+	h.active[channel] = &activeRelay{sandbox: sandbox, client: conn, stream: conn}
+	h.mu.Unlock()
+	defer h.removeActiveRelay(channel, conn)
 	select {
 	case p.ready <- conn:
 		log.Debug("relay data stream accepted")

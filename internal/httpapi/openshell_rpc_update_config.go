@@ -150,17 +150,14 @@ func (s *openShellRPC) updateConfigPolicy(ctx context.Context, req *openshellv1.
 		if !isConfigAdmin(p, s.options.OIDC.AdminRole) {
 			return nil, status.Error(codes.PermissionDenied, "platform admin role required for global policy")
 		}
-		if s.runtime.relay != nil {
-			for _, sandbox := range s.runtime.st.ListSandboxes() {
-				if s.runtime.relay.Connected(sandbox.Name) {
-					return nil, status.Error(codes.FailedPrecondition, "global policy update requires runtime acknowledgement, which the pinned protocol does not provide")
-				}
+		_, expectedPolicyRevision := s.runtime.st.GlobalPolicySnapshot()
+		policyRevision, err := applyGlobalPolicy(ctx, s.runtime.st, s.runtime, string(policyYAML), expectedPolicyRevision, s.runtime.opt.ProviderProfileSources)
+		if err != nil {
+			if errors.Is(err, store.ErrResourceVersionConflict) {
+				return nil, status.Error(codes.Aborted, "global policy or sandbox state changed")
 			}
+			return nil, status.Error(codes.FailedPrecondition, "global policy could not be applied to every sandbox")
 		}
-		if err := s.runtime.st.SetGlobalPolicy(string(policyYAML)); err != nil {
-			return nil, status.Error(codes.Internal, "could not store global policy")
-		}
-		_, policyRevision := s.runtime.st.GlobalPolicySnapshot()
 		_, settingsRevision := s.runtime.st.SettingsSnapshot()
 		version := uint32(0)
 		if policyRevision <= uint64(^uint32(0)) {
@@ -197,6 +194,9 @@ func (s *openShellRPC) updateConfigPolicy(ctx context.Context, req *openshellv1.
 			return nil, status.Error(codes.PermissionDenied, "sandbox updates may only change network policy fields")
 		}
 	}
+	if globalPolicy, _ := s.runtime.st.GlobalPolicySnapshot(); strings.TrimSpace(globalPolicy) != "" {
+		return nil, status.Error(codes.FailedPrecondition, "sandbox policy is managed by the global policy")
+	}
 	if strings.TrimSpace(sandbox.BasePolicyYAML) == "" {
 		return nil, status.Error(codes.FailedPrecondition, "sandbox has no stored base policy")
 	}
@@ -204,6 +204,9 @@ func (s *openShellRPC) updateConfigPolicy(ctx context.Context, req *openshellv1.
 	if err != nil {
 		if errors.Is(err, store.ErrResourceVersionConflict) {
 			return nil, status.Error(codes.Aborted, "sandbox resource version changed")
+		}
+		if errors.Is(err, store.ErrSandboxPolicyManagedGlobally) {
+			return nil, status.Error(codes.FailedPrecondition, "sandbox policy is managed by the global policy")
 		}
 		return nil, status.Error(codes.Internal, "could not store sandbox policy revision")
 	}

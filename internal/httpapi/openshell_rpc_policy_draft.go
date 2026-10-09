@@ -88,7 +88,7 @@ func (s *openShellRPC) ApproveDraftChunk(ctx context.Context, req *openshellv1.A
 	if err != nil {
 		return nil, err
 	}
-	if err := approveProposal(s.runtime.st, BuiltinProvidersDir(), proposal.Sandbox, proposal.ID); err != nil {
+	if err := approveProposal(ctx, s.runtime.st, s.runtime, BuiltinProvidersDir(), proposal.Sandbox, proposal.ID); err != nil {
 		return nil, status.Errorf(codes.FailedPrecondition, "approve draft chunk: %v", err)
 	}
 	return s.policyMutationResponse(proposal.Sandbox), nil
@@ -127,7 +127,7 @@ func (s *openShellRPC) ApproveAllDraftChunks(ctx context.Context, req *openshell
 		if token := approvalTokens[proposal.ID]; token != "" && token != proposal.ReviewToken {
 			return nil, status.Error(codes.FailedPrecondition, "draft review token is stale")
 		}
-		if err := approveProposal(s.runtime.st, BuiltinProvidersDir(), proposal.Sandbox, proposal.ID); err != nil {
+		if err := approveProposal(ctx, s.runtime.st, s.runtime, BuiltinProvidersDir(), proposal.Sandbox, proposal.ID); err != nil {
 			return nil, status.Errorf(codes.FailedPrecondition, "approve draft chunk %q: %v", proposal.ID, err)
 		}
 		approved++

@@ -5,13 +5,16 @@ import (
 	"strings"
 	"testing"
 
+	"connectrpc.com/connect"
+	controlv1 "github.com/cauteum/cauteum-gateway/api/gen/cauteum/control/v1"
+	"github.com/cauteum/cauteum-gateway/api/gen/cauteum/control/v1/controlv1connect"
 	"github.com/cauteum/cauteum-gateway/internal/httpapi"
 )
 
 func TestAuthRequiredOnAPI(t *testing.T) {
 	g := newTestGateway(t, httpapi.Options{})
 	g.createSandbox("demo")
-	for _, path := range []string{"/v1/sandboxes", "/v1/info", "/v1/whoami", "/v1/ssh-sessions", "/debug/loglevel", "/v1/sandboxes/demo/secrets", "/v1/providers"} {
+	for _, path := range []string{"/v1/sandboxes", "/v1/whoami", "/v1/ssh-sessions", "/debug/loglevel", "/v1/sandboxes/demo/secrets", "/v1/providers"} {
 		for _, token := range []string{"", "wrong-token"} {
 			if code, _ := g.do(http.MethodGet, path, token, nil); code != http.StatusUnauthorized {
 				t.Errorf("GET %s with token %q = %d, want 401", path, token, code)
@@ -26,8 +29,8 @@ func TestAuthRequiredOnAPI(t *testing.T) {
 	if code, _ := g.do(http.MethodGet, "/healthz", "", nil); code != http.StatusOK {
 		t.Errorf("/healthz = %d, want 200", code)
 	}
-	if code, _ := g.do(http.MethodGet, "/v1/sandboxes", g.token, nil); code != http.StatusOK {
-		t.Errorf("/v1/sandboxes with token = %d, want 200", code)
+	if code, _ := g.do(http.MethodGet, "/v1/sandboxes", g.token, nil); code != http.StatusNotFound {
+		t.Errorf("removed /v1/sandboxes route with token = %d, want 404", code)
 	}
 }
 
@@ -36,40 +39,25 @@ func TestSandboxPrincipalScope(t *testing.T) {
 	g.createSandbox("demo")
 	g.createSandbox("other")
 	token := g.sandboxToken("demo")
-	for _, path := range []string{"/v1/whoami", "/v1/sandboxes/demo/secrets"} {
-		if code, body := g.do(http.MethodGet, path, token, nil); code == http.StatusUnauthorized || code == http.StatusForbidden {
-			t.Errorf("GET %s = %d %s, want allowed", path, code, body)
-		}
+	viewer := controlv1connect.NewConsoleServiceClient(http.DefaultClient, g.srv.URL)
+	request := connect.NewRequest(&controlv1.GetViewerRequest{})
+	request.Header().Set("Authorization", "Bearer "+token)
+	if _, err := viewer.GetViewer(t.Context(), request); connect.CodeOf(err) != connect.CodePermissionDenied {
+		t.Errorf("sandbox principal GetViewer error = %v, want permission denied", err)
 	}
-	denied := []struct{ method, path string }{
-		{http.MethodGet, "/v1/sandboxes"},
-		{http.MethodGet, "/v1/sandboxes/demo"},
-		{http.MethodDelete, "/v1/sandboxes/demo"},
-		{http.MethodGet, "/v1/sandboxes/other/secrets"},
-		{http.MethodPost, "/v1/sandboxes/demo/ssh-session"},
-		{http.MethodPost, "/v1/sandboxes/demo/exec"},
-		{http.MethodPost, "/v1/sandboxes/demo/supervisor-token"},
-		{http.MethodPost, "/v1/sandboxes/other/proposals"},
-		{http.MethodGet, "/v1/ssh-sessions"},
-		{http.MethodGet, "/v1/info"},
-		{http.MethodGet, "/v1/supervisor/connect?sandbox=other"},
-	}
-	for _, c := range denied {
-		if code, _ := g.do(c.method, c.path, token, nil); code != http.StatusForbidden {
-			t.Errorf("%s %s with sandbox token = %d, want 403", c.method, c.path, code)
-		}
-	}
-	var who map[string]any
-	g.mustJSON(http.MethodGet, "/v1/whoami", token, nil, http.StatusOK, &who)
-	if who["sandbox"] != "demo" {
-		t.Errorf("whoami = %v", who)
+	logs := controlv1connect.NewSandboxServiceClient(http.DefaultClient, g.srv.URL)
+	read := connect.NewRequest(&controlv1.GetSandboxLogsRequest{Name: "demo"})
+	read.Header().Set("Authorization", "Bearer "+token)
+	if _, err := logs.GetSandboxLogs(t.Context(), read); connect.CodeOf(err) != connect.CodePermissionDenied {
+		t.Errorf("sandbox principal log read error = %v, want permission denied", err)
 	}
 }
 
 func TestAllowUnauthenticated(t *testing.T) {
 	g := newTestGateway(t, httpapi.Options{AllowUnauthenticated: true})
-	if code, _ := g.do(http.MethodGet, "/v1/sandboxes", "", nil); code != http.StatusOK {
-		t.Fatalf("unsafe mode without token = %d, want 200", code)
+	viewer := controlv1connect.NewConsoleServiceClient(http.DefaultClient, g.srv.URL)
+	if _, err := viewer.GetViewer(t.Context(), connect.NewRequest(&controlv1.GetViewerRequest{})); err != nil {
+		t.Fatalf("unsafe mode GetViewer error = %v", err)
 	}
 	if code, _ := g.do(http.MethodGet, "/v1/sandboxes", "wrong", nil); code != http.StatusUnauthorized {
 		t.Fatalf("unsafe mode with bad token = %d, want 401", code)

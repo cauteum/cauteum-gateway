@@ -24,10 +24,8 @@ import (
 	"google.golang.org/grpc"
 
 	"github.com/cauteum/cauteum-core/defaults"
-	"github.com/cauteum/cauteum-core/relayproto"
 	"github.com/cauteum/cauteum-gateway/internal/logbuf"
 	"github.com/cauteum/cauteum-gateway/internal/logger"
-	"github.com/cauteum/cauteum-gateway/internal/service"
 	"github.com/cauteum/cauteum-gateway/internal/sshrelay"
 	"github.com/cauteum/cauteum-gateway/internal/storage/store"
 	"github.com/cauteum/cauteum-runtime/secrets"
@@ -479,7 +477,6 @@ func NewHandler(ctx context.Context, opt Options) (http.Handler, error) {
 		return nil, fmt.Errorf("mTLS authentication requires a TLS client CA")
 	}
 	mux := http.NewServeMux()
-	consoleReader := service.ConsoleReader{Store: st}
 	mountControlAPI(mux, st, logs, opt, oidcValidator)
 	ssh.mount(mux)
 	mux.Handle("/debug/loglevel", log.LevelHTTPHandler())
@@ -494,192 +491,12 @@ func NewHandler(ctx context.Context, opt Options) (http.Handler, error) {
 			"time":       time.Now().UTC(),
 		})
 	})
-	mux.HandleFunc("/v1/info", func(w http.ResponseWriter, _ *http.Request) {
-		s := st.Snapshot()
-		kek := secrets.Inspect(opt.DataDir, os.Getenv)
-		authMode := "local-dev"
-		if oidcValidator != nil {
-			authMode = "oidc"
-		}
-		w.Header().Set("Content-Type", "application/json")
-		_ = json.NewEncoder(w).Encode(map[string]any{
-			"gateway_id":                s.GatewayID,
-			"sandbox_count":             len(s.Sandboxes),
-			"updated_at":                s.UpdatedAt,
-			"data_dir":                  opt.DataDir,
-			"auth_mode":                 authMode,
-			"compute_drivers":           configuredDriverStatus(opt.ComputeDriverNames, opt.ComputeDriverConfigs),
-			"credential_drivers":        append([]string{}, opt.CredentialDriverNames...),
-			"default_credential_driver": opt.DefaultCredentialDriver,
-			"allow_unauthenticated":     opt.AllowUnauthenticated,
-			"oidc_issuer":               opt.OIDC.Issuer,
-			"host_osg_internal":         "host.cauteum.internal → host-gateway (Docker)",
-			"relay":                     "supervisor relay: " + relayproto.PathSupervisorConnect + " + " + relayproto.PathSSHConnect,
-			"ssh_session_ttl_s":         int64(ttl / time.Second),
-			"secrets_kek": map[string]any{
-				"source":           string(kek.Source),
-				"pinned":           kek.Pinned,
-				"env":              secrets.EnvKEK,
-				"warning":          kek.Warning(),
-				"format":           kek.Format,
-				"migration_needed": kek.MigrationNeeded,
-			},
-		})
-	})
-	mux.HandleFunc("/v1/sandboxes", func(w http.ResponseWriter, r *http.Request) {
-		const op = "gateway.sandboxes.list"
-		log := logger.FromContext(r.Context()).With(slog.String("op", op))
-		switch r.Method {
-		case http.MethodGet:
-			list := consoleReader.ListRecords()
-			log.Info("listed sandboxes", slog.Int("count", len(list)))
-			w.Header().Set("Content-Type", "application/json")
-			_ = json.NewEncoder(w).Encode(map[string]any{"sandboxes": list})
-		default:
-			http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
-		}
-	})
-	mux.HandleFunc("/v1/sandboxes/", func(w http.ResponseWriter, r *http.Request) {
-		rest := strings.TrimPrefix(r.URL.Path, "/v1/sandboxes/")
-		rest = strings.Trim(rest, "/")
-		if rest == "" {
-			http.Error(w, "bad name", http.StatusBadRequest)
-			return
-		}
-		name, sub, hasSub := strings.Cut(rest, "/")
-		if name == "" {
-			http.Error(w, "bad name", http.StatusBadRequest)
-			return
-		}
-		if hasSub {
-			if ssh.sandboxSubpath(w, r, name, strings.Trim(sub, "/")) {
-				return
-			}
-			handleSandboxSubpath(w, r, st, sec, logs, BuiltinProvidersDir(), opt.ProviderProfileSources, name, sub)
-			return
-		}
-		switch r.Method {
-		case http.MethodGet:
-			const op = "gateway.sandboxes.get"
-			log := logger.FromContext(r.Context()).With(slog.String("op", op), slog.String("sandbox", name))
-			sb, ok := consoleReader.GetRecord(name)
-			if !ok {
-				log.Info("sandbox not found")
-				http.Error(w, "not found", http.StatusNotFound)
-				return
-			}
-			log.Info("sandbox fetched")
-			w.Header().Set("Content-Type", "application/json")
-			_ = json.NewEncoder(w).Encode(sb)
-		case http.MethodPut:
-			if opt.grpcRuntime != nil {
-				opt.grpcRuntime.sandboxMu.Lock()
-				defer opt.grpcRuntime.sandboxMu.Unlock()
-			}
-			const op = "gateway.sandboxes.upsert"
-			log := logger.FromContext(r.Context()).With(slog.String("op", op), slog.String("sandbox", name))
-			log.Info("upserting sandbox")
-			var sb store.Sandbox
-			if err := json.NewDecoder(r.Body).Decode(&sb); err != nil {
-				log.Error("failed to decode sandbox body", slogx.Err(err))
-				http.Error(w, err.Error(), http.StatusBadRequest)
-				return
-			}
-			sb.Name = name
-			if err := st.UpsertSandbox(sb); err != nil {
-				log.Error("failed to upsert sandbox", slogx.Err(err))
-				http.Error(w, err.Error(), http.StatusInternalServerError)
-				return
-			}
-			log.Info("sandbox upserted")
-			w.WriteHeader(http.StatusNoContent)
-		case http.MethodDelete:
-			if opt.grpcRuntime != nil {
-				opt.grpcRuntime.sandboxMu.Lock()
-				defer opt.grpcRuntime.sandboxMu.Unlock()
-			}
-			const op = "gateway.sandboxes.delete"
-			log := logger.FromContext(r.Context()).With(slog.String("op", op), slog.String("sandbox", name))
-			log.Info("deleting sandbox")
-			if err := st.DeleteSandbox(name); err != nil {
-				log.Error("failed to delete sandbox", slogx.Err(err))
-				http.Error(w, err.Error(), http.StatusInternalServerError)
-				return
-			}
-			relayHub.Disconnect(name)
-			logs.Remove(name)
-			log.Info("sandbox deleted")
-			w.WriteHeader(http.StatusNoContent)
-		default:
-			http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
-		}
-	})
-	mountProviderAPIWithSources(mux, st, sec, BuiltinProvidersDir(), opt.ProviderProfileSources)
-	mountParityAPI(mux, st, oidcValidator)
+	mountLocalAuthAPI(mux, st)
 	mountOIDCAuthAPI(mux, opt.OIDC, oidcValidator, st.AuthToken)
 	if oidcValidator != nil {
 		log.Info("oidc auth enabled", slog.String("op", "gateway.oidc"), slog.String("issuer", opt.OIDC.Issuer))
 	}
-	// Fleet logs: GET /v1/logs?follow=1 lists all sandboxes' ring buffers via query names=
-	mux.HandleFunc("/v1/logs", func(w http.ResponseWriter, r *http.Request) {
-		if r.Method != http.MethodGet {
-			http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
-			return
-		}
-		names := r.URL.Query()["name"]
-		if all := r.URL.Query().Get("all"); all == "1" || all == "true" {
-			snap := st.Snapshot()
-			names = names[:0]
-			for n := range snap.Sandboxes {
-				names = append(names, n)
-			}
-		}
-		if len(names) == 0 {
-			http.Error(w, "usage: /v1/logs?name=a&name=b or ?all=1", http.StatusBadRequest)
-			return
-		}
-		// Snapshot merge (non-follow) for simplicity; follow uses per-sandbox SSE.
-		follow := r.URL.Query().Get("follow") == "1" || r.URL.Query().Get("follow") == "true"
-		if follow && len(names) == 1 {
-			handleSandboxLogs(w, r, logs, names[0])
-			return
-		}
-		if follow {
-			w.Header().Set("Content-Type", "text/event-stream")
-			w.Header().Set("Cache-Control", "no-cache")
-			flusher, ok := w.(http.Flusher)
-			if !ok {
-				http.Error(w, "streaming unsupported", http.StatusInternalServerError)
-				return
-			}
-			last := map[string]time.Time{}
-			for {
-				for _, n := range names {
-					for _, ln := range logs.Snapshot(n, last[n], "", "", 0) {
-						if !last[n].IsZero() && !ln.TS.After(last[n]) {
-							continue
-						}
-						fmt.Fprintf(w, "data: [%s] %s\n\n", n, formatLogLine(ln))
-						last[n] = ln.TS
-					}
-				}
-				flusher.Flush()
-				select {
-				case <-r.Context().Done():
-					return
-				case <-time.After(relayRetryInterval):
-				}
-			}
-		}
-		all := make([]map[string]any, 0)
-		for _, n := range names {
-			for _, ln := range logs.Snapshot(n, time.Time{}, "", "", 200) {
-				all = append(all, map[string]any{"sandbox": n, "line": ln})
-			}
-		}
-		w.Header().Set("Content-Type", "application/json")
-		_ = json.NewEncoder(w).Encode(map[string]any{"lines": all})
-	})
+
 	auth := withAuth(mux, st, AuthOptions{
 		OIDC:                 oidcValidator,
 		OIDCSettings:         opt.OIDC,

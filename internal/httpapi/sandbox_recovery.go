@@ -106,7 +106,7 @@ func (s *openShellRPC) recreateMissingSandboxRuntime(ctx context.Context, rec st
 			return fail(fmt.Errorf("sandbox proxy supervisor did not start: %w", err))
 		}
 		if err := s.waitForSupervisorReady(ctx, rec.Name); err != nil {
-			return fail(fmt.Errorf("sandbox supervisor relay did not become ready: %w", err))
+			return fail(fmt.Errorf("sandbox supervisor relay did not become ready; check compute driver's grpc_endpoint reachability and guest TLS settings: %w", err))
 		}
 	}
 	recovered, ok := s.runtime.st.GetSandbox(rec.Name)

@@ -33,13 +33,17 @@ type controlAPI struct {
 
 func mountControlAPI(mux *http.ServeMux, st *store.Store, logs *logbuf.Hub, opt Options, oidcValidator *idp.OIDC) {
 	api := &controlAPI{reader: service.ConsoleReader{Store: st}, store: st, logs: logs, opt: opt, watchSlots: make(chan struct{}, 32)}
-	consolePath, consoleHandler := controlv1connect.NewConsoleServiceHandler(api)
-	sandboxPath, sandboxHandler := controlv1connect.NewSandboxServiceHandler(api)
-	operationsPath, operationsHandler := controlv1connect.NewOperationsServiceHandler(api)
-	catalogPath, catalogHandler := controlv1connect.NewCatalogServiceHandler(api)
-	policyPath, policyHandler := controlv1connect.NewPolicyServiceHandler(api)
-	profilePath, profileHandler := controlv1connect.NewProviderProfileServiceHandler(api)
-	credentialPath, credentialHandler := controlv1connect.NewProviderCredentialServiceHandler(api)
+	security := connect.WithInterceptors(controlSecurityInterceptor{api: api})
+	consolePath, consoleHandler := controlv1connect.NewConsoleServiceHandler(api, security)
+	adminPath, adminHandler := controlv1connect.NewGatewayAdminServiceHandler(api, security)
+	sandboxPath, sandboxHandler := controlv1connect.NewSandboxServiceHandler(api, security)
+	operationsPath, operationsHandler := controlv1connect.NewOperationsServiceHandler(api, security)
+	catalogPath, catalogHandler := controlv1connect.NewCatalogServiceHandler(api, security)
+	inferencePath, inferenceHandler := controlv1connect.NewInferenceServiceHandler(api, security)
+	policyPath, policyHandler := controlv1connect.NewPolicyServiceHandler(api, security)
+	profilePath, profileHandler := controlv1connect.NewProviderProfileServiceHandler(api, security)
+	credentialPath, credentialHandler := controlv1connect.NewProviderCredentialServiceHandler(api, security)
+	managedSandboxPath, managedSandboxHandler := controlv1connect.NewManagedSandboxServiceHandler(api, security)
 	wrap := func(handler http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			principal, valid := resolvePrincipal(r, st, oidcValidator, opt.OIDC)
@@ -56,12 +60,15 @@ func mountControlAPI(mux *http.ServeMux, st *store.Store, logs *logbuf.Hub, opt 
 		})
 	}
 	mux.Handle(consolePath, wrap(consoleHandler))
+	mux.Handle(adminPath, wrap(adminHandler))
 	mux.Handle(sandboxPath, wrap(sandboxHandler))
 	mux.Handle(operationsPath, wrap(operationsHandler))
 	mux.Handle(catalogPath, wrap(catalogHandler))
+	mux.Handle(inferencePath, wrap(inferenceHandler))
 	mux.Handle(policyPath, wrap(policyHandler))
 	mux.Handle(profilePath, wrap(profileHandler))
 	mux.Handle(credentialPath, wrap(credentialHandler))
+	mux.Handle(managedSandboxPath, wrap(managedSandboxHandler))
 }
 
 func (a *controlAPI) requireUser(ctx context.Context, sandboxRead bool) error {

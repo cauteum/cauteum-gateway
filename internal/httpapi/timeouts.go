@@ -4,7 +4,6 @@ import "time"
 
 // Operational defaults for the HTTP control plane and its background operations.
 const (
-	relayExecTimeout         = 60 * time.Second
 	relayRequestTimeout      = 10 * time.Second
 	providerRotationInterval = 15 * time.Second
 	oauthRequestTimeout      = 20 * time.Second

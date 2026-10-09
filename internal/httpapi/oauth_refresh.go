@@ -20,25 +20,6 @@ import (
 
 var providerCredentialRefreshMu sync.Mutex
 
-func redactProviderRefresh(refresh map[string]store.ProviderRefreshConfig) map[string]store.ProviderRefreshConfig {
-	if refresh == nil {
-		return nil
-	}
-	out := make(map[string]store.ProviderRefreshConfig, len(refresh))
-	for key, cfg := range refresh {
-		redacted := make(map[string]string, len(cfg.Material)+len(cfg.MaterialSecretKeys))
-		for materialKey := range cfg.Material {
-			redacted[materialKey] = "[configured]"
-		}
-		for _, materialKey := range cfg.MaterialSecretKeys {
-			redacted[materialKey] = "[configured]"
-		}
-		cfg.Material = redacted
-		out[key] = cfg
-	}
-	return out
-}
-
 func refreshMaterialKey(providerName, credentialKey, materialName string) string {
 	return "provider/" + url.PathEscape(providerName) + "/refresh/" + url.PathEscape(credentialKey) + "/" + url.PathEscape(materialName)
 }
@@ -113,10 +94,6 @@ func loadProviderRefreshMaterialForRecord(ctx context.Context, sec *secrets.Loca
 		}
 	}
 	return material, nil
-}
-
-func refreshStoredProviderCredential(ctx context.Context, st *store.Store, sec *secrets.LocalEncrypted, providerName, credentialKey string) error {
-	return refreshStoredProviderCredentialWithDrivers(ctx, st, sec, nil, Options{}, providerName, credentialKey)
 }
 
 func refreshStoredProviderCredentialWithDrivers(ctx context.Context, st *store.Store, sec *secrets.LocalEncrypted, drivers *driverRegistry, opt Options, providerName, credentialKey string) error {

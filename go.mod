@@ -2,6 +2,8 @@ module github.com/cauteum/cauteum-gateway
 
 go 1.27.0
 
+toolchain go1.27.2
+
 require (
 	connectrpc.com/connect v1.21.0
 	github.com/NVIDIA/OpenShell/sdk/go v0.0.0-20260909233434-a0814443f19c
@@ -18,7 +20,7 @@ require (
 	github.com/pelletier/go-toml/v2 v2.4.3
 	github.com/spiffe/go-spiffe/v2 v2.9.0
 	golang.org/x/crypto v0.57.0
-	golang.org/x/net v0.58.0
+	golang.org/x/net v0.60.0
 	golang.org/x/sys v0.48.0
 	google.golang.org/grpc v1.84.0
 	google.golang.org/protobuf v1.36.12

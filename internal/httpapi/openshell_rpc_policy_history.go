@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	openshellv1 "github.com/NVIDIA/OpenShell/sdk/go/proto/openshellv1"
+	sandboxv1 "github.com/NVIDIA/OpenShell/sdk/go/proto/sandboxv1"
 	corepolicy "github.com/cauteum/cauteum-core/policy"
 	"github.com/cauteum/cauteum-gateway/internal/storage/store"
 	"google.golang.org/grpc/codes"
@@ -172,6 +173,25 @@ func (s *openShellRPC) authorizePolicyHistory(ctx context.Context, name, workspa
 
 func projectPolicyRevision(revision store.PolicyRevision, includePolicy bool) (*openshellv1.SandboxPolicyRevision, error) {
 	item := &openshellv1.SandboxPolicyRevision{Version: uint32(revision.Rev), CreatedAtMs: revision.UpdatedAt.UnixMilli(), Provenance: maps.Clone(revision.Annotations), LoadError: revision.LoadError}
+	if revision.Cleared || (revision.Bytes == 0 && revision.YAML == "" && revision.Status == store.PolicyStatusLoaded) {
+		if includePolicy {
+			item.Policy = &sandboxv1.SandboxPolicy{}
+		}
+		if !revision.LoadedAt.IsZero() {
+			item.LoadedAtMs = revision.LoadedAt.UnixMilli()
+		}
+		switch revision.Status {
+		case store.PolicyStatusPending:
+			item.Status = openshellv1.PolicyStatus_POLICY_STATUS_PENDING
+		case store.PolicyStatusLoaded:
+			item.Status = openshellv1.PolicyStatus_POLICY_STATUS_LOADED
+		case store.PolicyStatusFailed:
+			item.Status = openshellv1.PolicyStatus_POLICY_STATUS_FAILED
+		case store.PolicyStatusSuperseded:
+			item.Status = openshellv1.PolicyStatus_POLICY_STATUS_SUPERSEDED
+		}
+		return item, nil
+	}
 	if !revision.LoadedAt.IsZero() {
 		item.LoadedAtMs = revision.LoadedAt.UnixMilli()
 	}

@@ -235,26 +235,6 @@ func TestOpenAPIHTTPContract(t *testing.T) {
 		body                                     any
 	}{
 		{method: http.MethodGet, path: "/healthz", openAPIPath: "/healthz", openAPIMethod: "get", want: http.StatusOK},
-		{method: http.MethodGet, path: "/v1/info", openAPIPath: "/v1/info", openAPIMethod: "get", want: http.StatusOK},
-		{method: http.MethodGet, path: "/v1/whoami", openAPIPath: "/v1/whoami", openAPIMethod: "get", want: http.StatusOK},
-		{method: http.MethodGet, path: "/v1/sandboxes", openAPIPath: "/v1/sandboxes", openAPIMethod: "get", want: http.StatusOK},
-		{method: http.MethodPut, path: "/v1/sandboxes/contract-demo", openAPIPath: "/v1/sandboxes/{name}", openAPIMethod: "put", want: http.StatusNoContent, body: map[string]any{}},
-		{method: http.MethodGet, path: "/v1/sandboxes/contract-demo", openAPIPath: "/v1/sandboxes/{name}", openAPIMethod: "get", want: http.StatusOK},
-		{method: http.MethodGet, path: "/v1/sandboxes/contract-demo/logs", openAPIPath: "/v1/sandboxes/{name}/logs", openAPIMethod: "get", want: http.StatusOK},
-		{method: http.MethodGet, path: "/v1/logs?name=contract-demo", openAPIPath: "/v1/logs", openAPIMethod: "get", want: http.StatusOK},
-		{method: http.MethodGet, path: "/v1/sandboxes/contract-demo/secrets", openAPIPath: "/v1/sandboxes/{name}/secrets", openAPIMethod: "get", want: http.StatusOK},
-		{method: http.MethodGet, path: "/v1/sandboxes/contract-demo/proposals", openAPIPath: "/v1/sandboxes/{name}/proposals", openAPIMethod: "get", want: http.StatusOK},
-		{method: http.MethodPost, path: "/v1/sandboxes/contract-demo/proposals", openAPIPath: "/v1/sandboxes/{name}/proposals", openAPIMethod: "post", want: http.StatusAccepted, body: map[string]any{"id": "contract-proposal", "intent_summary": "contract test"}},
-		{method: http.MethodGet, path: "/v1/sandboxes/contract-demo/proposals/contract-proposal", openAPIPath: "/v1/sandboxes/{name}/proposals/{proposalId}", openAPIMethod: "get", want: http.StatusOK},
-		{method: http.MethodPost, path: "/v1/sandboxes/contract-demo/proposals/contract-proposal/reject", openAPIPath: "/v1/sandboxes/{name}/proposals/{proposalId}/reject", openAPIMethod: "post", want: http.StatusOK, body: map[string]any{"reason": "contract test"}},
-		{method: http.MethodPost, path: "/v1/workspaces", openAPIPath: "/v1/workspaces", openAPIMethod: "post", want: http.StatusCreated, body: map[string]any{"name": "contract-workspace"}},
-		{method: http.MethodGet, path: "/v1/workspaces", openAPIPath: "/v1/workspaces", openAPIMethod: "get", want: http.StatusOK},
-		{method: http.MethodPut, path: "/v1/workspaces/contract-workspace/members", openAPIPath: "/v1/workspaces/{name}/members", openAPIMethod: "put", want: http.StatusNoContent, body: map[string]any{"subject": "contract-user", "role": "member"}},
-		{method: http.MethodGet, path: "/v1/workspaces/contract-workspace/members", openAPIPath: "/v1/workspaces/{name}/members", openAPIMethod: "get", want: http.StatusOK},
-		{method: http.MethodDelete, path: "/v1/workspaces/contract-workspace/members/contract-user", openAPIPath: "/v1/workspaces/{name}/members/{subject}", openAPIMethod: "delete", want: http.StatusNoContent},
-		{method: http.MethodDelete, path: "/v1/workspaces/contract-workspace", openAPIPath: "/v1/workspaces/{name}", openAPIMethod: "delete", want: http.StatusNoContent},
-		{method: http.MethodGet, path: "/v1/ssh-sessions", openAPIPath: "/v1/ssh-sessions", openAPIMethod: "get", want: http.StatusOK},
-		{method: http.MethodDelete, path: "/v1/sandboxes/contract-demo", openAPIPath: "/v1/sandboxes/{name}", openAPIMethod: "delete", want: http.StatusNoContent},
 	}
 	for _, check := range checks {
 		t.Run(check.method+" "+check.openAPIPath, func(t *testing.T) {

@@ -99,7 +99,7 @@ func (a *controlAPI) ApprovePolicyProposal(ctx context.Context, req *connect.Req
 	if _, ok := a.reader.GetWorkspace(workspace, proposal.Sandbox); !ok {
 		return nil, connect.NewError(connect.CodeNotFound, errors.New("proposal not found"))
 	}
-	if err := approveProposal(a.store, BuiltinProvidersDir(), proposal.Sandbox, id); err != nil {
+	if err := approveProposal(ctx, a.store, a.opt.grpcRuntime, BuiltinProvidersDir(), proposal.Sandbox, id); err != nil {
 		return nil, connect.NewError(connect.CodeFailedPrecondition, err)
 	}
 	updated, _ := a.store.GetProposal(id)

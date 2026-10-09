@@ -23,12 +23,18 @@ const _ = connect.IsAtLeastVersion1_13_0
 const (
 	// ConsoleServiceName is the fully-qualified name of the ConsoleService service.
 	ConsoleServiceName = "cauteum.control.v1.ConsoleService"
+	// GatewayAdminServiceName is the fully-qualified name of the GatewayAdminService service.
+	GatewayAdminServiceName = "cauteum.control.v1.GatewayAdminService"
 	// SandboxServiceName is the fully-qualified name of the SandboxService service.
 	SandboxServiceName = "cauteum.control.v1.SandboxService"
+	// ManagedSandboxServiceName is the fully-qualified name of the ManagedSandboxService service.
+	ManagedSandboxServiceName = "cauteum.control.v1.ManagedSandboxService"
 	// OperationsServiceName is the fully-qualified name of the OperationsService service.
 	OperationsServiceName = "cauteum.control.v1.OperationsService"
 	// CatalogServiceName is the fully-qualified name of the CatalogService service.
 	CatalogServiceName = "cauteum.control.v1.CatalogService"
+	// InferenceServiceName is the fully-qualified name of the InferenceService service.
+	InferenceServiceName = "cauteum.control.v1.InferenceService"
 	// PolicyServiceName is the fully-qualified name of the PolicyService service.
 	PolicyServiceName = "cauteum.control.v1.PolicyService"
 	// ProviderProfileServiceName is the fully-qualified name of the ProviderProfileService service.
@@ -55,6 +61,9 @@ const (
 	// ConsoleServiceGetOverviewProcedure is the fully-qualified name of the ConsoleService's
 	// GetOverview RPC.
 	ConsoleServiceGetOverviewProcedure = "/cauteum.control.v1.ConsoleService/GetOverview"
+	// GatewayAdminServiceGetGatewayInfoProcedure is the fully-qualified name of the
+	// GatewayAdminService's GetGatewayInfo RPC.
+	GatewayAdminServiceGetGatewayInfoProcedure = "/cauteum.control.v1.GatewayAdminService/GetGatewayInfo"
 	// SandboxServiceListSandboxesProcedure is the fully-qualified name of the SandboxService's
 	// ListSandboxes RPC.
 	SandboxServiceListSandboxesProcedure = "/cauteum.control.v1.SandboxService/ListSandboxes"
@@ -67,6 +76,9 @@ const (
 	// SandboxServiceGetSandboxLogsProcedure is the fully-qualified name of the SandboxService's
 	// GetSandboxLogs RPC.
 	SandboxServiceGetSandboxLogsProcedure = "/cauteum.control.v1.SandboxService/GetSandboxLogs"
+	// SandboxServiceAppendSandboxLogsProcedure is the fully-qualified name of the SandboxService's
+	// AppendSandboxLogs RPC.
+	SandboxServiceAppendSandboxLogsProcedure = "/cauteum.control.v1.SandboxService/AppendSandboxLogs"
 	// SandboxServiceWatchSandboxLogsProcedure is the fully-qualified name of the SandboxService's
 	// WatchSandboxLogs RPC.
 	SandboxServiceWatchSandboxLogsProcedure = "/cauteum.control.v1.SandboxService/WatchSandboxLogs"
@@ -82,6 +94,18 @@ const (
 	// SandboxServiceDeleteSandboxProcedure is the fully-qualified name of the SandboxService's
 	// DeleteSandbox RPC.
 	SandboxServiceDeleteSandboxProcedure = "/cauteum.control.v1.SandboxService/DeleteSandbox"
+	// ManagedSandboxServiceSyncManagedSandboxProcedure is the fully-qualified name of the
+	// ManagedSandboxService's SyncManagedSandbox RPC.
+	ManagedSandboxServiceSyncManagedSandboxProcedure = "/cauteum.control.v1.ManagedSandboxService/SyncManagedSandbox"
+	// ManagedSandboxServiceGetManagedSandboxProcedure is the fully-qualified name of the
+	// ManagedSandboxService's GetManagedSandbox RPC.
+	ManagedSandboxServiceGetManagedSandboxProcedure = "/cauteum.control.v1.ManagedSandboxService/GetManagedSandbox"
+	// ManagedSandboxServiceDeleteManagedSandboxProcedure is the fully-qualified name of the
+	// ManagedSandboxService's DeleteManagedSandbox RPC.
+	ManagedSandboxServiceDeleteManagedSandboxProcedure = "/cauteum.control.v1.ManagedSandboxService/DeleteManagedSandbox"
+	// ManagedSandboxServiceIssueManagedSandboxTokenProcedure is the fully-qualified name of the
+	// ManagedSandboxService's IssueManagedSandboxToken RPC.
+	ManagedSandboxServiceIssueManagedSandboxTokenProcedure = "/cauteum.control.v1.ManagedSandboxService/IssueManagedSandboxToken"
 	// OperationsServiceGetOperationProcedure is the fully-qualified name of the OperationsService's
 	// GetOperation RPC.
 	OperationsServiceGetOperationProcedure = "/cauteum.control.v1.OperationsService/GetOperation"
@@ -103,6 +127,15 @@ const (
 	// CatalogServiceGetWorkspaceProcedure is the fully-qualified name of the CatalogService's
 	// GetWorkspace RPC.
 	CatalogServiceGetWorkspaceProcedure = "/cauteum.control.v1.CatalogService/GetWorkspace"
+	// InferenceServiceGetInferenceRouteProcedure is the fully-qualified name of the InferenceService's
+	// GetInferenceRoute RPC.
+	InferenceServiceGetInferenceRouteProcedure = "/cauteum.control.v1.InferenceService/GetInferenceRoute"
+	// InferenceServiceUpdateInferenceRouteProcedure is the fully-qualified name of the
+	// InferenceService's UpdateInferenceRoute RPC.
+	InferenceServiceUpdateInferenceRouteProcedure = "/cauteum.control.v1.InferenceService/UpdateInferenceRoute"
+	// InferenceServiceClearInferenceRouteProcedure is the fully-qualified name of the
+	// InferenceService's ClearInferenceRoute RPC.
+	InferenceServiceClearInferenceRouteProcedure = "/cauteum.control.v1.InferenceService/ClearInferenceRoute"
 	// PolicyServiceGetGlobalPolicyProcedure is the fully-qualified name of the PolicyService's
 	// GetGlobalPolicy RPC.
 	PolicyServiceGetGlobalPolicyProcedure = "/cauteum.control.v1.PolicyService/GetGlobalPolicy"
@@ -281,6 +314,77 @@ func (UnimplementedConsoleServiceHandler) GetOverview(context.Context, *connect.
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("cauteum.control.v1.ConsoleService.GetOverview is not implemented"))
 }
 
+// GatewayAdminServiceClient is a client for the cauteum.control.v1.GatewayAdminService service.
+type GatewayAdminServiceClient interface {
+	GetGatewayInfo(context.Context, *connect.Request[v1.GetGatewayInfoRequest]) (*connect.Response[v1.GetGatewayInfoResponse], error)
+}
+
+// NewGatewayAdminServiceClient constructs a client for the cauteum.control.v1.GatewayAdminService
+// service. By default, it uses the Connect protocol with the binary Protobuf Codec, asks for
+// gzipped responses, and sends uncompressed requests. To use the gRPC or gRPC-Web protocols, supply
+// the connect.WithGRPC() or connect.WithGRPCWeb() options.
+//
+// The URL supplied here should be the base URL for the Connect or gRPC server (for example,
+// http://api.acme.com or https://acme.com/grpc).
+func NewGatewayAdminServiceClient(httpClient connect.HTTPClient, baseURL string, opts ...connect.ClientOption) GatewayAdminServiceClient {
+	baseURL = strings.TrimRight(baseURL, "/")
+	gatewayAdminServiceMethods := v1.File_cauteum_control_v1_console_proto.Services().ByName("GatewayAdminService").Methods()
+	return &gatewayAdminServiceClient{
+		getGatewayInfo: connect.NewClient[v1.GetGatewayInfoRequest, v1.GetGatewayInfoResponse](
+			httpClient,
+			baseURL+GatewayAdminServiceGetGatewayInfoProcedure,
+			connect.WithSchema(gatewayAdminServiceMethods.ByName("GetGatewayInfo")),
+			connect.WithClientOptions(opts...),
+		),
+	}
+}
+
+// gatewayAdminServiceClient implements GatewayAdminServiceClient.
+type gatewayAdminServiceClient struct {
+	getGatewayInfo *connect.Client[v1.GetGatewayInfoRequest, v1.GetGatewayInfoResponse]
+}
+
+// GetGatewayInfo calls cauteum.control.v1.GatewayAdminService.GetGatewayInfo.
+func (c *gatewayAdminServiceClient) GetGatewayInfo(ctx context.Context, req *connect.Request[v1.GetGatewayInfoRequest]) (*connect.Response[v1.GetGatewayInfoResponse], error) {
+	return c.getGatewayInfo.CallUnary(ctx, req)
+}
+
+// GatewayAdminServiceHandler is an implementation of the cauteum.control.v1.GatewayAdminService
+// service.
+type GatewayAdminServiceHandler interface {
+	GetGatewayInfo(context.Context, *connect.Request[v1.GetGatewayInfoRequest]) (*connect.Response[v1.GetGatewayInfoResponse], error)
+}
+
+// NewGatewayAdminServiceHandler builds an HTTP handler from the service implementation. It returns
+// the path on which to mount the handler and the handler itself.
+//
+// By default, handlers support the Connect, gRPC, and gRPC-Web protocols with the binary Protobuf
+// and JSON codecs. They also support gzip compression.
+func NewGatewayAdminServiceHandler(svc GatewayAdminServiceHandler, opts ...connect.HandlerOption) (string, http.Handler) {
+	gatewayAdminServiceMethods := v1.File_cauteum_control_v1_console_proto.Services().ByName("GatewayAdminService").Methods()
+	gatewayAdminServiceGetGatewayInfoHandler := connect.NewUnaryHandler(
+		GatewayAdminServiceGetGatewayInfoProcedure,
+		svc.GetGatewayInfo,
+		connect.WithSchema(gatewayAdminServiceMethods.ByName("GetGatewayInfo")),
+		connect.WithHandlerOptions(opts...),
+	)
+	return "/cauteum.control.v1.GatewayAdminService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch r.URL.Path {
+		case GatewayAdminServiceGetGatewayInfoProcedure:
+			gatewayAdminServiceGetGatewayInfoHandler.ServeHTTP(w, r)
+		default:
+			http.NotFound(w, r)
+		}
+	})
+}
+
+// UnimplementedGatewayAdminServiceHandler returns CodeUnimplemented from all methods.
+type UnimplementedGatewayAdminServiceHandler struct{}
+
+func (UnimplementedGatewayAdminServiceHandler) GetGatewayInfo(context.Context, *connect.Request[v1.GetGatewayInfoRequest]) (*connect.Response[v1.GetGatewayInfoResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("cauteum.control.v1.GatewayAdminService.GetGatewayInfo is not implemented"))
+}
+
 // SandboxServiceClient is a client for the cauteum.control.v1.SandboxService service.
 type SandboxServiceClient interface {
 	// ListSandboxes returns a bounded page of one workspace's sandbox records.
@@ -292,6 +396,8 @@ type SandboxServiceClient interface {
 	WatchSandboxes(context.Context, *connect.Request[v1.WatchSandboxesRequest]) (*connect.ServerStreamForClient[v1.WatchSandboxesResponse], error)
 	// GetSandboxLogs returns a bounded tail of one visible sandbox's log buffer.
 	GetSandboxLogs(context.Context, *connect.Request[v1.GetSandboxLogsRequest]) (*connect.Response[v1.GetSandboxLogsResponse], error)
+	// Append bounded observations from an authorized user or matching sandbox token.
+	AppendSandboxLogs(context.Context, *connect.Request[v1.AppendSandboxLogsRequest]) (*connect.Response[v1.AppendSandboxLogsResponse], error)
 	// WatchSandboxLogs starts with a tail and then follows new buffered lines.
 	WatchSandboxLogs(context.Context, *connect.Request[v1.WatchSandboxLogsRequest]) (*connect.ServerStreamForClient[v1.WatchSandboxLogsResponse], error)
 	// These actions execute against the configured runtime, never the REST registry.
@@ -336,6 +442,12 @@ func NewSandboxServiceClient(httpClient connect.HTTPClient, baseURL string, opts
 			connect.WithSchema(sandboxServiceMethods.ByName("GetSandboxLogs")),
 			connect.WithClientOptions(opts...),
 		),
+		appendSandboxLogs: connect.NewClient[v1.AppendSandboxLogsRequest, v1.AppendSandboxLogsResponse](
+			httpClient,
+			baseURL+SandboxServiceAppendSandboxLogsProcedure,
+			connect.WithSchema(sandboxServiceMethods.ByName("AppendSandboxLogs")),
+			connect.WithClientOptions(opts...),
+		),
 		watchSandboxLogs: connect.NewClient[v1.WatchSandboxLogsRequest, v1.WatchSandboxLogsResponse](
 			httpClient,
 			baseURL+SandboxServiceWatchSandboxLogsProcedure,
@@ -371,15 +483,16 @@ func NewSandboxServiceClient(httpClient connect.HTTPClient, baseURL string, opts
 
 // sandboxServiceClient implements SandboxServiceClient.
 type sandboxServiceClient struct {
-	listSandboxes    *connect.Client[v1.ListSandboxesRequest, v1.ListSandboxesResponse]
-	getSandbox       *connect.Client[v1.GetSandboxRequest, v1.GetSandboxResponse]
-	watchSandboxes   *connect.Client[v1.WatchSandboxesRequest, v1.WatchSandboxesResponse]
-	getSandboxLogs   *connect.Client[v1.GetSandboxLogsRequest, v1.GetSandboxLogsResponse]
-	watchSandboxLogs *connect.Client[v1.WatchSandboxLogsRequest, v1.WatchSandboxLogsResponse]
-	createSandbox    *connect.Client[v1.CreateSandboxRequest, v1.CreateSandboxResponse]
-	startSandbox     *connect.Client[v1.StartSandboxRequest, v1.StartSandboxResponse]
-	stopSandbox      *connect.Client[v1.StopSandboxRequest, v1.StopSandboxResponse]
-	deleteSandbox    *connect.Client[v1.DeleteSandboxRequest, v1.DeleteSandboxResponse]
+	listSandboxes     *connect.Client[v1.ListSandboxesRequest, v1.ListSandboxesResponse]
+	getSandbox        *connect.Client[v1.GetSandboxRequest, v1.GetSandboxResponse]
+	watchSandboxes    *connect.Client[v1.WatchSandboxesRequest, v1.WatchSandboxesResponse]
+	getSandboxLogs    *connect.Client[v1.GetSandboxLogsRequest, v1.GetSandboxLogsResponse]
+	appendSandboxLogs *connect.Client[v1.AppendSandboxLogsRequest, v1.AppendSandboxLogsResponse]
+	watchSandboxLogs  *connect.Client[v1.WatchSandboxLogsRequest, v1.WatchSandboxLogsResponse]
+	createSandbox     *connect.Client[v1.CreateSandboxRequest, v1.CreateSandboxResponse]
+	startSandbox      *connect.Client[v1.StartSandboxRequest, v1.StartSandboxResponse]
+	stopSandbox       *connect.Client[v1.StopSandboxRequest, v1.StopSandboxResponse]
+	deleteSandbox     *connect.Client[v1.DeleteSandboxRequest, v1.DeleteSandboxResponse]
 }
 
 // ListSandboxes calls cauteum.control.v1.SandboxService.ListSandboxes.
@@ -400,6 +513,11 @@ func (c *sandboxServiceClient) WatchSandboxes(ctx context.Context, req *connect.
 // GetSandboxLogs calls cauteum.control.v1.SandboxService.GetSandboxLogs.
 func (c *sandboxServiceClient) GetSandboxLogs(ctx context.Context, req *connect.Request[v1.GetSandboxLogsRequest]) (*connect.Response[v1.GetSandboxLogsResponse], error) {
 	return c.getSandboxLogs.CallUnary(ctx, req)
+}
+
+// AppendSandboxLogs calls cauteum.control.v1.SandboxService.AppendSandboxLogs.
+func (c *sandboxServiceClient) AppendSandboxLogs(ctx context.Context, req *connect.Request[v1.AppendSandboxLogsRequest]) (*connect.Response[v1.AppendSandboxLogsResponse], error) {
+	return c.appendSandboxLogs.CallUnary(ctx, req)
 }
 
 // WatchSandboxLogs calls cauteum.control.v1.SandboxService.WatchSandboxLogs.
@@ -438,6 +556,8 @@ type SandboxServiceHandler interface {
 	WatchSandboxes(context.Context, *connect.Request[v1.WatchSandboxesRequest], *connect.ServerStream[v1.WatchSandboxesResponse]) error
 	// GetSandboxLogs returns a bounded tail of one visible sandbox's log buffer.
 	GetSandboxLogs(context.Context, *connect.Request[v1.GetSandboxLogsRequest]) (*connect.Response[v1.GetSandboxLogsResponse], error)
+	// Append bounded observations from an authorized user or matching sandbox token.
+	AppendSandboxLogs(context.Context, *connect.Request[v1.AppendSandboxLogsRequest]) (*connect.Response[v1.AppendSandboxLogsResponse], error)
 	// WatchSandboxLogs starts with a tail and then follows new buffered lines.
 	WatchSandboxLogs(context.Context, *connect.Request[v1.WatchSandboxLogsRequest], *connect.ServerStream[v1.WatchSandboxLogsResponse]) error
 	// These actions execute against the configured runtime, never the REST registry.
@@ -476,6 +596,12 @@ func NewSandboxServiceHandler(svc SandboxServiceHandler, opts ...connect.Handler
 		SandboxServiceGetSandboxLogsProcedure,
 		svc.GetSandboxLogs,
 		connect.WithSchema(sandboxServiceMethods.ByName("GetSandboxLogs")),
+		connect.WithHandlerOptions(opts...),
+	)
+	sandboxServiceAppendSandboxLogsHandler := connect.NewUnaryHandler(
+		SandboxServiceAppendSandboxLogsProcedure,
+		svc.AppendSandboxLogs,
+		connect.WithSchema(sandboxServiceMethods.ByName("AppendSandboxLogs")),
 		connect.WithHandlerOptions(opts...),
 	)
 	sandboxServiceWatchSandboxLogsHandler := connect.NewServerStreamHandler(
@@ -518,6 +644,8 @@ func NewSandboxServiceHandler(svc SandboxServiceHandler, opts ...connect.Handler
 			sandboxServiceWatchSandboxesHandler.ServeHTTP(w, r)
 		case SandboxServiceGetSandboxLogsProcedure:
 			sandboxServiceGetSandboxLogsHandler.ServeHTTP(w, r)
+		case SandboxServiceAppendSandboxLogsProcedure:
+			sandboxServiceAppendSandboxLogsHandler.ServeHTTP(w, r)
 		case SandboxServiceWatchSandboxLogsProcedure:
 			sandboxServiceWatchSandboxLogsHandler.ServeHTTP(w, r)
 		case SandboxServiceCreateSandboxProcedure:
@@ -553,6 +681,10 @@ func (UnimplementedSandboxServiceHandler) GetSandboxLogs(context.Context, *conne
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("cauteum.control.v1.SandboxService.GetSandboxLogs is not implemented"))
 }
 
+func (UnimplementedSandboxServiceHandler) AppendSandboxLogs(context.Context, *connect.Request[v1.AppendSandboxLogsRequest]) (*connect.Response[v1.AppendSandboxLogsResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("cauteum.control.v1.SandboxService.AppendSandboxLogs is not implemented"))
+}
+
 func (UnimplementedSandboxServiceHandler) WatchSandboxLogs(context.Context, *connect.Request[v1.WatchSandboxLogsRequest], *connect.ServerStream[v1.WatchSandboxLogsResponse]) error {
 	return connect.NewError(connect.CodeUnimplemented, errors.New("cauteum.control.v1.SandboxService.WatchSandboxLogs is not implemented"))
 }
@@ -571,6 +703,155 @@ func (UnimplementedSandboxServiceHandler) StopSandbox(context.Context, *connect.
 
 func (UnimplementedSandboxServiceHandler) DeleteSandbox(context.Context, *connect.Request[v1.DeleteSandboxRequest]) (*connect.Response[v1.DeleteSandboxResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("cauteum.control.v1.SandboxService.DeleteSandbox is not implemented"))
+}
+
+// ManagedSandboxServiceClient is a client for the cauteum.control.v1.ManagedSandboxService service.
+type ManagedSandboxServiceClient interface {
+	SyncManagedSandbox(context.Context, *connect.Request[v1.SyncManagedSandboxRequest]) (*connect.Response[v1.SyncManagedSandboxResponse], error)
+	GetManagedSandbox(context.Context, *connect.Request[v1.GetManagedSandboxRequest]) (*connect.Response[v1.GetManagedSandboxResponse], error)
+	DeleteManagedSandbox(context.Context, *connect.Request[v1.DeleteManagedSandboxRequest]) (*connect.Response[v1.DeleteManagedSandboxResponse], error)
+	IssueManagedSandboxToken(context.Context, *connect.Request[v1.IssueManagedSandboxTokenRequest]) (*connect.Response[v1.IssueManagedSandboxTokenResponse], error)
+}
+
+// NewManagedSandboxServiceClient constructs a client for the
+// cauteum.control.v1.ManagedSandboxService service. By default, it uses the Connect protocol with
+// the binary Protobuf Codec, asks for gzipped responses, and sends uncompressed requests. To use
+// the gRPC or gRPC-Web protocols, supply the connect.WithGRPC() or connect.WithGRPCWeb() options.
+//
+// The URL supplied here should be the base URL for the Connect or gRPC server (for example,
+// http://api.acme.com or https://acme.com/grpc).
+func NewManagedSandboxServiceClient(httpClient connect.HTTPClient, baseURL string, opts ...connect.ClientOption) ManagedSandboxServiceClient {
+	baseURL = strings.TrimRight(baseURL, "/")
+	managedSandboxServiceMethods := v1.File_cauteum_control_v1_console_proto.Services().ByName("ManagedSandboxService").Methods()
+	return &managedSandboxServiceClient{
+		syncManagedSandbox: connect.NewClient[v1.SyncManagedSandboxRequest, v1.SyncManagedSandboxResponse](
+			httpClient,
+			baseURL+ManagedSandboxServiceSyncManagedSandboxProcedure,
+			connect.WithSchema(managedSandboxServiceMethods.ByName("SyncManagedSandbox")),
+			connect.WithClientOptions(opts...),
+		),
+		getManagedSandbox: connect.NewClient[v1.GetManagedSandboxRequest, v1.GetManagedSandboxResponse](
+			httpClient,
+			baseURL+ManagedSandboxServiceGetManagedSandboxProcedure,
+			connect.WithSchema(managedSandboxServiceMethods.ByName("GetManagedSandbox")),
+			connect.WithClientOptions(opts...),
+		),
+		deleteManagedSandbox: connect.NewClient[v1.DeleteManagedSandboxRequest, v1.DeleteManagedSandboxResponse](
+			httpClient,
+			baseURL+ManagedSandboxServiceDeleteManagedSandboxProcedure,
+			connect.WithSchema(managedSandboxServiceMethods.ByName("DeleteManagedSandbox")),
+			connect.WithClientOptions(opts...),
+		),
+		issueManagedSandboxToken: connect.NewClient[v1.IssueManagedSandboxTokenRequest, v1.IssueManagedSandboxTokenResponse](
+			httpClient,
+			baseURL+ManagedSandboxServiceIssueManagedSandboxTokenProcedure,
+			connect.WithSchema(managedSandboxServiceMethods.ByName("IssueManagedSandboxToken")),
+			connect.WithClientOptions(opts...),
+		),
+	}
+}
+
+// managedSandboxServiceClient implements ManagedSandboxServiceClient.
+type managedSandboxServiceClient struct {
+	syncManagedSandbox       *connect.Client[v1.SyncManagedSandboxRequest, v1.SyncManagedSandboxResponse]
+	getManagedSandbox        *connect.Client[v1.GetManagedSandboxRequest, v1.GetManagedSandboxResponse]
+	deleteManagedSandbox     *connect.Client[v1.DeleteManagedSandboxRequest, v1.DeleteManagedSandboxResponse]
+	issueManagedSandboxToken *connect.Client[v1.IssueManagedSandboxTokenRequest, v1.IssueManagedSandboxTokenResponse]
+}
+
+// SyncManagedSandbox calls cauteum.control.v1.ManagedSandboxService.SyncManagedSandbox.
+func (c *managedSandboxServiceClient) SyncManagedSandbox(ctx context.Context, req *connect.Request[v1.SyncManagedSandboxRequest]) (*connect.Response[v1.SyncManagedSandboxResponse], error) {
+	return c.syncManagedSandbox.CallUnary(ctx, req)
+}
+
+// GetManagedSandbox calls cauteum.control.v1.ManagedSandboxService.GetManagedSandbox.
+func (c *managedSandboxServiceClient) GetManagedSandbox(ctx context.Context, req *connect.Request[v1.GetManagedSandboxRequest]) (*connect.Response[v1.GetManagedSandboxResponse], error) {
+	return c.getManagedSandbox.CallUnary(ctx, req)
+}
+
+// DeleteManagedSandbox calls cauteum.control.v1.ManagedSandboxService.DeleteManagedSandbox.
+func (c *managedSandboxServiceClient) DeleteManagedSandbox(ctx context.Context, req *connect.Request[v1.DeleteManagedSandboxRequest]) (*connect.Response[v1.DeleteManagedSandboxResponse], error) {
+	return c.deleteManagedSandbox.CallUnary(ctx, req)
+}
+
+// IssueManagedSandboxToken calls cauteum.control.v1.ManagedSandboxService.IssueManagedSandboxToken.
+func (c *managedSandboxServiceClient) IssueManagedSandboxToken(ctx context.Context, req *connect.Request[v1.IssueManagedSandboxTokenRequest]) (*connect.Response[v1.IssueManagedSandboxTokenResponse], error) {
+	return c.issueManagedSandboxToken.CallUnary(ctx, req)
+}
+
+// ManagedSandboxServiceHandler is an implementation of the cauteum.control.v1.ManagedSandboxService
+// service.
+type ManagedSandboxServiceHandler interface {
+	SyncManagedSandbox(context.Context, *connect.Request[v1.SyncManagedSandboxRequest]) (*connect.Response[v1.SyncManagedSandboxResponse], error)
+	GetManagedSandbox(context.Context, *connect.Request[v1.GetManagedSandboxRequest]) (*connect.Response[v1.GetManagedSandboxResponse], error)
+	DeleteManagedSandbox(context.Context, *connect.Request[v1.DeleteManagedSandboxRequest]) (*connect.Response[v1.DeleteManagedSandboxResponse], error)
+	IssueManagedSandboxToken(context.Context, *connect.Request[v1.IssueManagedSandboxTokenRequest]) (*connect.Response[v1.IssueManagedSandboxTokenResponse], error)
+}
+
+// NewManagedSandboxServiceHandler builds an HTTP handler from the service implementation. It
+// returns the path on which to mount the handler and the handler itself.
+//
+// By default, handlers support the Connect, gRPC, and gRPC-Web protocols with the binary Protobuf
+// and JSON codecs. They also support gzip compression.
+func NewManagedSandboxServiceHandler(svc ManagedSandboxServiceHandler, opts ...connect.HandlerOption) (string, http.Handler) {
+	managedSandboxServiceMethods := v1.File_cauteum_control_v1_console_proto.Services().ByName("ManagedSandboxService").Methods()
+	managedSandboxServiceSyncManagedSandboxHandler := connect.NewUnaryHandler(
+		ManagedSandboxServiceSyncManagedSandboxProcedure,
+		svc.SyncManagedSandbox,
+		connect.WithSchema(managedSandboxServiceMethods.ByName("SyncManagedSandbox")),
+		connect.WithHandlerOptions(opts...),
+	)
+	managedSandboxServiceGetManagedSandboxHandler := connect.NewUnaryHandler(
+		ManagedSandboxServiceGetManagedSandboxProcedure,
+		svc.GetManagedSandbox,
+		connect.WithSchema(managedSandboxServiceMethods.ByName("GetManagedSandbox")),
+		connect.WithHandlerOptions(opts...),
+	)
+	managedSandboxServiceDeleteManagedSandboxHandler := connect.NewUnaryHandler(
+		ManagedSandboxServiceDeleteManagedSandboxProcedure,
+		svc.DeleteManagedSandbox,
+		connect.WithSchema(managedSandboxServiceMethods.ByName("DeleteManagedSandbox")),
+		connect.WithHandlerOptions(opts...),
+	)
+	managedSandboxServiceIssueManagedSandboxTokenHandler := connect.NewUnaryHandler(
+		ManagedSandboxServiceIssueManagedSandboxTokenProcedure,
+		svc.IssueManagedSandboxToken,
+		connect.WithSchema(managedSandboxServiceMethods.ByName("IssueManagedSandboxToken")),
+		connect.WithHandlerOptions(opts...),
+	)
+	return "/cauteum.control.v1.ManagedSandboxService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch r.URL.Path {
+		case ManagedSandboxServiceSyncManagedSandboxProcedure:
+			managedSandboxServiceSyncManagedSandboxHandler.ServeHTTP(w, r)
+		case ManagedSandboxServiceGetManagedSandboxProcedure:
+			managedSandboxServiceGetManagedSandboxHandler.ServeHTTP(w, r)
+		case ManagedSandboxServiceDeleteManagedSandboxProcedure:
+			managedSandboxServiceDeleteManagedSandboxHandler.ServeHTTP(w, r)
+		case ManagedSandboxServiceIssueManagedSandboxTokenProcedure:
+			managedSandboxServiceIssueManagedSandboxTokenHandler.ServeHTTP(w, r)
+		default:
+			http.NotFound(w, r)
+		}
+	})
+}
+
+// UnimplementedManagedSandboxServiceHandler returns CodeUnimplemented from all methods.
+type UnimplementedManagedSandboxServiceHandler struct{}
+
+func (UnimplementedManagedSandboxServiceHandler) SyncManagedSandbox(context.Context, *connect.Request[v1.SyncManagedSandboxRequest]) (*connect.Response[v1.SyncManagedSandboxResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("cauteum.control.v1.ManagedSandboxService.SyncManagedSandbox is not implemented"))
+}
+
+func (UnimplementedManagedSandboxServiceHandler) GetManagedSandbox(context.Context, *connect.Request[v1.GetManagedSandboxRequest]) (*connect.Response[v1.GetManagedSandboxResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("cauteum.control.v1.ManagedSandboxService.GetManagedSandbox is not implemented"))
+}
+
+func (UnimplementedManagedSandboxServiceHandler) DeleteManagedSandbox(context.Context, *connect.Request[v1.DeleteManagedSandboxRequest]) (*connect.Response[v1.DeleteManagedSandboxResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("cauteum.control.v1.ManagedSandboxService.DeleteManagedSandbox is not implemented"))
+}
+
+func (UnimplementedManagedSandboxServiceHandler) IssueManagedSandboxToken(context.Context, *connect.Request[v1.IssueManagedSandboxTokenRequest]) (*connect.Response[v1.IssueManagedSandboxTokenResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("cauteum.control.v1.ManagedSandboxService.IssueManagedSandboxToken is not implemented"))
 }
 
 // OperationsServiceClient is a client for the cauteum.control.v1.OperationsService service.
@@ -842,6 +1123,128 @@ func (UnimplementedCatalogServiceHandler) ListWorkspaces(context.Context, *conne
 
 func (UnimplementedCatalogServiceHandler) GetWorkspace(context.Context, *connect.Request[v1.GetWorkspaceRequest]) (*connect.Response[v1.GetWorkspaceResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("cauteum.control.v1.CatalogService.GetWorkspace is not implemented"))
+}
+
+// InferenceServiceClient is a client for the cauteum.control.v1.InferenceService service.
+type InferenceServiceClient interface {
+	GetInferenceRoute(context.Context, *connect.Request[v1.GetInferenceRouteRequest]) (*connect.Response[v1.GetInferenceRouteResponse], error)
+	UpdateInferenceRoute(context.Context, *connect.Request[v1.UpdateInferenceRouteRequest]) (*connect.Response[v1.UpdateInferenceRouteResponse], error)
+	ClearInferenceRoute(context.Context, *connect.Request[v1.ClearInferenceRouteRequest]) (*connect.Response[v1.ClearInferenceRouteResponse], error)
+}
+
+// NewInferenceServiceClient constructs a client for the cauteum.control.v1.InferenceService
+// service. By default, it uses the Connect protocol with the binary Protobuf Codec, asks for
+// gzipped responses, and sends uncompressed requests. To use the gRPC or gRPC-Web protocols, supply
+// the connect.WithGRPC() or connect.WithGRPCWeb() options.
+//
+// The URL supplied here should be the base URL for the Connect or gRPC server (for example,
+// http://api.acme.com or https://acme.com/grpc).
+func NewInferenceServiceClient(httpClient connect.HTTPClient, baseURL string, opts ...connect.ClientOption) InferenceServiceClient {
+	baseURL = strings.TrimRight(baseURL, "/")
+	inferenceServiceMethods := v1.File_cauteum_control_v1_console_proto.Services().ByName("InferenceService").Methods()
+	return &inferenceServiceClient{
+		getInferenceRoute: connect.NewClient[v1.GetInferenceRouteRequest, v1.GetInferenceRouteResponse](
+			httpClient,
+			baseURL+InferenceServiceGetInferenceRouteProcedure,
+			connect.WithSchema(inferenceServiceMethods.ByName("GetInferenceRoute")),
+			connect.WithClientOptions(opts...),
+		),
+		updateInferenceRoute: connect.NewClient[v1.UpdateInferenceRouteRequest, v1.UpdateInferenceRouteResponse](
+			httpClient,
+			baseURL+InferenceServiceUpdateInferenceRouteProcedure,
+			connect.WithSchema(inferenceServiceMethods.ByName("UpdateInferenceRoute")),
+			connect.WithClientOptions(opts...),
+		),
+		clearInferenceRoute: connect.NewClient[v1.ClearInferenceRouteRequest, v1.ClearInferenceRouteResponse](
+			httpClient,
+			baseURL+InferenceServiceClearInferenceRouteProcedure,
+			connect.WithSchema(inferenceServiceMethods.ByName("ClearInferenceRoute")),
+			connect.WithClientOptions(opts...),
+		),
+	}
+}
+
+// inferenceServiceClient implements InferenceServiceClient.
+type inferenceServiceClient struct {
+	getInferenceRoute    *connect.Client[v1.GetInferenceRouteRequest, v1.GetInferenceRouteResponse]
+	updateInferenceRoute *connect.Client[v1.UpdateInferenceRouteRequest, v1.UpdateInferenceRouteResponse]
+	clearInferenceRoute  *connect.Client[v1.ClearInferenceRouteRequest, v1.ClearInferenceRouteResponse]
+}
+
+// GetInferenceRoute calls cauteum.control.v1.InferenceService.GetInferenceRoute.
+func (c *inferenceServiceClient) GetInferenceRoute(ctx context.Context, req *connect.Request[v1.GetInferenceRouteRequest]) (*connect.Response[v1.GetInferenceRouteResponse], error) {
+	return c.getInferenceRoute.CallUnary(ctx, req)
+}
+
+// UpdateInferenceRoute calls cauteum.control.v1.InferenceService.UpdateInferenceRoute.
+func (c *inferenceServiceClient) UpdateInferenceRoute(ctx context.Context, req *connect.Request[v1.UpdateInferenceRouteRequest]) (*connect.Response[v1.UpdateInferenceRouteResponse], error) {
+	return c.updateInferenceRoute.CallUnary(ctx, req)
+}
+
+// ClearInferenceRoute calls cauteum.control.v1.InferenceService.ClearInferenceRoute.
+func (c *inferenceServiceClient) ClearInferenceRoute(ctx context.Context, req *connect.Request[v1.ClearInferenceRouteRequest]) (*connect.Response[v1.ClearInferenceRouteResponse], error) {
+	return c.clearInferenceRoute.CallUnary(ctx, req)
+}
+
+// InferenceServiceHandler is an implementation of the cauteum.control.v1.InferenceService service.
+type InferenceServiceHandler interface {
+	GetInferenceRoute(context.Context, *connect.Request[v1.GetInferenceRouteRequest]) (*connect.Response[v1.GetInferenceRouteResponse], error)
+	UpdateInferenceRoute(context.Context, *connect.Request[v1.UpdateInferenceRouteRequest]) (*connect.Response[v1.UpdateInferenceRouteResponse], error)
+	ClearInferenceRoute(context.Context, *connect.Request[v1.ClearInferenceRouteRequest]) (*connect.Response[v1.ClearInferenceRouteResponse], error)
+}
+
+// NewInferenceServiceHandler builds an HTTP handler from the service implementation. It returns the
+// path on which to mount the handler and the handler itself.
+//
+// By default, handlers support the Connect, gRPC, and gRPC-Web protocols with the binary Protobuf
+// and JSON codecs. They also support gzip compression.
+func NewInferenceServiceHandler(svc InferenceServiceHandler, opts ...connect.HandlerOption) (string, http.Handler) {
+	inferenceServiceMethods := v1.File_cauteum_control_v1_console_proto.Services().ByName("InferenceService").Methods()
+	inferenceServiceGetInferenceRouteHandler := connect.NewUnaryHandler(
+		InferenceServiceGetInferenceRouteProcedure,
+		svc.GetInferenceRoute,
+		connect.WithSchema(inferenceServiceMethods.ByName("GetInferenceRoute")),
+		connect.WithHandlerOptions(opts...),
+	)
+	inferenceServiceUpdateInferenceRouteHandler := connect.NewUnaryHandler(
+		InferenceServiceUpdateInferenceRouteProcedure,
+		svc.UpdateInferenceRoute,
+		connect.WithSchema(inferenceServiceMethods.ByName("UpdateInferenceRoute")),
+		connect.WithHandlerOptions(opts...),
+	)
+	inferenceServiceClearInferenceRouteHandler := connect.NewUnaryHandler(
+		InferenceServiceClearInferenceRouteProcedure,
+		svc.ClearInferenceRoute,
+		connect.WithSchema(inferenceServiceMethods.ByName("ClearInferenceRoute")),
+		connect.WithHandlerOptions(opts...),
+	)
+	return "/cauteum.control.v1.InferenceService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch r.URL.Path {
+		case InferenceServiceGetInferenceRouteProcedure:
+			inferenceServiceGetInferenceRouteHandler.ServeHTTP(w, r)
+		case InferenceServiceUpdateInferenceRouteProcedure:
+			inferenceServiceUpdateInferenceRouteHandler.ServeHTTP(w, r)
+		case InferenceServiceClearInferenceRouteProcedure:
+			inferenceServiceClearInferenceRouteHandler.ServeHTTP(w, r)
+		default:
+			http.NotFound(w, r)
+		}
+	})
+}
+
+// UnimplementedInferenceServiceHandler returns CodeUnimplemented from all methods.
+type UnimplementedInferenceServiceHandler struct{}
+
+func (UnimplementedInferenceServiceHandler) GetInferenceRoute(context.Context, *connect.Request[v1.GetInferenceRouteRequest]) (*connect.Response[v1.GetInferenceRouteResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("cauteum.control.v1.InferenceService.GetInferenceRoute is not implemented"))
+}
+
+func (UnimplementedInferenceServiceHandler) UpdateInferenceRoute(context.Context, *connect.Request[v1.UpdateInferenceRouteRequest]) (*connect.Response[v1.UpdateInferenceRouteResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("cauteum.control.v1.InferenceService.UpdateInferenceRoute is not implemented"))
+}
+
+func (UnimplementedInferenceServiceHandler) ClearInferenceRoute(context.Context, *connect.Request[v1.ClearInferenceRouteRequest]) (*connect.Response[v1.ClearInferenceRouteResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("cauteum.control.v1.InferenceService.ClearInferenceRoute is not implemented"))
 }
 
 // PolicyServiceClient is a client for the cauteum.control.v1.PolicyService service.

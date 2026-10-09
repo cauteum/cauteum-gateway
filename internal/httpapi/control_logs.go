@@ -3,6 +3,8 @@ package httpapi
 import (
 	"context"
 	"errors"
+	"net/http"
+	"net/url"
 	"strings"
 	"time"
 
@@ -12,6 +14,72 @@ import (
 )
 
 const maxConsoleLogLines = 1000
+
+const (
+	maxClientLogLines = 256
+	maxClientLogBytes = 1 << 20
+)
+
+func (a *controlAPI) AppendSandboxLogs(ctx context.Context, req *connect.Request[controlv1.AppendSandboxLogsRequest]) (*connect.Response[controlv1.AppendSandboxLogsResponse], error) {
+	name := strings.TrimSpace(req.Msg.GetSandboxName())
+	linesIn := req.Msg.GetLines()
+	if name == "" || len(linesIn) == 0 || len(linesIn) > maxClientLogLines {
+		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("sandbox name and 1..256 log lines are required"))
+	}
+	principal := PrincipalFrom(ctx)
+	if principal.Kind == PrincipalNone {
+		return nil, connect.NewError(connect.CodeUnauthenticated, errors.New("authentication required"))
+	}
+	workspace := strings.TrimSpace(req.Msg.GetWorkspace())
+	if workspace == "" {
+		workspace = "default"
+	}
+	switch principal.Kind {
+	case PrincipalSandbox:
+		if principal.Sandbox != name {
+			return nil, connect.NewError(connect.CodePermissionDenied, errors.New("sandbox token scope mismatch"))
+		}
+	case PrincipalUser:
+		if (principal.IDP == "oidc" || principal.IDP == "mtls") && !oidcRouteAuthorized(principal, http.MethodPost, &url.URL{Path: "/v1/sandboxes/" + url.PathEscape(name) + "/logs"}, a.opt.OIDC) {
+			return nil, connect.NewError(connect.CodePermissionDenied, errors.New("insufficient role or scope"))
+		}
+		if _, err := a.requireWorkspace(ctx, workspace); err != nil {
+			return nil, err
+		}
+	default:
+		return nil, connect.NewError(connect.CodePermissionDenied, errors.New("unsupported principal"))
+	}
+	record, exists := a.store.GetSandbox(name)
+	if !exists || principal.Kind == PrincipalUser && record.Workspace != "" && record.Workspace != workspace {
+		return nil, connect.NewError(connect.CodeNotFound, errors.New("sandbox not found"))
+	}
+	lines := make([]logbuf.Line, 0, len(linesIn))
+	bytesTotal := 0
+	for _, line := range linesIn {
+		if line == nil {
+			return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("log line is required"))
+		}
+		bytesTotal += len(line.GetText()) + len(line.GetSource()) + len(line.GetLevel())
+		if bytesTotal > maxClientLogBytes {
+			return nil, connect.NewError(connect.CodeResourceExhausted, errors.New("log batch exceeds 1 MiB"))
+		}
+		ts := time.UnixMilli(line.GetTimestampUnixMs()).UTC()
+		if line.GetTimestampUnixMs() <= 0 {
+			ts = time.Now().UTC()
+		}
+		source := strings.TrimSpace(line.GetSource())
+		if source == "" {
+			source = "proc"
+		}
+		level := strings.TrimSpace(line.GetLevel())
+		if level == "" {
+			level = "INFO"
+		}
+		lines = append(lines, logbuf.Line{TS: ts, Source: source, Level: level, Text: line.GetText()})
+	}
+	a.logs.Append(name, lines)
+	return connect.NewResponse(&controlv1.AppendSandboxLogsResponse{Accepted: uint32(len(lines))}), nil
+}
 
 func (a *controlAPI) logTarget(ctx context.Context, workspace, name string) (string, error) {
 	workspace, err := a.requireWorkspace(ctx, workspace)

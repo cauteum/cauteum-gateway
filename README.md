@@ -1,8 +1,8 @@
 <h1 align="center">cauteum-gateway</h1>
 
 <p align="center">
-  <strong>Control-plane registry & relay</strong><br>
-  HTTP registry for sandboxes, providers, policy, proposals, and relayed exec.
+  <strong>RPC control plane and relay</strong><br>
+  OpenShell and Cauteum RPC APIs with HTTP health, auth bootstrap, and streaming relay transport.
 </p>
 <p align="center">
   <a href="https://github.com/cauteum/cauteum-gateway/actions/workflows/ci.yml"><img src="https://github.com/cauteum/cauteum-gateway/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
@@ -22,7 +22,7 @@
 
 Use the [gateway guide](https://cauteum.github.io/guides/gateway/) for setup and the [OpenShell compatibility page](https://cauteum.github.io/reference/openshell-compatibility/) for the current supported scope.
 
-**cauteum-gateway** is the optional control-plane daemon. Sandboxes register here; migrated CLI, UI, and SDK workflows use authenticated RPC. The legacy REST surface remains for workflows still queued for migration, alongside health, browser/auth bootstrap, and relay/stream transport.
+**cauteum-gateway** is the optional control-plane daemon. Client management workflows use authenticated RPC. HTTP remains for health, browser/auth bootstrap, and relay/stream transport.
 
 ### Key Features
 
@@ -63,15 +63,11 @@ curl -s http://127.0.0.1:7443/healthz
 | Method | Path | Role |
 |--------|------|------|
 | GET | `/healthz` | liveness |
-| GET | `/v1/info` | gateway id + sandbox count |
-| GET/PUT/DELETE | `/v1/sandboxes/{name}` | registry |
-| GET/POST | `/v1/sandboxes/{name}/proposals` | policy advisor chunks |
 
-The machine-readable contract for the remaining client-facing REST API is
-[`api/openapi.yaml`](./api/openapi.yaml). It excludes relay transports,
-operational endpoints, and RPC. Provider profiles, partial credential updates,
-policy management, and runtime lifecycle use RPC; registry writes through the remaining REST API
-do not create or stop runtimes. Global and sandbox policy workflows use Control RPC.
+The remaining HTTP contract is documented in [`api/openapi.yaml`](./api/openapi.yaml).
+It covers health and bootstrap flows; management operations use the generated
+Control RPC or the pinned OpenShell RPC contract. No REST compatibility layer
+is maintained for beta clients.
 
 The separate `cauteum.control.v1` Connect API serves authenticated UI and
 SDK clients on the gateway listener. Its generated Proto source and private

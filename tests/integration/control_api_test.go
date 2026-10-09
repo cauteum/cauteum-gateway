@@ -27,12 +27,7 @@ func TestControlAPIReadSlice(t *testing.T) {
 	if _, err := console.GetViewer(ctx, connect.NewRequest(&controlv1.GetViewerRequest{})); connect.CodeOf(err) != connect.CodeUnauthenticated {
 		t.Fatalf("unauthenticated GetViewer error = %v", err)
 	}
-	code, body := g.do(http.MethodPut, "/v1/sandboxes/alpha", g.token, map[string]any{
-		"workspace": "default", "status": "ready", "settings": map[string]string{"password": "private-sentinel"},
-	})
-	if code != http.StatusNoContent {
-		t.Fatalf("create alpha: %d %s", code, body)
-	}
+	g.syncSandbox(&controlv1.SyncManagedSandboxRequest{Workspace: "default", Name: "alpha", Status: "ready"})
 	g.createSandbox("box") // legacy registry record without an explicit workspace
 	sandboxToken := g.sandboxToken("box")
 	sandboxViewer := connect.NewRequest(&controlv1.GetViewerRequest{})
@@ -50,7 +45,7 @@ func TestControlAPIReadSlice(t *testing.T) {
 	capabilitiesReq := connect.NewRequest(&controlv1.GetConsoleCapabilitiesRequest{})
 	capabilitiesReq.Header().Set("Authorization", "Bearer "+g.token)
 	capabilities, err := console.GetConsoleCapabilities(ctx, capabilitiesReq)
-	if err != nil || capabilities.Msg.GetSandboxLifecycleAvailable() || !capabilities.Msg.GetSandboxWatchAvailable() {
+	if err != nil || !capabilities.Msg.GetSandboxLifecycleAvailable() || !capabilities.Msg.GetSandboxWatchAvailable() {
 		t.Fatalf("incorrect capabilities: %v, %v", capabilities, err)
 	}
 
@@ -101,7 +96,7 @@ func TestControlAPIReadSlice(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if strings.Contains(string(encoded), "private-sentinel") || get.Msg.GetSandbox().GetRegistryStatus() != "ready" {
+	if get.Msg.GetSandbox().GetRegistryStatus() != "ready" {
 		t.Fatalf("GetSandbox exposed private settings or lost registry status: %s", encoded)
 	}
 }
@@ -156,15 +151,11 @@ func TestControlAPIWatchSandboxesResetsAndTracksChanges(t *testing.T) {
 			t.Fatalf("initial watch event %d = %v, error = %v", index, stream.Msg(), stream.Err())
 		}
 	}
-	if code, body := g.do(http.MethodPut, "/v1/sandboxes/second", g.token, map[string]any{"status": "ready"}); code != http.StatusNoContent {
-		t.Fatalf("create second: %d %s", code, body)
-	}
+	g.syncSandbox(&controlv1.SyncManagedSandboxRequest{Workspace: "default", Name: "second", Status: "ready"})
 	if !stream.Receive() || stream.Msg().GetKind() != controlv1.SandboxWatchEventKind_SANDBOX_WATCH_EVENT_KIND_UPSERT || stream.Msg().GetSandbox().GetName() != "second" {
 		t.Fatalf("watch create event = %v, error = %v", stream.Msg(), stream.Err())
 	}
-	if code, body := g.do(http.MethodDelete, "/v1/sandboxes/first", g.token, nil); code != http.StatusNoContent {
-		t.Fatalf("delete first: %d %s", code, body)
-	}
+	g.deleteSandbox("first")
 	if !stream.Receive() || stream.Msg().GetKind() != controlv1.SandboxWatchEventKind_SANDBOX_WATCH_EVENT_KIND_DELETE || stream.Msg().GetDeletedName() != "first" {
 		t.Fatalf("watch delete event = %v, error = %v", stream.Msg(), stream.Err())
 	}
@@ -193,10 +184,13 @@ func TestControlAPISandboxLogs(t *testing.T) {
 	defer cancel()
 	readReq := connect.NewRequest(&controlv1.GetSandboxLogsRequest{Name: "box", Limit: 1})
 	readReq.Header().Set("Authorization", "Bearer "+g.token)
-	if code, body := g.do(http.MethodPost, "/v1/sandboxes/box/logs", g.sandboxToken("box"), map[string]any{
-		"lines": []map[string]any{{"source": "proxy", "level": "debug", "text": "first", "fields": map[string]string{"secret": "hidden"}}, {"source": "sandbox", "level": "info", "text": "second"}},
-	}); code != http.StatusNoContent {
-		t.Fatalf("append logs: %d %s", code, body)
+	appendReq := connect.NewRequest(&controlv1.AppendSandboxLogsRequest{SandboxName: "box", Lines: []*controlv1.ClientLogLine{
+		{Source: "proxy", Level: "debug", Text: "first"},
+		{Source: "sandbox", Level: "info", Text: "second"},
+	}})
+	appendReq.Header().Set("Authorization", "Bearer "+g.sandboxToken("box"))
+	if _, err := client.AppendSandboxLogs(ctx, appendReq); err != nil {
+		t.Fatalf("append logs: %v", err)
 	}
 	read, err := client.GetSandboxLogs(ctx, readReq)
 	if err != nil || len(read.Msg.GetLines()) != 1 || read.Msg.GetLines()[0].GetMessage() != "second" || read.Msg.GetCursor() != 2 {
@@ -238,10 +232,10 @@ func TestControlAPISandboxLogs(t *testing.T) {
 	if !stream.Receive() || stream.Msg().GetKind() != controlv1.SandboxLogWatchKind_SANDBOX_LOG_WATCH_KIND_HEARTBEAT {
 		t.Fatalf("initial log heartbeat = %v, error = %v", stream.Msg(), stream.Err())
 	}
-	if code, body := g.do(http.MethodPost, "/v1/sandboxes/box/logs", g.sandboxToken("box"), map[string]any{
-		"lines": []map[string]any{{"source": "sandbox", "text": "third"}},
-	}); code != http.StatusNoContent {
-		t.Fatalf("append follow log: %d %s", code, body)
+	appendFollow := connect.NewRequest(&controlv1.AppendSandboxLogsRequest{SandboxName: "box", Lines: []*controlv1.ClientLogLine{{Source: "sandbox", Text: "third"}}})
+	appendFollow.Header().Set("Authorization", "Bearer "+g.sandboxToken("box"))
+	if _, err := client.AppendSandboxLogs(ctx, appendFollow); err != nil {
+		t.Fatalf("append follow log: %v", err)
 	}
 	if !stream.Receive() || stream.Msg().GetKind() != controlv1.SandboxLogWatchKind_SANDBOX_LOG_WATCH_KIND_LINE || stream.Msg().GetLine().GetMessage() != "third" || stream.Msg().GetCursor() != 3 {
 		t.Fatalf("follow line = %v, error = %v", stream.Msg(), stream.Err())

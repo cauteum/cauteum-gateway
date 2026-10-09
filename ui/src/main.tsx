@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { createRoot } from "react-dom/client";
 import { Code, ConnectError, type Interceptor } from "@connectrpc/connect";
 import { createControlClients, createControlTransport, type SandboxSummary } from "@cauteum/control-client";
@@ -24,6 +24,7 @@ function ControlApp() {
   const [filter, setFilter] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
+  const refreshGeneration = useRef(0);
 
   useEffect(() => {
     let alive = true;
@@ -56,6 +57,7 @@ function ControlApp() {
 
   const refresh = useCallback(async () => {
     if (!clients) return;
+    const generation = ++refreshGeneration.current;
     setBusy(true); setError("");
     try {
       const [identity, summary, listed, workspaceList] = await Promise.all([
@@ -64,28 +66,49 @@ function ControlApp() {
         clients.sandboxes.listSandboxes({ workspace, pageSize: 100 }),
         clients.catalog.listWorkspaces({}),
       ]);
+      if (generation !== refreshGeneration.current) return;
       setViewer({ subject: identity.subject, roles: identity.roles });
       setWorkspaces(workspaceList.workspaces.map((item) => item.name));
       setOverview({ sandboxCount: summary.sandboxCount, registryRunningCount: summary.registryRunningCount, workspace: summary.workspace });
       setRows(listed.sandboxes);
       setNextPageToken(listed.nextPageToken);
-      if (selected) setSelected(listed.sandboxes.find((row) => row.name === selected.name) ?? null);
+      setSelected((current) => current ? listed.sandboxes.find((row) => row.name === current.name) ?? null : null);
     } catch (err) {
-      setError(apiError(err));
-    } finally { setBusy(false); }
-  }, [clients, workspace, selected]);
+      if (generation === refreshGeneration.current) setError(apiError(err));
+    } finally { if (generation === refreshGeneration.current) setBusy(false); }
+  }, [clients, workspace]);
 
-  useEffect(() => { void refresh(); }, [refresh]);
+  useEffect(() => {
+    void refresh();
+    return () => { refreshGeneration.current++; };
+  }, [refresh]);
+
+  const logout = useCallback(async () => {
+    refreshGeneration.current++;
+    await signOut();
+    setUser(null);
+    setViewer(null);
+    setOverview(null);
+    setWorkspaces([]);
+    setRows([]);
+    setNextPageToken("");
+    setSelected(null);
+    setLogs([]);
+    setError("");
+    setBusy(false);
+  }, []);
 
   const loadMore = useCallback(async () => {
     if (!clients || !nextPageToken) return;
+    const generation = refreshGeneration.current;
     setBusy(true);
     try {
       const page = await clients.sandboxes.listSandboxes({ workspace, pageSize: 100, pageToken: nextPageToken });
+      if (generation !== refreshGeneration.current) return;
       setRows((existing) => existing.concat(page.sandboxes));
       setNextPageToken(page.nextPageToken);
-    } catch (err) { setError(apiError(err)); }
-    finally { setBusy(false); }
+    } catch (err) { if (generation === refreshGeneration.current) setError(apiError(err)); }
+    finally { if (generation === refreshGeneration.current) setBusy(false); }
   }, [clients, nextPageToken, workspace]);
 
   useEffect(() => {
@@ -103,7 +126,7 @@ function ControlApp() {
   if (!user) return <main className="auth-stage"><div className="auth-card"><Brand /><div className="eyebrow">CONTROL CONSOLE</div><h1>Your sandbox fleet,<br />in one place.</h1><p className="auth-copy">Sign in with your organization identity to inspect the resources available to you.</p>{authError && <div className="callout error">{authError}</div>}<button className="primary-button" onClick={() => void signIn().catch((e) => setAuthError(message(e)))}>Sign in <span>↗</span></button><p className="auth-foot">Access is checked by the gateway for every request.</p></div></main>;
 
   return <div className="shell">
-    <aside className="rail"><Brand compact /><div className="rail-label">WORKSPACE</div><label className="workspace-select"><span className="workspace-dot" /><select value={workspace || "default"} onChange={(event) => setWorkspace(event.target.value)} aria-label="Select workspace">{(workspaces.length ? workspaces : ["default"]).map((name) => <option key={name} value={name}>{name}</option>)}</select><span className="chevron">⌄</span></label><div className="rail-label nav-label">CONTROL</div><a className="nav-link active" href="#fleet"><span className="nav-icon">▦</span>Sandboxes<span className="nav-count">{rows.length}</span></a><div className="rail-bottom"><div className="gateway-mark"><span className="pulse" />GATEWAY ONLINE</div><div className="profile"><div className="avatar">{(viewer?.subject ?? user.profile.sub ?? "U").slice(0, 1).toUpperCase()}</div><div className="profile-copy"><strong>{viewer?.subject ?? user.profile.sub ?? "Signed in"}</strong><span>{viewer?.roles.join(", ") || "viewer"}</span></div><button aria-label="Sign out" className="icon-button" onClick={() => void signOut().then(() => setUser(null))}>↗</button></div></div></aside>
+    <aside className="rail"><Brand compact /><div className="rail-label">WORKSPACE</div><label className="workspace-select"><span className="workspace-dot" /><select value={workspace || "default"} onChange={(event) => { refreshGeneration.current++; setSelected(null); setRows([]); setNextPageToken(""); setWorkspace(event.target.value); }} aria-label="Select workspace">{(workspaces.length ? workspaces : ["default"]).map((name) => <option key={name} value={name}>{name}</option>)}</select><span className="chevron">⌄</span></label><div className="rail-label nav-label">CONTROL</div><a className="nav-link active" href="#fleet"><span className="nav-icon">▦</span>Sandboxes<span className="nav-count">{rows.length}</span></a><div className="rail-bottom"><div className="gateway-mark"><span className="pulse" />GATEWAY ONLINE</div><div className="profile"><div className="avatar">{(viewer?.subject ?? user.profile.sub ?? "U").slice(0, 1).toUpperCase()}</div><div className="profile-copy"><strong>{viewer?.subject ?? user.profile.sub ?? "Signed in"}</strong><span>{viewer?.roles.join(", ") || "viewer"}</span></div><button aria-label="Sign out" className="icon-button" onClick={() => void logout().catch((err: unknown) => setError(apiError(err)))}>↗</button></div></div></aside>
     <main className="main" id="fleet">
       <header className="topbar"><div className="crumb">Cauteum <span>/</span> Control</div><div className="topbar-right"><span className="sync-note"><span className="sync-dot" />Registry snapshot</span><button className="refresh-button" onClick={() => void refresh()} disabled={busy}><span className={busy ? "spin" : ""}>↻</span> Refresh</button></div></header>
       <section className="intro"><div><div className="eyebrow">FLEET LEDGER <span>·</span> {overview?.workspace || workspace || "DEFAULT WORKSPACE"}</div><h1>Sandboxes</h1><p>Resources visible in this workspace, as recorded by the gateway.</p></div><div className="intro-stamp"><span className="stamp-glyph">C</span><span>Cauteum<br />CONTROL PLANE</span></div></section>

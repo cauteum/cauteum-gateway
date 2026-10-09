@@ -23,6 +23,8 @@ func clonePolicyRevisions(revisions []PolicyRevision) []PolicyRevision {
 	out := slices.Clone(revisions)
 	for i := range out {
 		out[i].Annotations = maps.Clone(out[i].Annotations)
+		out[i].ExpectedSandboxes = slices.Clone(out[i].ExpectedSandboxes)
+		out[i].AppliedSandboxes = slices.Clone(out[i].AppliedSandboxes)
 	}
 	return out
 }

@@ -48,14 +48,14 @@ func (a *controlAPI) UpdateGlobalPolicy(ctx context.Context, req *connect.Reques
 	if err := a.auditPolicyMutation(ctx, action, "", "", "attempt", ""); err != nil {
 		return nil, err
 	}
-	version, updated, err := a.store.SetGlobalPolicyIfRevision(string(document), req.Msg.GetExpectedResourceVersion())
+	version, err := applyGlobalPolicy(ctx, a.store, a.opt.grpcRuntime, string(document), req.Msg.GetExpectedResourceVersion(), a.opt.ProviderProfileSources)
 	if err != nil {
-		_ = a.auditPolicyMutation(ctx, action, "", "", "failed", "internal")
-		return nil, connect.NewError(connect.CodeInternal, errors.New("could not store global policy"))
-	}
-	if !updated {
-		_ = a.auditPolicyMutation(ctx, action, "", "", "failed", "aborted")
-		return nil, connect.NewError(connect.CodeAborted, errors.New("global policy changed; read it again before updating"))
+		if errors.Is(err, store.ErrResourceVersionConflict) {
+			_ = a.auditPolicyMutation(ctx, action, "", "", "failed", "aborted")
+			return nil, connect.NewError(connect.CodeAborted, errors.New("global policy or sandbox state changed; read it again before updating"))
+		}
+		_ = a.auditPolicyMutation(ctx, action, "", "", "failed", "failed_precondition")
+		return nil, connect.NewError(connect.CodeFailedPrecondition, errors.New("global policy could not be applied to every sandbox"))
 	}
 	if err := a.auditPolicyMutation(ctx, action, "", "", "succeeded", ""); err != nil {
 		return nil, err
@@ -111,6 +111,9 @@ func (a *controlAPI) UpdateSandboxPolicy(ctx context.Context, req *connect.Reque
 	if !ok || sandbox.Workspace != workspace {
 		return nil, connect.NewError(connect.CodeNotFound, errors.New("sandbox not found"))
 	}
+	if globalPolicy, _ := a.store.GlobalPolicySnapshot(); strings.TrimSpace(globalPolicy) != "" {
+		return nil, connect.NewError(connect.CodeFailedPrecondition, errors.New("sandbox policy is managed by the global policy"))
+	}
 	if uint64(sandbox.PolicyRev) != req.Msg.GetExpectedPolicyRevision() {
 		return nil, connect.NewError(connect.CodeAborted, errors.New("sandbox policy changed; read it again before updating"))
 	}
@@ -123,12 +126,24 @@ func (a *controlAPI) UpdateSandboxPolicy(ctx context.Context, req *connect.Reque
 	}
 	effective, stripped, revision, err := setSandboxBasePolicyWithSourcesExpected(a.store, BuiltinProvidersDir(), sandbox.Name, document, a.opt.ProviderProfileSources, sandbox.PolicyRev)
 	if err != nil {
+		if errors.Is(err, store.ErrSandboxPolicyManagedGlobally) {
+			return nil, connect.NewError(connect.CodeFailedPrecondition, err)
+		}
 		if strings.Contains(err.Error(), "revision changed") {
 			_ = a.auditPolicyMutation(ctx, "policy.sandbox.update", workspace, sandbox.Name, "failed", "aborted")
 			return nil, connect.NewError(connect.CodeAborted, errors.New("sandbox policy changed; read it again before updating"))
 		}
 		_ = a.auditPolicyMutation(ctx, "policy.sandbox.update", workspace, sandbox.Name, "failed", "invalid_argument")
 		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("sandbox policy is invalid or cannot be composed"))
+	}
+	policyRPC := &openShellRPC{options: a.opt, runtime: a.opt.grpcRuntime}
+	if err := policyRPC.syncSandboxRuntimePolicy(sandbox.Name, revision); err != nil {
+		_ = a.auditPolicyMutation(ctx, "policy.sandbox.update", workspace, sandbox.Name, "failed", "runtime_sync")
+		return nil, connect.NewError(connect.CodeFailedPrecondition, errors.New("sandbox policy was stored but could not be delivered to the runtime"))
+	}
+	if err := policyRPC.waitSandboxPolicyApplied(ctx, sandbox.Name, revision); err != nil {
+		_ = a.auditPolicyMutation(ctx, "policy.sandbox.update", workspace, sandbox.Name, "failed", "runtime_ack")
+		return nil, connect.NewError(connect.CodeFailedPrecondition, errors.New("sandbox policy was stored but the runtime did not acknowledge it"))
 	}
 	if err := a.auditPolicyMutation(ctx, "policy.sandbox.update", workspace, sandbox.Name, "succeeded", ""); err != nil {
 		return nil, err
