@@ -72,7 +72,7 @@ jobs:
         with:
           repository: cautem/cautem-sdk
           path: cautem-sdk
-          ref: b996938742ce46337c290f0baa6bce8bc42700f0
+          ref: 3a53ebb5f9a53daf369f55880f20fe159eaa75a3
 
       - name: Checkout slogx
         uses: actions/checkout@v4
