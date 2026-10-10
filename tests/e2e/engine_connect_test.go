@@ -3,6 +3,7 @@ package e2e
 import (
 	"context"
 	"errors"
+	"fmt"
 	"io"
 	"net"
 	"net/http"
@@ -36,6 +37,93 @@ type e2ECredentialDriver struct {
 	stores   int
 	resolves int
 	deletes  int
+}
+
+func startPolicyProbeServer(t *testing.T, parent context.Context, client openshellv1.OpenShellClient, sandboxID string) func() {
+	t.Helper()
+	ctx, cancel := context.WithCancel(parent)
+	stream, err := client.ExecSandboxInteractive(ctx)
+	if err != nil {
+		cancel()
+		t.Fatalf("open policy probe server ExecSandbox: %v", err)
+	}
+	if err := stream.Send(&openshellv1.ExecSandboxInput{Payload: &openshellv1.ExecSandboxInput_Start{Start: &openshellv1.ExecSandboxRequest{
+		SandboxId: sandboxID, Command: []string{"/usr/local/bin/cauteum-tcp-echo", "serve-tcp", "0.0.0.0:17777"}, NoLoginShell: true, TimeoutSeconds: 90,
+	}}}); err != nil {
+		cancel()
+		t.Fatalf("start policy probe server: %v", err)
+	}
+	ready := make(chan error, 1)
+	done := make(chan struct{})
+	go func() {
+		defer close(done)
+		readySent := false
+		for {
+			event, recvErr := stream.Recv()
+			if recvErr != nil {
+				if !readySent {
+					ready <- recvErr
+				}
+				return
+			}
+			if stdout := event.GetStdout(); stdout != nil && strings.Contains(string(stdout.GetData()), "READY tcp") && !readySent {
+				readySent = true
+				ready <- nil
+			}
+			if exit := event.GetExit(); exit != nil && !readySent {
+				ready <- fmt.Errorf("probe server exited with code %d", exit.GetExitCode())
+				return
+			}
+		}
+	}()
+	select {
+	case err := <-ready:
+		if err != nil {
+			cancel()
+			t.Fatalf("policy probe server failed before ready: %v", err)
+		}
+	case <-time.After(10 * time.Second):
+		cancel()
+		t.Fatal("policy probe server did not become ready")
+	case <-ctx.Done():
+		t.Fatalf("policy probe server context ended before ready: %v", ctx.Err())
+	}
+	return func() {
+		cancel()
+		select {
+		case <-done:
+		case <-time.After(3 * time.Second):
+			t.Error("policy probe server did not stop after stream cancellation")
+		}
+	}
+}
+
+func runPolicyConnectProbe(t *testing.T, ctx context.Context, client openshellv1.OpenShellClient, sandboxID, target, wantStatus string) {
+	t.Helper()
+	streamCtx, cancel := context.WithTimeout(ctx, 15*time.Second)
+	defer cancel()
+	stream, err := client.ExecSandbox(streamCtx, &openshellv1.ExecSandboxRequest{
+		SandboxId: sandboxID, Command: []string{"/usr/local/bin/cauteum-tcp-echo", "probe-connect-status", target, wantStatus}, NoLoginShell: true, TimeoutSeconds: 10,
+	})
+	if err != nil {
+		t.Fatalf("run policy CONNECT probe for %s: %v", target, err)
+	}
+	var exit *openshellv1.ExecSandboxExit
+	for {
+		event, recvErr := stream.Recv()
+		if recvErr == io.EOF {
+			break
+		}
+		if recvErr != nil {
+			t.Fatalf("receive policy CONNECT probe for %s: %v", target, recvErr)
+		}
+		if event.GetExit() != nil {
+			exit = event.GetExit()
+		}
+	}
+	if exit == nil || exit.GetExitCode() != 0 {
+		t.Fatalf("policy CONNECT probe for %s returned exit=%v; want proxy status %s", target, exit, wantStatus)
+	}
 }
 
 func (d *e2ECredentialDriver) GetCapabilities(context.Context, *credentialsv1.GetCredentialDriverCapabilitiesRequest) (*credentialsv1.GetCredentialDriverCapabilitiesResponse, error) {
@@ -243,7 +331,9 @@ func TestEngineGatewayConnectE2E(t *testing.T) {
 	globalPolicyUpdate, err := grpcClient.UpdateConfig(userCtx, &openshellv1.UpdateConfigRequest{
 		Global: true,
 		Policy: &sandboxv1.SandboxPolicy{Version: 1, NetworkPolicies: map[string]*sandboxv1.NetworkPolicyRule{
-			"api": {Name: "api", Endpoints: []*sandboxv1.NetworkEndpoint{{Host: "api.example.com", Port: 443}}},
+			"live-proxy-probe": {Name: "live-proxy-probe", Endpoints: []*sandboxv1.NetworkEndpoint{{
+				Host: "cauteum-" + name, Port: 17777, AllowedIps: []string{"10.0.0.0/8", "172.16.0.0/12"},
+			}}},
 		}},
 	})
 	if err != nil {
@@ -784,6 +874,11 @@ func TestEngineGatewayConnectE2E(t *testing.T) {
 	if err != nil || restartedConfig.GetGlobalPolicyVersion() != globalPolicyUpdate.GetVersion() {
 		t.Fatalf("effective sandbox config after gateway restart=%v err=%v; want global policy revision %d", restartedConfig, err, globalPolicyUpdate.GetVersion())
 	}
+	stopPolicyProbeServer := startPolicyProbeServer(t, userCtx, grpcClient, name)
+	defer stopPolicyProbeServer()
+	runPolicyConnectProbe(t, userCtx, grpcClient, name, "cauteum-"+name+":17777", "200")
+	runPolicyConnectProbe(t, userCtx, grpcClient, name, "blocked.invalid:443", "403")
+	stopPolicyProbeServer()
 	refreshCtx := metadata.AppendToOutgoingContext(ctx, "authorization", "Bearer "+supervisorToken)
 	refreshed, err := grpcClient.RefreshSandboxToken(refreshCtx, &openshellv1.RefreshSandboxTokenRequest{})
 	if err != nil || refreshed.GetToken() != supervisorToken {
