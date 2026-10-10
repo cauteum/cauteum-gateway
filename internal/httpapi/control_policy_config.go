@@ -6,9 +6,9 @@ import (
 	"strings"
 
 	"connectrpc.com/connect"
-	"github.com/cautem/cauteum-core/policy"
-	controlv1 "github.com/cautem/cauteum-gateway/api/gen/cauteum/control/v1"
-	"github.com/cautem/cauteum-gateway/internal/storage/store"
+	"github.com/cautem/cautem-core/policy"
+	controlv1 "github.com/cautem/cautem-gateway/api/gen/cautem/control/v1"
+	"github.com/cautem/cautem-gateway/internal/storage/store"
 	"gopkg.in/yaml.v3"
 )
 

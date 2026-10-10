@@ -11,9 +11,9 @@ import (
 
 	openshellv1 "github.com/NVIDIA/OpenShell/sdk/go/proto/openshellv1"
 	sandboxv1 "github.com/NVIDIA/OpenShell/sdk/go/proto/sandboxv1"
-	"github.com/cautem/cauteum-gateway/internal/sshrelay"
-	"github.com/cautem/cauteum-gateway/internal/storage/store"
-	"github.com/cautem/cauteum-runtime/secrets"
+	"github.com/cautem/cautem-gateway/internal/sshrelay"
+	"github.com/cautem/cautem-gateway/internal/storage/store"
+	"github.com/cautem/cautem-runtime/secrets"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
@@ -150,7 +150,7 @@ func installConfigTestProfile(t *testing.T, st *store.Store, workspace, id strin
 		t.Fatal("resolve config test source")
 	}
 	root := filepath.Dir(filepath.Dir(filepath.Dir(filepath.Dir(source))))
-	profile, err := os.ReadFile(filepath.Join(root, "cauteum-cli", "providers", id+".yaml"))
+	profile, err := os.ReadFile(filepath.Join(root, "cautem-cli", "providers", id+".yaml"))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -240,7 +240,7 @@ func TestUpdateConfigRejectsGlobalPolicyWithConnectedRuntime(t *testing.T) {
 	if err != nil {
 		t.Fatalf("read compensated runtime policy: %v", err)
 	}
-	if !strings.HasPrefix(string(policyFile), "# cauteum-policy-revision: 2\n") {
+	if !strings.HasPrefix(string(policyFile), "# cautem-policy-revision: 2\n") {
 		t.Fatalf("runtime policy after compensation does not contain revision 2: %q", policyFile)
 	}
 }

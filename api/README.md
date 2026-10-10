@@ -40,8 +40,8 @@ than duplicating them here.
 
 ## Control API and generated clients
 
-`api/proto/cauteum/control/v1/console.proto` is the single source for the
-`cauteum.control.v1` user-facing API. It defines console, sandbox,
+`api/proto/cautem/control/v1/console.proto` is the single source for the
+`cautem.control.v1` user-facing API. It defines console, sandbox,
 operations/audit, catalog, policy proposal, provider profile, and partial
 provider-credential services. Policy reads/writes and bounded revision history
 also use `PolicyService`. The gateway's Connect
@@ -50,7 +50,7 @@ gRPC, and Connect code is generated from the same file. The TypeScript client
 uses Connect-Web with the same generated messages and services. The `/v1` REST
 paths and pinned OpenShell service remain separate contracts.
 
-Provider profile methods carry the full Cauteum YAML document so Cauteum
+Provider profile methods carry the full cautem YAML document so cautem
 egress and credential metadata survive round trips. Updates require the current
 resource version; global profile access is limited to platform admins, while
 workspace profile access checks provider scopes and membership.

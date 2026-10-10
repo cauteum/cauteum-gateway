@@ -7,9 +7,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/cautem/cauteum-core/relayproto"
-	"github.com/cautem/cauteum-gateway/internal/sshrelay"
-	"github.com/cautem/cauteum-gateway/internal/storage/store"
+	"github.com/cautem/cautem-core/relayproto"
+	"github.com/cautem/cautem-gateway/internal/sshrelay"
+	"github.com/cautem/cautem-gateway/internal/storage/store"
 	"github.com/cautem/slogx"
 )
 

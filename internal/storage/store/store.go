@@ -1,4 +1,4 @@
-// Package store persists cauteum-gateway registry state as JSON on disk.
+// Package store persists cautem-gateway registry state as JSON on disk.
 package store
 
 import (

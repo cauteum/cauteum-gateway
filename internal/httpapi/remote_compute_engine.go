@@ -8,9 +8,9 @@ import (
 	"strconv"
 	"strings"
 
-	core "github.com/cautem/cauteum-core"
-	"github.com/cautem/cauteum-driver/driver"
-	computev1 "github.com/cautem/cauteum-gateway/internal/upstreamproto/computev1"
+	core "github.com/cautem/cautem-core"
+	"github.com/cautem/cautem-driver/driver"
+	computev1 "github.com/cautem/cautem-gateway/internal/upstreamproto/computev1"
 	"google.golang.org/protobuf/types/known/structpb"
 )
 

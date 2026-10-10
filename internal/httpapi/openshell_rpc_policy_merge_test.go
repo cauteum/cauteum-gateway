@@ -7,8 +7,8 @@ import (
 
 	openshellv1 "github.com/NVIDIA/OpenShell/sdk/go/proto/openshellv1"
 	sandboxv1 "github.com/NVIDIA/OpenShell/sdk/go/proto/sandboxv1"
-	"github.com/cautem/cauteum-core/policy"
-	"github.com/cautem/cauteum-gateway/internal/storage/store"
+	"github.com/cautem/cautem-core/policy"
+	"github.com/cautem/cautem-gateway/internal/storage/store"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )

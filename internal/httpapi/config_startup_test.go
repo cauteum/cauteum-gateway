@@ -258,7 +258,7 @@ func TestAuxiliaryHealthAndMetricsContracts(t *testing.T) {
 	}
 	rec := httptest.NewRecorder()
 	gatewayMetricsHandler().ServeHTTP(rec, httptest.NewRequest(http.MethodGet, "/metrics", nil))
-	if rec.Code != http.StatusOK || !strings.Contains(rec.Body.String(), "cauteum_gateway_up 1") {
+	if rec.Code != http.StatusOK || !strings.Contains(rec.Body.String(), "cautem_gateway_up 1") {
 		t.Fatalf("metrics response=%d %q", rec.Code, rec.Body.String())
 	}
 }

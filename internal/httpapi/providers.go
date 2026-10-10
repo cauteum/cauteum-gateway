@@ -10,10 +10,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/cautem/cauteum-core/policy"
-	"github.com/cautem/cauteum-gateway/internal/storage/store"
-	"github.com/cautem/cauteum-providers/provider"
-	"github.com/cautem/cauteum-runtime/secrets"
+	"github.com/cautem/cautem-core/policy"
+	"github.com/cautem/cautem-gateway/internal/storage/store"
+	"github.com/cautem/cautem-providers/provider"
+	"github.com/cautem/cautem-runtime/secrets"
 	"gopkg.in/yaml.v3"
 )
 
@@ -375,7 +375,7 @@ func effectivePolicyWithGlobalPolicy(st *store.Store, builtinDir, sandbox string
 	return effective, nil
 }
 
-// BuiltinProvidersDir tries to locate cauteum-cli/providers next to the module.
+// BuiltinProvidersDir tries to locate cautem-cli/providers next to the module.
 func BuiltinProvidersDir() string {
 	return provider.FindBuiltinDir()
 }

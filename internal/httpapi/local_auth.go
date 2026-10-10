@@ -6,14 +6,14 @@ import (
 	"strings"
 	"time"
 
-	"github.com/cautem/cauteum-gateway/internal/storage/store"
+	"github.com/cautem/cautem-gateway/internal/storage/store"
 )
 
 // mountLocalAuthAPI keeps the loopback-only token hand-off used by the CLI.
 func mountLocalAuthAPI(mux *http.ServeMux, st *store.Store) {
 	mux.HandleFunc("/v1/auth/login", func(w http.ResponseWriter, r *http.Request) {
 		if !isLoopbackRequest(r) {
-			http.Error(w, "local login is only available from loopback; use OIDC or `cauteum gateway login --token $(cat <data-dir>/auth_token)`", http.StatusForbidden)
+			http.Error(w, "local login is only available from loopback; use OIDC or `cautem gateway login --token $(cat <data-dir>/auth_token)`", http.StatusForbidden)
 			return
 		}
 		redirect := r.URL.Query().Get("redirect_uri")

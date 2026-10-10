@@ -9,8 +9,8 @@ import (
 	"strings"
 
 	"connectrpc.com/connect"
-	controlv1 "github.com/cautem/cauteum-gateway/api/gen/cauteum/control/v1"
-	"github.com/cautem/cauteum-providers/provider"
+	controlv1 "github.com/cautem/cautem-gateway/api/gen/cautem/control/v1"
+	"github.com/cautem/cautem-providers/provider"
 	"gopkg.in/yaml.v3"
 )
 

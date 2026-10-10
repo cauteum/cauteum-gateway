@@ -97,7 +97,7 @@ func awsSTSAssumeRole(ctx context.Context, material map[string]string, outputs m
 		return nil, 0, fmt.Errorf("aws_sts_assume_role: AWS credentials unavailable")
 	}
 	client := sts.NewFromConfig(cfg)
-	input := &sts.AssumeRoleInput{RoleArn: aws.String(roleARN), RoleSessionName: aws.String(firstNonEmpty(strings.TrimSpace(material["session_name"]), "cauteum-provider-refresh"))}
+	input := &sts.AssumeRoleInput{RoleArn: aws.String(roleARN), RoleSessionName: aws.String(firstNonEmpty(strings.TrimSpace(material["session_name"]), "cautem-provider-refresh"))}
 	if externalID := strings.TrimSpace(material["external_id"]); externalID != "" {
 		input.ExternalId = aws.String(externalID)
 	}

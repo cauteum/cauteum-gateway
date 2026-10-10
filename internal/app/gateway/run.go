@@ -2,10 +2,10 @@
 package gateway
 
 import (
-	"github.com/cautem/cauteum-gateway/internal/httpapi"
+	"github.com/cautem/cautem-gateway/internal/httpapi"
 )
 
-// Run is the composition root for cauteum-gateway.
+// Run is the composition root for cautem-gateway.
 func Run(args []string) error {
 	return httpapi.Run(args)
 }

@@ -1,4 +1,4 @@
-module github.com/cautem/cauteum-gateway
+module github.com/cautem/cautem-gateway
 
 go 1.27.0
 
@@ -11,10 +11,10 @@ require (
 	github.com/aws/aws-sdk-go-v2/config v1.33.7
 	github.com/aws/aws-sdk-go-v2/credentials v1.20.7
 	github.com/aws/aws-sdk-go-v2/service/sts v1.51.2
-	github.com/cautem/cauteum-core v0.1.5
-	github.com/cautem/cauteum-driver v0.1.5
-	github.com/cautem/cauteum-providers v0.1.5
-	github.com/cautem/cauteum-runtime v0.1.5
+	github.com/cautem/cautem-core v0.1.6
+	github.com/cautem/cautem-driver v0.1.6
+	github.com/cautem/cautem-providers v0.1.6
+	github.com/cautem/cautem-runtime v0.1.6
 	github.com/cautem/slogx v0.1.3
 	github.com/go-jose/go-jose/v4 v4.1.5
 	github.com/pelletier/go-toml/v2 v2.4.3

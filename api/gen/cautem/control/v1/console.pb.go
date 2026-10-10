@@ -2,7 +2,7 @@
 // versions:
 // 	protoc-gen-go v1.36.12
 // 	protoc        (unknown)
-// source: cauteum/control/v1/console.proto
+// source: cautem/control/v1/console.proto
 
 package controlv1
 
@@ -63,11 +63,11 @@ func (x SandboxWatchEventKind) String() string {
 }
 
 func (SandboxWatchEventKind) Descriptor() protoreflect.EnumDescriptor {
-	return file_cauteum_control_v1_console_proto_enumTypes[0].Descriptor()
+	return file_cautem_control_v1_console_proto_enumTypes[0].Descriptor()
 }
 
 func (SandboxWatchEventKind) Type() protoreflect.EnumType {
-	return &file_cauteum_control_v1_console_proto_enumTypes[0]
+	return &file_cautem_control_v1_console_proto_enumTypes[0]
 }
 
 func (x SandboxWatchEventKind) Number() protoreflect.EnumNumber {
@@ -76,7 +76,7 @@ func (x SandboxWatchEventKind) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use SandboxWatchEventKind.Descriptor instead.
 func (SandboxWatchEventKind) EnumDescriptor() ([]byte, []int) {
-	return file_cauteum_control_v1_console_proto_rawDescGZIP(), []int{0}
+	return file_cautem_control_v1_console_proto_rawDescGZIP(), []int{0}
 }
 
 type SandboxLogWatchKind int32
@@ -115,11 +115,11 @@ func (x SandboxLogWatchKind) String() string {
 }
 
 func (SandboxLogWatchKind) Descriptor() protoreflect.EnumDescriptor {
-	return file_cauteum_control_v1_console_proto_enumTypes[1].Descriptor()
+	return file_cautem_control_v1_console_proto_enumTypes[1].Descriptor()
 }
 
 func (SandboxLogWatchKind) Type() protoreflect.EnumType {
-	return &file_cauteum_control_v1_console_proto_enumTypes[1]
+	return &file_cautem_control_v1_console_proto_enumTypes[1]
 }
 
 func (x SandboxLogWatchKind) Number() protoreflect.EnumNumber {
@@ -128,7 +128,7 @@ func (x SandboxLogWatchKind) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use SandboxLogWatchKind.Descriptor instead.
 func (SandboxLogWatchKind) EnumDescriptor() ([]byte, []int) {
-	return file_cauteum_control_v1_console_proto_rawDescGZIP(), []int{1}
+	return file_cautem_control_v1_console_proto_rawDescGZIP(), []int{1}
 }
 
 type GetGatewayInfoRequest struct {
@@ -139,7 +139,7 @@ type GetGatewayInfoRequest struct {
 
 func (x *GetGatewayInfoRequest) Reset() {
 	*x = GetGatewayInfoRequest{}
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[0]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -151,7 +151,7 @@ func (x *GetGatewayInfoRequest) String() string {
 func (*GetGatewayInfoRequest) ProtoMessage() {}
 
 func (x *GetGatewayInfoRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[0]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -164,7 +164,7 @@ func (x *GetGatewayInfoRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetGatewayInfoRequest.ProtoReflect.Descriptor instead.
 func (*GetGatewayInfoRequest) Descriptor() ([]byte, []int) {
-	return file_cauteum_control_v1_console_proto_rawDescGZIP(), []int{0}
+	return file_cautem_control_v1_console_proto_rawDescGZIP(), []int{0}
 }
 
 type GetGatewayInfoResponse struct {
@@ -189,7 +189,7 @@ type GetGatewayInfoResponse struct {
 
 func (x *GetGatewayInfoResponse) Reset() {
 	*x = GetGatewayInfoResponse{}
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[1]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -201,7 +201,7 @@ func (x *GetGatewayInfoResponse) String() string {
 func (*GetGatewayInfoResponse) ProtoMessage() {}
 
 func (x *GetGatewayInfoResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[1]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -214,7 +214,7 @@ func (x *GetGatewayInfoResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetGatewayInfoResponse.ProtoReflect.Descriptor instead.
 func (*GetGatewayInfoResponse) Descriptor() ([]byte, []int) {
-	return file_cauteum_control_v1_console_proto_rawDescGZIP(), []int{1}
+	return file_cautem_control_v1_console_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *GetGatewayInfoResponse) GetGatewayId() string {
@@ -325,7 +325,7 @@ type ComputeDriverStatus struct {
 
 func (x *ComputeDriverStatus) Reset() {
 	*x = ComputeDriverStatus{}
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[2]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -337,7 +337,7 @@ func (x *ComputeDriverStatus) String() string {
 func (*ComputeDriverStatus) ProtoMessage() {}
 
 func (x *ComputeDriverStatus) ProtoReflect() protoreflect.Message {
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[2]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -350,7 +350,7 @@ func (x *ComputeDriverStatus) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ComputeDriverStatus.ProtoReflect.Descriptor instead.
 func (*ComputeDriverStatus) Descriptor() ([]byte, []int) {
-	return file_cauteum_control_v1_console_proto_rawDescGZIP(), []int{2}
+	return file_cautem_control_v1_console_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *ComputeDriverStatus) GetName() string {
@@ -377,7 +377,7 @@ type GetManagedSandboxRequest struct {
 
 func (x *GetManagedSandboxRequest) Reset() {
 	*x = GetManagedSandboxRequest{}
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[3]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -389,7 +389,7 @@ func (x *GetManagedSandboxRequest) String() string {
 func (*GetManagedSandboxRequest) ProtoMessage() {}
 
 func (x *GetManagedSandboxRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[3]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -402,7 +402,7 @@ func (x *GetManagedSandboxRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetManagedSandboxRequest.ProtoReflect.Descriptor instead.
 func (*GetManagedSandboxRequest) Descriptor() ([]byte, []int) {
-	return file_cauteum_control_v1_console_proto_rawDescGZIP(), []int{3}
+	return file_cautem_control_v1_console_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *GetManagedSandboxRequest) GetWorkspace() string {
@@ -437,7 +437,7 @@ type GetManagedSandboxResponse struct {
 
 func (x *GetManagedSandboxResponse) Reset() {
 	*x = GetManagedSandboxResponse{}
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[4]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -449,7 +449,7 @@ func (x *GetManagedSandboxResponse) String() string {
 func (*GetManagedSandboxResponse) ProtoMessage() {}
 
 func (x *GetManagedSandboxResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[4]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -462,7 +462,7 @@ func (x *GetManagedSandboxResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetManagedSandboxResponse.ProtoReflect.Descriptor instead.
 func (*GetManagedSandboxResponse) Descriptor() ([]byte, []int) {
-	return file_cauteum_control_v1_console_proto_rawDescGZIP(), []int{4}
+	return file_cautem_control_v1_console_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *GetManagedSandboxResponse) GetName() string {
@@ -552,7 +552,7 @@ type SyncManagedSandboxRequest struct {
 
 func (x *SyncManagedSandboxRequest) Reset() {
 	*x = SyncManagedSandboxRequest{}
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[5]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -564,7 +564,7 @@ func (x *SyncManagedSandboxRequest) String() string {
 func (*SyncManagedSandboxRequest) ProtoMessage() {}
 
 func (x *SyncManagedSandboxRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[5]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -577,7 +577,7 @@ func (x *SyncManagedSandboxRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SyncManagedSandboxRequest.ProtoReflect.Descriptor instead.
 func (*SyncManagedSandboxRequest) Descriptor() ([]byte, []int) {
-	return file_cauteum_control_v1_console_proto_rawDescGZIP(), []int{5}
+	return file_cautem_control_v1_console_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *SyncManagedSandboxRequest) GetWorkspace() string {
@@ -652,7 +652,7 @@ type SyncManagedSandboxResponse struct {
 
 func (x *SyncManagedSandboxResponse) Reset() {
 	*x = SyncManagedSandboxResponse{}
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[6]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -664,7 +664,7 @@ func (x *SyncManagedSandboxResponse) String() string {
 func (*SyncManagedSandboxResponse) ProtoMessage() {}
 
 func (x *SyncManagedSandboxResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[6]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -677,7 +677,7 @@ func (x *SyncManagedSandboxResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SyncManagedSandboxResponse.ProtoReflect.Descriptor instead.
 func (*SyncManagedSandboxResponse) Descriptor() ([]byte, []int) {
-	return file_cauteum_control_v1_console_proto_rawDescGZIP(), []int{6}
+	return file_cautem_control_v1_console_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *SyncManagedSandboxResponse) GetResourceVersion() uint64 {
@@ -697,7 +697,7 @@ type DeleteManagedSandboxRequest struct {
 
 func (x *DeleteManagedSandboxRequest) Reset() {
 	*x = DeleteManagedSandboxRequest{}
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[7]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -709,7 +709,7 @@ func (x *DeleteManagedSandboxRequest) String() string {
 func (*DeleteManagedSandboxRequest) ProtoMessage() {}
 
 func (x *DeleteManagedSandboxRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[7]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -722,7 +722,7 @@ func (x *DeleteManagedSandboxRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteManagedSandboxRequest.ProtoReflect.Descriptor instead.
 func (*DeleteManagedSandboxRequest) Descriptor() ([]byte, []int) {
-	return file_cauteum_control_v1_console_proto_rawDescGZIP(), []int{7}
+	return file_cautem_control_v1_console_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *DeleteManagedSandboxRequest) GetWorkspace() string {
@@ -748,7 +748,7 @@ type DeleteManagedSandboxResponse struct {
 
 func (x *DeleteManagedSandboxResponse) Reset() {
 	*x = DeleteManagedSandboxResponse{}
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[8]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -760,7 +760,7 @@ func (x *DeleteManagedSandboxResponse) String() string {
 func (*DeleteManagedSandboxResponse) ProtoMessage() {}
 
 func (x *DeleteManagedSandboxResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[8]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -773,7 +773,7 @@ func (x *DeleteManagedSandboxResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteManagedSandboxResponse.ProtoReflect.Descriptor instead.
 func (*DeleteManagedSandboxResponse) Descriptor() ([]byte, []int) {
-	return file_cauteum_control_v1_console_proto_rawDescGZIP(), []int{8}
+	return file_cautem_control_v1_console_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *DeleteManagedSandboxResponse) GetDeleted() bool {
@@ -793,7 +793,7 @@ type IssueManagedSandboxTokenRequest struct {
 
 func (x *IssueManagedSandboxTokenRequest) Reset() {
 	*x = IssueManagedSandboxTokenRequest{}
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[9]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -805,7 +805,7 @@ func (x *IssueManagedSandboxTokenRequest) String() string {
 func (*IssueManagedSandboxTokenRequest) ProtoMessage() {}
 
 func (x *IssueManagedSandboxTokenRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[9]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -818,7 +818,7 @@ func (x *IssueManagedSandboxTokenRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use IssueManagedSandboxTokenRequest.ProtoReflect.Descriptor instead.
 func (*IssueManagedSandboxTokenRequest) Descriptor() ([]byte, []int) {
-	return file_cauteum_control_v1_console_proto_rawDescGZIP(), []int{9}
+	return file_cautem_control_v1_console_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *IssueManagedSandboxTokenRequest) GetWorkspace() string {
@@ -844,7 +844,7 @@ type IssueManagedSandboxTokenResponse struct {
 
 func (x *IssueManagedSandboxTokenResponse) Reset() {
 	*x = IssueManagedSandboxTokenResponse{}
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[10]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -856,7 +856,7 @@ func (x *IssueManagedSandboxTokenResponse) String() string {
 func (*IssueManagedSandboxTokenResponse) ProtoMessage() {}
 
 func (x *IssueManagedSandboxTokenResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[10]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -869,7 +869,7 @@ func (x *IssueManagedSandboxTokenResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use IssueManagedSandboxTokenResponse.ProtoReflect.Descriptor instead.
 func (*IssueManagedSandboxTokenResponse) Descriptor() ([]byte, []int) {
-	return file_cauteum_control_v1_console_proto_rawDescGZIP(), []int{10}
+	return file_cautem_control_v1_console_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *IssueManagedSandboxTokenResponse) GetToken() string {
@@ -890,7 +890,7 @@ type AppendSandboxLogsRequest struct {
 
 func (x *AppendSandboxLogsRequest) Reset() {
 	*x = AppendSandboxLogsRequest{}
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[11]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[11]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -902,7 +902,7 @@ func (x *AppendSandboxLogsRequest) String() string {
 func (*AppendSandboxLogsRequest) ProtoMessage() {}
 
 func (x *AppendSandboxLogsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[11]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[11]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -915,7 +915,7 @@ func (x *AppendSandboxLogsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AppendSandboxLogsRequest.ProtoReflect.Descriptor instead.
 func (*AppendSandboxLogsRequest) Descriptor() ([]byte, []int) {
-	return file_cauteum_control_v1_console_proto_rawDescGZIP(), []int{11}
+	return file_cautem_control_v1_console_proto_rawDescGZIP(), []int{11}
 }
 
 func (x *AppendSandboxLogsRequest) GetWorkspace() string {
@@ -951,7 +951,7 @@ type ClientLogLine struct {
 
 func (x *ClientLogLine) Reset() {
 	*x = ClientLogLine{}
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[12]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[12]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -963,7 +963,7 @@ func (x *ClientLogLine) String() string {
 func (*ClientLogLine) ProtoMessage() {}
 
 func (x *ClientLogLine) ProtoReflect() protoreflect.Message {
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[12]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[12]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -976,7 +976,7 @@ func (x *ClientLogLine) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ClientLogLine.ProtoReflect.Descriptor instead.
 func (*ClientLogLine) Descriptor() ([]byte, []int) {
-	return file_cauteum_control_v1_console_proto_rawDescGZIP(), []int{12}
+	return file_cautem_control_v1_console_proto_rawDescGZIP(), []int{12}
 }
 
 func (x *ClientLogLine) GetTimestampUnixMs() int64 {
@@ -1016,7 +1016,7 @@ type AppendSandboxLogsResponse struct {
 
 func (x *AppendSandboxLogsResponse) Reset() {
 	*x = AppendSandboxLogsResponse{}
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[13]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[13]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1028,7 +1028,7 @@ func (x *AppendSandboxLogsResponse) String() string {
 func (*AppendSandboxLogsResponse) ProtoMessage() {}
 
 func (x *AppendSandboxLogsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[13]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[13]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1041,7 +1041,7 @@ func (x *AppendSandboxLogsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AppendSandboxLogsResponse.ProtoReflect.Descriptor instead.
 func (*AppendSandboxLogsResponse) Descriptor() ([]byte, []int) {
-	return file_cauteum_control_v1_console_proto_rawDescGZIP(), []int{13}
+	return file_cautem_control_v1_console_proto_rawDescGZIP(), []int{13}
 }
 
 func (x *AppendSandboxLogsResponse) GetAccepted() uint32 {
@@ -1059,7 +1059,7 @@ type GetInferenceRouteRequest struct {
 
 func (x *GetInferenceRouteRequest) Reset() {
 	*x = GetInferenceRouteRequest{}
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[14]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[14]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1071,7 +1071,7 @@ func (x *GetInferenceRouteRequest) String() string {
 func (*GetInferenceRouteRequest) ProtoMessage() {}
 
 func (x *GetInferenceRouteRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[14]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[14]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1084,7 +1084,7 @@ func (x *GetInferenceRouteRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetInferenceRouteRequest.ProtoReflect.Descriptor instead.
 func (*GetInferenceRouteRequest) Descriptor() ([]byte, []int) {
-	return file_cauteum_control_v1_console_proto_rawDescGZIP(), []int{14}
+	return file_cautem_control_v1_console_proto_rawDescGZIP(), []int{14}
 }
 
 type GetInferenceRouteResponse struct {
@@ -1099,7 +1099,7 @@ type GetInferenceRouteResponse struct {
 
 func (x *GetInferenceRouteResponse) Reset() {
 	*x = GetInferenceRouteResponse{}
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[15]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[15]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1111,7 +1111,7 @@ func (x *GetInferenceRouteResponse) String() string {
 func (*GetInferenceRouteResponse) ProtoMessage() {}
 
 func (x *GetInferenceRouteResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[15]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[15]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1124,7 +1124,7 @@ func (x *GetInferenceRouteResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetInferenceRouteResponse.ProtoReflect.Descriptor instead.
 func (*GetInferenceRouteResponse) Descriptor() ([]byte, []int) {
-	return file_cauteum_control_v1_console_proto_rawDescGZIP(), []int{15}
+	return file_cautem_control_v1_console_proto_rawDescGZIP(), []int{15}
 }
 
 func (x *GetInferenceRouteResponse) GetProvider() string {
@@ -1167,7 +1167,7 @@ type UpdateInferenceRouteRequest struct {
 
 func (x *UpdateInferenceRouteRequest) Reset() {
 	*x = UpdateInferenceRouteRequest{}
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[16]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[16]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1179,7 +1179,7 @@ func (x *UpdateInferenceRouteRequest) String() string {
 func (*UpdateInferenceRouteRequest) ProtoMessage() {}
 
 func (x *UpdateInferenceRouteRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[16]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[16]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1192,7 +1192,7 @@ func (x *UpdateInferenceRouteRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateInferenceRouteRequest.ProtoReflect.Descriptor instead.
 func (*UpdateInferenceRouteRequest) Descriptor() ([]byte, []int) {
-	return file_cauteum_control_v1_console_proto_rawDescGZIP(), []int{16}
+	return file_cautem_control_v1_console_proto_rawDescGZIP(), []int{16}
 }
 
 func (x *UpdateInferenceRouteRequest) GetProvider() string {
@@ -1232,7 +1232,7 @@ type UpdateInferenceRouteResponse struct {
 
 func (x *UpdateInferenceRouteResponse) Reset() {
 	*x = UpdateInferenceRouteResponse{}
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[17]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[17]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1244,7 +1244,7 @@ func (x *UpdateInferenceRouteResponse) String() string {
 func (*UpdateInferenceRouteResponse) ProtoMessage() {}
 
 func (x *UpdateInferenceRouteResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[17]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[17]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1257,7 +1257,7 @@ func (x *UpdateInferenceRouteResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateInferenceRouteResponse.ProtoReflect.Descriptor instead.
 func (*UpdateInferenceRouteResponse) Descriptor() ([]byte, []int) {
-	return file_cauteum_control_v1_console_proto_rawDescGZIP(), []int{17}
+	return file_cautem_control_v1_console_proto_rawDescGZIP(), []int{17}
 }
 
 func (x *UpdateInferenceRouteResponse) GetResourceVersion() uint64 {
@@ -1276,7 +1276,7 @@ type ClearInferenceRouteRequest struct {
 
 func (x *ClearInferenceRouteRequest) Reset() {
 	*x = ClearInferenceRouteRequest{}
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[18]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[18]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1288,7 +1288,7 @@ func (x *ClearInferenceRouteRequest) String() string {
 func (*ClearInferenceRouteRequest) ProtoMessage() {}
 
 func (x *ClearInferenceRouteRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[18]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[18]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1301,7 +1301,7 @@ func (x *ClearInferenceRouteRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ClearInferenceRouteRequest.ProtoReflect.Descriptor instead.
 func (*ClearInferenceRouteRequest) Descriptor() ([]byte, []int) {
-	return file_cauteum_control_v1_console_proto_rawDescGZIP(), []int{18}
+	return file_cautem_control_v1_console_proto_rawDescGZIP(), []int{18}
 }
 
 func (x *ClearInferenceRouteRequest) GetExpectedResourceVersion() uint64 {
@@ -1320,7 +1320,7 @@ type ClearInferenceRouteResponse struct {
 
 func (x *ClearInferenceRouteResponse) Reset() {
 	*x = ClearInferenceRouteResponse{}
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[19]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[19]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1332,7 +1332,7 @@ func (x *ClearInferenceRouteResponse) String() string {
 func (*ClearInferenceRouteResponse) ProtoMessage() {}
 
 func (x *ClearInferenceRouteResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[19]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[19]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1345,7 +1345,7 @@ func (x *ClearInferenceRouteResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ClearInferenceRouteResponse.ProtoReflect.Descriptor instead.
 func (*ClearInferenceRouteResponse) Descriptor() ([]byte, []int) {
-	return file_cauteum_control_v1_console_proto_rawDescGZIP(), []int{19}
+	return file_cautem_control_v1_console_proto_rawDescGZIP(), []int{19}
 }
 
 func (x *ClearInferenceRouteResponse) GetCleared() bool {
@@ -1363,7 +1363,7 @@ type GetGlobalPolicyRequest struct {
 
 func (x *GetGlobalPolicyRequest) Reset() {
 	*x = GetGlobalPolicyRequest{}
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[20]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[20]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1375,7 +1375,7 @@ func (x *GetGlobalPolicyRequest) String() string {
 func (*GetGlobalPolicyRequest) ProtoMessage() {}
 
 func (x *GetGlobalPolicyRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[20]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[20]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1388,7 +1388,7 @@ func (x *GetGlobalPolicyRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetGlobalPolicyRequest.ProtoReflect.Descriptor instead.
 func (*GetGlobalPolicyRequest) Descriptor() ([]byte, []int) {
-	return file_cauteum_control_v1_console_proto_rawDescGZIP(), []int{20}
+	return file_cautem_control_v1_console_proto_rawDescGZIP(), []int{20}
 }
 
 type GetGlobalPolicyResponse struct {
@@ -1401,7 +1401,7 @@ type GetGlobalPolicyResponse struct {
 
 func (x *GetGlobalPolicyResponse) Reset() {
 	*x = GetGlobalPolicyResponse{}
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[21]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[21]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1413,7 +1413,7 @@ func (x *GetGlobalPolicyResponse) String() string {
 func (*GetGlobalPolicyResponse) ProtoMessage() {}
 
 func (x *GetGlobalPolicyResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[21]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[21]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1426,7 +1426,7 @@ func (x *GetGlobalPolicyResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetGlobalPolicyResponse.ProtoReflect.Descriptor instead.
 func (*GetGlobalPolicyResponse) Descriptor() ([]byte, []int) {
-	return file_cauteum_control_v1_console_proto_rawDescGZIP(), []int{21}
+	return file_cautem_control_v1_console_proto_rawDescGZIP(), []int{21}
 }
 
 func (x *GetGlobalPolicyResponse) GetPolicyYaml() string {
@@ -1454,7 +1454,7 @@ type UpdateGlobalPolicyRequest struct {
 
 func (x *UpdateGlobalPolicyRequest) Reset() {
 	*x = UpdateGlobalPolicyRequest{}
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[22]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[22]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1466,7 +1466,7 @@ func (x *UpdateGlobalPolicyRequest) String() string {
 func (*UpdateGlobalPolicyRequest) ProtoMessage() {}
 
 func (x *UpdateGlobalPolicyRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[22]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[22]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1479,7 +1479,7 @@ func (x *UpdateGlobalPolicyRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateGlobalPolicyRequest.ProtoReflect.Descriptor instead.
 func (*UpdateGlobalPolicyRequest) Descriptor() ([]byte, []int) {
-	return file_cauteum_control_v1_console_proto_rawDescGZIP(), []int{22}
+	return file_cautem_control_v1_console_proto_rawDescGZIP(), []int{22}
 }
 
 func (x *UpdateGlobalPolicyRequest) GetPolicyYaml() string {
@@ -1512,7 +1512,7 @@ type UpdateGlobalPolicyResponse struct {
 
 func (x *UpdateGlobalPolicyResponse) Reset() {
 	*x = UpdateGlobalPolicyResponse{}
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[23]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[23]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1524,7 +1524,7 @@ func (x *UpdateGlobalPolicyResponse) String() string {
 func (*UpdateGlobalPolicyResponse) ProtoMessage() {}
 
 func (x *UpdateGlobalPolicyResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[23]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[23]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1537,7 +1537,7 @@ func (x *UpdateGlobalPolicyResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateGlobalPolicyResponse.ProtoReflect.Descriptor instead.
 func (*UpdateGlobalPolicyResponse) Descriptor() ([]byte, []int) {
-	return file_cauteum_control_v1_console_proto_rawDescGZIP(), []int{23}
+	return file_cautem_control_v1_console_proto_rawDescGZIP(), []int{23}
 }
 
 func (x *UpdateGlobalPolicyResponse) GetResourceVersion() uint64 {
@@ -1559,7 +1559,7 @@ type GetSandboxPolicyRequest struct {
 
 func (x *GetSandboxPolicyRequest) Reset() {
 	*x = GetSandboxPolicyRequest{}
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[24]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[24]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1571,7 +1571,7 @@ func (x *GetSandboxPolicyRequest) String() string {
 func (*GetSandboxPolicyRequest) ProtoMessage() {}
 
 func (x *GetSandboxPolicyRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[24]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[24]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1584,7 +1584,7 @@ func (x *GetSandboxPolicyRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetSandboxPolicyRequest.ProtoReflect.Descriptor instead.
 func (*GetSandboxPolicyRequest) Descriptor() ([]byte, []int) {
-	return file_cauteum_control_v1_console_proto_rawDescGZIP(), []int{24}
+	return file_cautem_control_v1_console_proto_rawDescGZIP(), []int{24}
 }
 
 func (x *GetSandboxPolicyRequest) GetWorkspace() string {
@@ -1619,7 +1619,7 @@ type GetSandboxPolicyResponse struct {
 
 func (x *GetSandboxPolicyResponse) Reset() {
 	*x = GetSandboxPolicyResponse{}
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[25]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[25]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1631,7 +1631,7 @@ func (x *GetSandboxPolicyResponse) String() string {
 func (*GetSandboxPolicyResponse) ProtoMessage() {}
 
 func (x *GetSandboxPolicyResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[25]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[25]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1644,7 +1644,7 @@ func (x *GetSandboxPolicyResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetSandboxPolicyResponse.ProtoReflect.Descriptor instead.
 func (*GetSandboxPolicyResponse) Descriptor() ([]byte, []int) {
-	return file_cauteum_control_v1_console_proto_rawDescGZIP(), []int{25}
+	return file_cautem_control_v1_console_proto_rawDescGZIP(), []int{25}
 }
 
 func (x *GetSandboxPolicyResponse) GetPolicyYaml() string {
@@ -1680,7 +1680,7 @@ type UpdateSandboxPolicyRequest struct {
 
 func (x *UpdateSandboxPolicyRequest) Reset() {
 	*x = UpdateSandboxPolicyRequest{}
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[26]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[26]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1692,7 +1692,7 @@ func (x *UpdateSandboxPolicyRequest) String() string {
 func (*UpdateSandboxPolicyRequest) ProtoMessage() {}
 
 func (x *UpdateSandboxPolicyRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[26]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[26]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1705,7 +1705,7 @@ func (x *UpdateSandboxPolicyRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateSandboxPolicyRequest.ProtoReflect.Descriptor instead.
 func (*UpdateSandboxPolicyRequest) Descriptor() ([]byte, []int) {
-	return file_cauteum_control_v1_console_proto_rawDescGZIP(), []int{26}
+	return file_cautem_control_v1_console_proto_rawDescGZIP(), []int{26}
 }
 
 func (x *UpdateSandboxPolicyRequest) GetWorkspace() string {
@@ -1747,7 +1747,7 @@ type UpdateSandboxPolicyResponse struct {
 
 func (x *UpdateSandboxPolicyResponse) Reset() {
 	*x = UpdateSandboxPolicyResponse{}
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[27]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[27]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1759,7 +1759,7 @@ func (x *UpdateSandboxPolicyResponse) String() string {
 func (*UpdateSandboxPolicyResponse) ProtoMessage() {}
 
 func (x *UpdateSandboxPolicyResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[27]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[27]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1772,7 +1772,7 @@ func (x *UpdateSandboxPolicyResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateSandboxPolicyResponse.ProtoReflect.Descriptor instead.
 func (*UpdateSandboxPolicyResponse) Descriptor() ([]byte, []int) {
-	return file_cauteum_control_v1_console_proto_rawDescGZIP(), []int{27}
+	return file_cautem_control_v1_console_proto_rawDescGZIP(), []int{27}
 }
 
 func (x *UpdateSandboxPolicyResponse) GetEffectivePolicyYaml() string {
@@ -1806,7 +1806,7 @@ type ListSandboxPolicyRevisionsRequest struct {
 
 func (x *ListSandboxPolicyRevisionsRequest) Reset() {
 	*x = ListSandboxPolicyRevisionsRequest{}
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[28]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[28]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1818,7 +1818,7 @@ func (x *ListSandboxPolicyRevisionsRequest) String() string {
 func (*ListSandboxPolicyRevisionsRequest) ProtoMessage() {}
 
 func (x *ListSandboxPolicyRevisionsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[28]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[28]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1831,7 +1831,7 @@ func (x *ListSandboxPolicyRevisionsRequest) ProtoReflect() protoreflect.Message 
 
 // Deprecated: Use ListSandboxPolicyRevisionsRequest.ProtoReflect.Descriptor instead.
 func (*ListSandboxPolicyRevisionsRequest) Descriptor() ([]byte, []int) {
-	return file_cauteum_control_v1_console_proto_rawDescGZIP(), []int{28}
+	return file_cautem_control_v1_console_proto_rawDescGZIP(), []int{28}
 }
 
 func (x *ListSandboxPolicyRevisionsRequest) GetWorkspace() string {
@@ -1857,7 +1857,7 @@ type ListSandboxPolicyRevisionsResponse struct {
 
 func (x *ListSandboxPolicyRevisionsResponse) Reset() {
 	*x = ListSandboxPolicyRevisionsResponse{}
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[29]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[29]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1869,7 +1869,7 @@ func (x *ListSandboxPolicyRevisionsResponse) String() string {
 func (*ListSandboxPolicyRevisionsResponse) ProtoMessage() {}
 
 func (x *ListSandboxPolicyRevisionsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[29]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[29]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1882,7 +1882,7 @@ func (x *ListSandboxPolicyRevisionsResponse) ProtoReflect() protoreflect.Message
 
 // Deprecated: Use ListSandboxPolicyRevisionsResponse.ProtoReflect.Descriptor instead.
 func (*ListSandboxPolicyRevisionsResponse) Descriptor() ([]byte, []int) {
-	return file_cauteum_control_v1_console_proto_rawDescGZIP(), []int{29}
+	return file_cautem_control_v1_console_proto_rawDescGZIP(), []int{29}
 }
 
 func (x *ListSandboxPolicyRevisionsResponse) GetRevisions() []*PolicyRevisionSummary {
@@ -1903,7 +1903,7 @@ type GetSandboxPolicyRevisionRequest struct {
 
 func (x *GetSandboxPolicyRevisionRequest) Reset() {
 	*x = GetSandboxPolicyRevisionRequest{}
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[30]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[30]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1915,7 +1915,7 @@ func (x *GetSandboxPolicyRevisionRequest) String() string {
 func (*GetSandboxPolicyRevisionRequest) ProtoMessage() {}
 
 func (x *GetSandboxPolicyRevisionRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[30]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[30]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1928,7 +1928,7 @@ func (x *GetSandboxPolicyRevisionRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetSandboxPolicyRevisionRequest.ProtoReflect.Descriptor instead.
 func (*GetSandboxPolicyRevisionRequest) Descriptor() ([]byte, []int) {
-	return file_cauteum_control_v1_console_proto_rawDescGZIP(), []int{30}
+	return file_cautem_control_v1_console_proto_rawDescGZIP(), []int{30}
 }
 
 func (x *GetSandboxPolicyRevisionRequest) GetWorkspace() string {
@@ -1962,7 +1962,7 @@ type GetSandboxPolicyRevisionResponse struct {
 
 func (x *GetSandboxPolicyRevisionResponse) Reset() {
 	*x = GetSandboxPolicyRevisionResponse{}
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[31]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[31]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1974,7 +1974,7 @@ func (x *GetSandboxPolicyRevisionResponse) String() string {
 func (*GetSandboxPolicyRevisionResponse) ProtoMessage() {}
 
 func (x *GetSandboxPolicyRevisionResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[31]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[31]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1987,7 +1987,7 @@ func (x *GetSandboxPolicyRevisionResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetSandboxPolicyRevisionResponse.ProtoReflect.Descriptor instead.
 func (*GetSandboxPolicyRevisionResponse) Descriptor() ([]byte, []int) {
-	return file_cauteum_control_v1_console_proto_rawDescGZIP(), []int{31}
+	return file_cautem_control_v1_console_proto_rawDescGZIP(), []int{31}
 }
 
 func (x *GetSandboxPolicyRevisionResponse) GetPolicyYaml() string {
@@ -2016,7 +2016,7 @@ type PolicyRevisionSummary struct {
 
 func (x *PolicyRevisionSummary) Reset() {
 	*x = PolicyRevisionSummary{}
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[32]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[32]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2028,7 +2028,7 @@ func (x *PolicyRevisionSummary) String() string {
 func (*PolicyRevisionSummary) ProtoMessage() {}
 
 func (x *PolicyRevisionSummary) ProtoReflect() protoreflect.Message {
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[32]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[32]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2041,7 +2041,7 @@ func (x *PolicyRevisionSummary) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PolicyRevisionSummary.ProtoReflect.Descriptor instead.
 func (*PolicyRevisionSummary) Descriptor() ([]byte, []int) {
-	return file_cauteum_control_v1_console_proto_rawDescGZIP(), []int{32}
+	return file_cautem_control_v1_console_proto_rawDescGZIP(), []int{32}
 }
 
 func (x *PolicyRevisionSummary) GetRevision() uint64 {
@@ -2083,7 +2083,7 @@ type UpdateProviderCredentialsRequest struct {
 
 func (x *UpdateProviderCredentialsRequest) Reset() {
 	*x = UpdateProviderCredentialsRequest{}
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[33]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[33]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2095,7 +2095,7 @@ func (x *UpdateProviderCredentialsRequest) String() string {
 func (*UpdateProviderCredentialsRequest) ProtoMessage() {}
 
 func (x *UpdateProviderCredentialsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[33]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[33]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2108,7 +2108,7 @@ func (x *UpdateProviderCredentialsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateProviderCredentialsRequest.ProtoReflect.Descriptor instead.
 func (*UpdateProviderCredentialsRequest) Descriptor() ([]byte, []int) {
-	return file_cauteum_control_v1_console_proto_rawDescGZIP(), []int{33}
+	return file_cautem_control_v1_console_proto_rawDescGZIP(), []int{33}
 }
 
 func (x *UpdateProviderCredentialsRequest) GetWorkspace() string {
@@ -2141,7 +2141,7 @@ type UpdateProviderCredentialsResponse struct {
 
 func (x *UpdateProviderCredentialsResponse) Reset() {
 	*x = UpdateProviderCredentialsResponse{}
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[34]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[34]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2153,7 +2153,7 @@ func (x *UpdateProviderCredentialsResponse) String() string {
 func (*UpdateProviderCredentialsResponse) ProtoMessage() {}
 
 func (x *UpdateProviderCredentialsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[34]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[34]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2166,7 +2166,7 @@ func (x *UpdateProviderCredentialsResponse) ProtoReflect() protoreflect.Message 
 
 // Deprecated: Use UpdateProviderCredentialsResponse.ProtoReflect.Descriptor instead.
 func (*UpdateProviderCredentialsResponse) Descriptor() ([]byte, []int) {
-	return file_cauteum_control_v1_console_proto_rawDescGZIP(), []int{34}
+	return file_cautem_control_v1_console_proto_rawDescGZIP(), []int{34}
 }
 
 func (x *UpdateProviderCredentialsResponse) GetUpdatedKeys() []string {
@@ -2186,7 +2186,7 @@ type ListProviderProfilesRequest struct {
 
 func (x *ListProviderProfilesRequest) Reset() {
 	*x = ListProviderProfilesRequest{}
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[35]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[35]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2198,7 +2198,7 @@ func (x *ListProviderProfilesRequest) String() string {
 func (*ListProviderProfilesRequest) ProtoMessage() {}
 
 func (x *ListProviderProfilesRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[35]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[35]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2211,7 +2211,7 @@ func (x *ListProviderProfilesRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListProviderProfilesRequest.ProtoReflect.Descriptor instead.
 func (*ListProviderProfilesRequest) Descriptor() ([]byte, []int) {
-	return file_cauteum_control_v1_console_proto_rawDescGZIP(), []int{35}
+	return file_cautem_control_v1_console_proto_rawDescGZIP(), []int{35}
 }
 
 func (x *ListProviderProfilesRequest) GetWorkspace() string {
@@ -2234,7 +2234,7 @@ type ProviderProfileSummary struct {
 
 func (x *ProviderProfileSummary) Reset() {
 	*x = ProviderProfileSummary{}
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[36]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[36]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2246,7 +2246,7 @@ func (x *ProviderProfileSummary) String() string {
 func (*ProviderProfileSummary) ProtoMessage() {}
 
 func (x *ProviderProfileSummary) ProtoReflect() protoreflect.Message {
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[36]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[36]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2259,7 +2259,7 @@ func (x *ProviderProfileSummary) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ProviderProfileSummary.ProtoReflect.Descriptor instead.
 func (*ProviderProfileSummary) Descriptor() ([]byte, []int) {
-	return file_cauteum_control_v1_console_proto_rawDescGZIP(), []int{36}
+	return file_cautem_control_v1_console_proto_rawDescGZIP(), []int{36}
 }
 
 func (x *ProviderProfileSummary) GetId() string {
@@ -2306,7 +2306,7 @@ type ListProviderProfilesResponse struct {
 
 func (x *ListProviderProfilesResponse) Reset() {
 	*x = ListProviderProfilesResponse{}
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[37]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[37]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2318,7 +2318,7 @@ func (x *ListProviderProfilesResponse) String() string {
 func (*ListProviderProfilesResponse) ProtoMessage() {}
 
 func (x *ListProviderProfilesResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[37]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[37]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2331,7 +2331,7 @@ func (x *ListProviderProfilesResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListProviderProfilesResponse.ProtoReflect.Descriptor instead.
 func (*ListProviderProfilesResponse) Descriptor() ([]byte, []int) {
-	return file_cauteum_control_v1_console_proto_rawDescGZIP(), []int{37}
+	return file_cautem_control_v1_console_proto_rawDescGZIP(), []int{37}
 }
 
 func (x *ListProviderProfilesResponse) GetProfiles() []*ProviderProfileSummary {
@@ -2351,7 +2351,7 @@ type GetProviderProfileRequest struct {
 
 func (x *GetProviderProfileRequest) Reset() {
 	*x = GetProviderProfileRequest{}
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[38]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[38]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2363,7 +2363,7 @@ func (x *GetProviderProfileRequest) String() string {
 func (*GetProviderProfileRequest) ProtoMessage() {}
 
 func (x *GetProviderProfileRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[38]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[38]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2376,7 +2376,7 @@ func (x *GetProviderProfileRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetProviderProfileRequest.ProtoReflect.Descriptor instead.
 func (*GetProviderProfileRequest) Descriptor() ([]byte, []int) {
-	return file_cauteum_control_v1_console_proto_rawDescGZIP(), []int{38}
+	return file_cautem_control_v1_console_proto_rawDescGZIP(), []int{38}
 }
 
 func (x *GetProviderProfileRequest) GetWorkspace() string {
@@ -2404,7 +2404,7 @@ type GetProviderProfileResponse struct {
 
 func (x *GetProviderProfileResponse) Reset() {
 	*x = GetProviderProfileResponse{}
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[39]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[39]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2416,7 +2416,7 @@ func (x *GetProviderProfileResponse) String() string {
 func (*GetProviderProfileResponse) ProtoMessage() {}
 
 func (x *GetProviderProfileResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[39]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[39]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2429,7 +2429,7 @@ func (x *GetProviderProfileResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetProviderProfileResponse.ProtoReflect.Descriptor instead.
 func (*GetProviderProfileResponse) Descriptor() ([]byte, []int) {
-	return file_cauteum_control_v1_console_proto_rawDescGZIP(), []int{39}
+	return file_cautem_control_v1_console_proto_rawDescGZIP(), []int{39}
 }
 
 func (x *GetProviderProfileResponse) GetProfileYaml() string {
@@ -2464,7 +2464,7 @@ type ImportProviderProfileRequest struct {
 
 func (x *ImportProviderProfileRequest) Reset() {
 	*x = ImportProviderProfileRequest{}
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[40]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[40]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2476,7 +2476,7 @@ func (x *ImportProviderProfileRequest) String() string {
 func (*ImportProviderProfileRequest) ProtoMessage() {}
 
 func (x *ImportProviderProfileRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[40]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[40]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2489,7 +2489,7 @@ func (x *ImportProviderProfileRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ImportProviderProfileRequest.ProtoReflect.Descriptor instead.
 func (*ImportProviderProfileRequest) Descriptor() ([]byte, []int) {
-	return file_cauteum_control_v1_console_proto_rawDescGZIP(), []int{40}
+	return file_cautem_control_v1_console_proto_rawDescGZIP(), []int{40}
 }
 
 func (x *ImportProviderProfileRequest) GetWorkspace() string {
@@ -2522,7 +2522,7 @@ type ImportProviderProfileResponse struct {
 
 func (x *ImportProviderProfileResponse) Reset() {
 	*x = ImportProviderProfileResponse{}
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[41]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[41]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2534,7 +2534,7 @@ func (x *ImportProviderProfileResponse) String() string {
 func (*ImportProviderProfileResponse) ProtoMessage() {}
 
 func (x *ImportProviderProfileResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[41]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[41]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2547,7 +2547,7 @@ func (x *ImportProviderProfileResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ImportProviderProfileResponse.ProtoReflect.Descriptor instead.
 func (*ImportProviderProfileResponse) Descriptor() ([]byte, []int) {
-	return file_cauteum_control_v1_console_proto_rawDescGZIP(), []int{41}
+	return file_cautem_control_v1_console_proto_rawDescGZIP(), []int{41}
 }
 
 func (x *ImportProviderProfileResponse) GetImportedId() string {
@@ -2569,7 +2569,7 @@ type UpdateProviderProfileRequest struct {
 
 func (x *UpdateProviderProfileRequest) Reset() {
 	*x = UpdateProviderProfileRequest{}
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[42]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[42]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2581,7 +2581,7 @@ func (x *UpdateProviderProfileRequest) String() string {
 func (*UpdateProviderProfileRequest) ProtoMessage() {}
 
 func (x *UpdateProviderProfileRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[42]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[42]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2594,7 +2594,7 @@ func (x *UpdateProviderProfileRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateProviderProfileRequest.ProtoReflect.Descriptor instead.
 func (*UpdateProviderProfileRequest) Descriptor() ([]byte, []int) {
-	return file_cauteum_control_v1_console_proto_rawDescGZIP(), []int{42}
+	return file_cautem_control_v1_console_proto_rawDescGZIP(), []int{42}
 }
 
 func (x *UpdateProviderProfileRequest) GetWorkspace() string {
@@ -2634,7 +2634,7 @@ type UpdateProviderProfileResponse struct {
 
 func (x *UpdateProviderProfileResponse) Reset() {
 	*x = UpdateProviderProfileResponse{}
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[43]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[43]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2646,7 +2646,7 @@ func (x *UpdateProviderProfileResponse) String() string {
 func (*UpdateProviderProfileResponse) ProtoMessage() {}
 
 func (x *UpdateProviderProfileResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[43]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[43]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2659,7 +2659,7 @@ func (x *UpdateProviderProfileResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateProviderProfileResponse.ProtoReflect.Descriptor instead.
 func (*UpdateProviderProfileResponse) Descriptor() ([]byte, []int) {
-	return file_cauteum_control_v1_console_proto_rawDescGZIP(), []int{43}
+	return file_cautem_control_v1_console_proto_rawDescGZIP(), []int{43}
 }
 
 func (x *UpdateProviderProfileResponse) GetResourceVersion() uint64 {
@@ -2679,7 +2679,7 @@ type DeleteProviderProfileRequest struct {
 
 func (x *DeleteProviderProfileRequest) Reset() {
 	*x = DeleteProviderProfileRequest{}
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[44]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[44]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2691,7 +2691,7 @@ func (x *DeleteProviderProfileRequest) String() string {
 func (*DeleteProviderProfileRequest) ProtoMessage() {}
 
 func (x *DeleteProviderProfileRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[44]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[44]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2704,7 +2704,7 @@ func (x *DeleteProviderProfileRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteProviderProfileRequest.ProtoReflect.Descriptor instead.
 func (*DeleteProviderProfileRequest) Descriptor() ([]byte, []int) {
-	return file_cauteum_control_v1_console_proto_rawDescGZIP(), []int{44}
+	return file_cautem_control_v1_console_proto_rawDescGZIP(), []int{44}
 }
 
 func (x *DeleteProviderProfileRequest) GetWorkspace() string {
@@ -2730,7 +2730,7 @@ type DeleteProviderProfileResponse struct {
 
 func (x *DeleteProviderProfileResponse) Reset() {
 	*x = DeleteProviderProfileResponse{}
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[45]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[45]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2742,7 +2742,7 @@ func (x *DeleteProviderProfileResponse) String() string {
 func (*DeleteProviderProfileResponse) ProtoMessage() {}
 
 func (x *DeleteProviderProfileResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[45]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[45]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2755,7 +2755,7 @@ func (x *DeleteProviderProfileResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteProviderProfileResponse.ProtoReflect.Descriptor instead.
 func (*DeleteProviderProfileResponse) Descriptor() ([]byte, []int) {
-	return file_cauteum_control_v1_console_proto_rawDescGZIP(), []int{45}
+	return file_cautem_control_v1_console_proto_rawDescGZIP(), []int{45}
 }
 
 func (x *DeleteProviderProfileResponse) GetDeleted() bool {
@@ -2773,7 +2773,7 @@ type GetViewerRequest struct {
 
 func (x *GetViewerRequest) Reset() {
 	*x = GetViewerRequest{}
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[46]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[46]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2785,7 +2785,7 @@ func (x *GetViewerRequest) String() string {
 func (*GetViewerRequest) ProtoMessage() {}
 
 func (x *GetViewerRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[46]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[46]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2798,7 +2798,7 @@ func (x *GetViewerRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetViewerRequest.ProtoReflect.Descriptor instead.
 func (*GetViewerRequest) Descriptor() ([]byte, []int) {
-	return file_cauteum_control_v1_console_proto_rawDescGZIP(), []int{46}
+	return file_cautem_control_v1_console_proto_rawDescGZIP(), []int{46}
 }
 
 type GetViewerResponse struct {
@@ -2813,7 +2813,7 @@ type GetViewerResponse struct {
 
 func (x *GetViewerResponse) Reset() {
 	*x = GetViewerResponse{}
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[47]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[47]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2825,7 +2825,7 @@ func (x *GetViewerResponse) String() string {
 func (*GetViewerResponse) ProtoMessage() {}
 
 func (x *GetViewerResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[47]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[47]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2838,7 +2838,7 @@ func (x *GetViewerResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetViewerResponse.ProtoReflect.Descriptor instead.
 func (*GetViewerResponse) Descriptor() ([]byte, []int) {
-	return file_cauteum_control_v1_console_proto_rawDescGZIP(), []int{47}
+	return file_cautem_control_v1_console_proto_rawDescGZIP(), []int{47}
 }
 
 func (x *GetViewerResponse) GetSubject() string {
@@ -2877,7 +2877,7 @@ type GetConsoleCapabilitiesRequest struct {
 
 func (x *GetConsoleCapabilitiesRequest) Reset() {
 	*x = GetConsoleCapabilitiesRequest{}
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[48]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[48]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2889,7 +2889,7 @@ func (x *GetConsoleCapabilitiesRequest) String() string {
 func (*GetConsoleCapabilitiesRequest) ProtoMessage() {}
 
 func (x *GetConsoleCapabilitiesRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[48]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[48]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2902,7 +2902,7 @@ func (x *GetConsoleCapabilitiesRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetConsoleCapabilitiesRequest.ProtoReflect.Descriptor instead.
 func (*GetConsoleCapabilitiesRequest) Descriptor() ([]byte, []int) {
-	return file_cauteum_control_v1_console_proto_rawDescGZIP(), []int{48}
+	return file_cautem_control_v1_console_proto_rawDescGZIP(), []int{48}
 }
 
 type GetConsoleCapabilitiesResponse struct {
@@ -2917,7 +2917,7 @@ type GetConsoleCapabilitiesResponse struct {
 
 func (x *GetConsoleCapabilitiesResponse) Reset() {
 	*x = GetConsoleCapabilitiesResponse{}
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[49]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[49]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2929,7 +2929,7 @@ func (x *GetConsoleCapabilitiesResponse) String() string {
 func (*GetConsoleCapabilitiesResponse) ProtoMessage() {}
 
 func (x *GetConsoleCapabilitiesResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[49]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[49]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2942,7 +2942,7 @@ func (x *GetConsoleCapabilitiesResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetConsoleCapabilitiesResponse.ProtoReflect.Descriptor instead.
 func (*GetConsoleCapabilitiesResponse) Descriptor() ([]byte, []int) {
-	return file_cauteum_control_v1_console_proto_rawDescGZIP(), []int{49}
+	return file_cautem_control_v1_console_proto_rawDescGZIP(), []int{49}
 }
 
 func (x *GetConsoleCapabilitiesResponse) GetSandboxLifecycleAvailable() bool {
@@ -2976,7 +2976,7 @@ type GetOverviewRequest struct {
 
 func (x *GetOverviewRequest) Reset() {
 	*x = GetOverviewRequest{}
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[50]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[50]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2988,7 +2988,7 @@ func (x *GetOverviewRequest) String() string {
 func (*GetOverviewRequest) ProtoMessage() {}
 
 func (x *GetOverviewRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[50]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[50]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3001,7 +3001,7 @@ func (x *GetOverviewRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetOverviewRequest.ProtoReflect.Descriptor instead.
 func (*GetOverviewRequest) Descriptor() ([]byte, []int) {
-	return file_cauteum_control_v1_console_proto_rawDescGZIP(), []int{50}
+	return file_cautem_control_v1_console_proto_rawDescGZIP(), []int{50}
 }
 
 func (x *GetOverviewRequest) GetWorkspace() string {
@@ -3026,7 +3026,7 @@ type GetOverviewResponse struct {
 
 func (x *GetOverviewResponse) Reset() {
 	*x = GetOverviewResponse{}
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[51]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[51]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3038,7 +3038,7 @@ func (x *GetOverviewResponse) String() string {
 func (*GetOverviewResponse) ProtoMessage() {}
 
 func (x *GetOverviewResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[51]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[51]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3051,7 +3051,7 @@ func (x *GetOverviewResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetOverviewResponse.ProtoReflect.Descriptor instead.
 func (*GetOverviewResponse) Descriptor() ([]byte, []int) {
-	return file_cauteum_control_v1_console_proto_rawDescGZIP(), []int{51}
+	return file_cautem_control_v1_console_proto_rawDescGZIP(), []int{51}
 }
 
 func (x *GetOverviewResponse) GetGatewayId() string {
@@ -3114,7 +3114,7 @@ type ListSandboxesRequest struct {
 
 func (x *ListSandboxesRequest) Reset() {
 	*x = ListSandboxesRequest{}
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[52]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[52]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3126,7 +3126,7 @@ func (x *ListSandboxesRequest) String() string {
 func (*ListSandboxesRequest) ProtoMessage() {}
 
 func (x *ListSandboxesRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[52]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[52]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3139,7 +3139,7 @@ func (x *ListSandboxesRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListSandboxesRequest.ProtoReflect.Descriptor instead.
 func (*ListSandboxesRequest) Descriptor() ([]byte, []int) {
-	return file_cauteum_control_v1_console_proto_rawDescGZIP(), []int{52}
+	return file_cautem_control_v1_console_proto_rawDescGZIP(), []int{52}
 }
 
 func (x *ListSandboxesRequest) GetWorkspace() string {
@@ -3201,7 +3201,7 @@ type ListSandboxesResponse struct {
 
 func (x *ListSandboxesResponse) Reset() {
 	*x = ListSandboxesResponse{}
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[53]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[53]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3213,7 +3213,7 @@ func (x *ListSandboxesResponse) String() string {
 func (*ListSandboxesResponse) ProtoMessage() {}
 
 func (x *ListSandboxesResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[53]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[53]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3226,7 +3226,7 @@ func (x *ListSandboxesResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListSandboxesResponse.ProtoReflect.Descriptor instead.
 func (*ListSandboxesResponse) Descriptor() ([]byte, []int) {
-	return file_cauteum_control_v1_console_proto_rawDescGZIP(), []int{53}
+	return file_cautem_control_v1_console_proto_rawDescGZIP(), []int{53}
 }
 
 func (x *ListSandboxesResponse) GetSandboxes() []*SandboxSummary {
@@ -3254,7 +3254,7 @@ type GetSandboxRequest struct {
 
 func (x *GetSandboxRequest) Reset() {
 	*x = GetSandboxRequest{}
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[54]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[54]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3266,7 +3266,7 @@ func (x *GetSandboxRequest) String() string {
 func (*GetSandboxRequest) ProtoMessage() {}
 
 func (x *GetSandboxRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[54]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[54]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3279,7 +3279,7 @@ func (x *GetSandboxRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetSandboxRequest.ProtoReflect.Descriptor instead.
 func (*GetSandboxRequest) Descriptor() ([]byte, []int) {
-	return file_cauteum_control_v1_console_proto_rawDescGZIP(), []int{54}
+	return file_cautem_control_v1_console_proto_rawDescGZIP(), []int{54}
 }
 
 func (x *GetSandboxRequest) GetWorkspace() string {
@@ -3305,7 +3305,7 @@ type GetSandboxResponse struct {
 
 func (x *GetSandboxResponse) Reset() {
 	*x = GetSandboxResponse{}
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[55]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[55]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3317,7 +3317,7 @@ func (x *GetSandboxResponse) String() string {
 func (*GetSandboxResponse) ProtoMessage() {}
 
 func (x *GetSandboxResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[55]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[55]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3330,7 +3330,7 @@ func (x *GetSandboxResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetSandboxResponse.ProtoReflect.Descriptor instead.
 func (*GetSandboxResponse) Descriptor() ([]byte, []int) {
-	return file_cauteum_control_v1_console_proto_rawDescGZIP(), []int{55}
+	return file_cautem_control_v1_console_proto_rawDescGZIP(), []int{55}
 }
 
 func (x *GetSandboxResponse) GetSandbox() *SandboxSummary {
@@ -3350,7 +3350,7 @@ type WatchSandboxesRequest struct {
 
 func (x *WatchSandboxesRequest) Reset() {
 	*x = WatchSandboxesRequest{}
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[56]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[56]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3362,7 +3362,7 @@ func (x *WatchSandboxesRequest) String() string {
 func (*WatchSandboxesRequest) ProtoMessage() {}
 
 func (x *WatchSandboxesRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[56]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[56]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3375,7 +3375,7 @@ func (x *WatchSandboxesRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use WatchSandboxesRequest.ProtoReflect.Descriptor instead.
 func (*WatchSandboxesRequest) Descriptor() ([]byte, []int) {
-	return file_cauteum_control_v1_console_proto_rawDescGZIP(), []int{56}
+	return file_cautem_control_v1_console_proto_rawDescGZIP(), []int{56}
 }
 
 func (x *WatchSandboxesRequest) GetWorkspace() string {
@@ -3387,7 +3387,7 @@ func (x *WatchSandboxesRequest) GetWorkspace() string {
 
 type WatchSandboxesResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	Kind  SandboxWatchEventKind  `protobuf:"varint,1,opt,name=kind,proto3,enum=cauteum.control.v1.SandboxWatchEventKind" json:"kind,omitempty"`
+	Kind  SandboxWatchEventKind  `protobuf:"varint,1,opt,name=kind,proto3,enum=cautem.control.v1.SandboxWatchEventKind" json:"kind,omitempty"`
 	// Sequence numbers start at one for each stream and are not durable cursors.
 	StreamSequence   uint64          `protobuf:"varint,2,opt,name=stream_sequence,json=streamSequence,proto3" json:"stream_sequence,omitempty"`
 	Sandbox          *SandboxSummary `protobuf:"bytes,3,opt,name=sandbox,proto3" json:"sandbox,omitempty"`
@@ -3399,7 +3399,7 @@ type WatchSandboxesResponse struct {
 
 func (x *WatchSandboxesResponse) Reset() {
 	*x = WatchSandboxesResponse{}
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[57]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[57]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3411,7 +3411,7 @@ func (x *WatchSandboxesResponse) String() string {
 func (*WatchSandboxesResponse) ProtoMessage() {}
 
 func (x *WatchSandboxesResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[57]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[57]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3424,7 +3424,7 @@ func (x *WatchSandboxesResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use WatchSandboxesResponse.ProtoReflect.Descriptor instead.
 func (*WatchSandboxesResponse) Descriptor() ([]byte, []int) {
-	return file_cauteum_control_v1_console_proto_rawDescGZIP(), []int{57}
+	return file_cautem_control_v1_console_proto_rawDescGZIP(), []int{57}
 }
 
 func (x *WatchSandboxesResponse) GetKind() SandboxWatchEventKind {
@@ -3480,7 +3480,7 @@ type GetSandboxLogsRequest struct {
 
 func (x *GetSandboxLogsRequest) Reset() {
 	*x = GetSandboxLogsRequest{}
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[58]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[58]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3492,7 +3492,7 @@ func (x *GetSandboxLogsRequest) String() string {
 func (*GetSandboxLogsRequest) ProtoMessage() {}
 
 func (x *GetSandboxLogsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[58]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[58]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3505,7 +3505,7 @@ func (x *GetSandboxLogsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetSandboxLogsRequest.ProtoReflect.Descriptor instead.
 func (*GetSandboxLogsRequest) Descriptor() ([]byte, []int) {
-	return file_cauteum_control_v1_console_proto_rawDescGZIP(), []int{58}
+	return file_cautem_control_v1_console_proto_rawDescGZIP(), []int{58}
 }
 
 func (x *GetSandboxLogsRequest) GetWorkspace() string {
@@ -3561,7 +3561,7 @@ type GetSandboxLogsResponse struct {
 
 func (x *GetSandboxLogsResponse) Reset() {
 	*x = GetSandboxLogsResponse{}
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[59]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[59]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3573,7 +3573,7 @@ func (x *GetSandboxLogsResponse) String() string {
 func (*GetSandboxLogsResponse) ProtoMessage() {}
 
 func (x *GetSandboxLogsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[59]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[59]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3586,7 +3586,7 @@ func (x *GetSandboxLogsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetSandboxLogsResponse.ProtoReflect.Descriptor instead.
 func (*GetSandboxLogsResponse) Descriptor() ([]byte, []int) {
-	return file_cauteum_control_v1_console_proto_rawDescGZIP(), []int{59}
+	return file_cautem_control_v1_console_proto_rawDescGZIP(), []int{59}
 }
 
 func (x *GetSandboxLogsResponse) GetLines() []*SandboxLogLine {
@@ -3623,7 +3623,7 @@ type WatchSandboxLogsRequest struct {
 
 func (x *WatchSandboxLogsRequest) Reset() {
 	*x = WatchSandboxLogsRequest{}
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[60]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[60]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3635,7 +3635,7 @@ func (x *WatchSandboxLogsRequest) String() string {
 func (*WatchSandboxLogsRequest) ProtoMessage() {}
 
 func (x *WatchSandboxLogsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[60]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[60]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3648,7 +3648,7 @@ func (x *WatchSandboxLogsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use WatchSandboxLogsRequest.ProtoReflect.Descriptor instead.
 func (*WatchSandboxLogsRequest) Descriptor() ([]byte, []int) {
-	return file_cauteum_control_v1_console_proto_rawDescGZIP(), []int{60}
+	return file_cautem_control_v1_console_proto_rawDescGZIP(), []int{60}
 }
 
 func (x *WatchSandboxLogsRequest) GetWorkspace() string {
@@ -3702,7 +3702,7 @@ func (x *WatchSandboxLogsRequest) GetLevel() string {
 
 type WatchSandboxLogsResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	Kind  SandboxLogWatchKind    `protobuf:"varint,1,opt,name=kind,proto3,enum=cauteum.control.v1.SandboxLogWatchKind" json:"kind,omitempty"`
+	Kind  SandboxLogWatchKind    `protobuf:"varint,1,opt,name=kind,proto3,enum=cautem.control.v1.SandboxLogWatchKind" json:"kind,omitempty"`
 	Line  *SandboxLogLine        `protobuf:"bytes,2,opt,name=line,proto3" json:"line,omitempty"`
 	// Resume cursor at a reset or heartbeat. RESET precedes a bounded tail.
 	Cursor           uint64 `protobuf:"varint,3,opt,name=cursor,proto3" json:"cursor,omitempty"`
@@ -3713,7 +3713,7 @@ type WatchSandboxLogsResponse struct {
 
 func (x *WatchSandboxLogsResponse) Reset() {
 	*x = WatchSandboxLogsResponse{}
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[61]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[61]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3725,7 +3725,7 @@ func (x *WatchSandboxLogsResponse) String() string {
 func (*WatchSandboxLogsResponse) ProtoMessage() {}
 
 func (x *WatchSandboxLogsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[61]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[61]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3738,7 +3738,7 @@ func (x *WatchSandboxLogsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use WatchSandboxLogsResponse.ProtoReflect.Descriptor instead.
 func (*WatchSandboxLogsResponse) Descriptor() ([]byte, []int) {
-	return file_cauteum_control_v1_console_proto_rawDescGZIP(), []int{61}
+	return file_cautem_control_v1_console_proto_rawDescGZIP(), []int{61}
 }
 
 func (x *WatchSandboxLogsResponse) GetKind() SandboxLogWatchKind {
@@ -3785,7 +3785,7 @@ type SandboxLogLine struct {
 
 func (x *SandboxLogLine) Reset() {
 	*x = SandboxLogLine{}
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[62]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[62]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3797,7 +3797,7 @@ func (x *SandboxLogLine) String() string {
 func (*SandboxLogLine) ProtoMessage() {}
 
 func (x *SandboxLogLine) ProtoReflect() protoreflect.Message {
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[62]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[62]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3810,7 +3810,7 @@ func (x *SandboxLogLine) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SandboxLogLine.ProtoReflect.Descriptor instead.
 func (*SandboxLogLine) Descriptor() ([]byte, []int) {
-	return file_cauteum_control_v1_console_proto_rawDescGZIP(), []int{62}
+	return file_cautem_control_v1_console_proto_rawDescGZIP(), []int{62}
 }
 
 func (x *SandboxLogLine) GetCursor() uint64 {
@@ -3873,7 +3873,7 @@ type CreateSandboxRequest struct {
 
 func (x *CreateSandboxRequest) Reset() {
 	*x = CreateSandboxRequest{}
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[63]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[63]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3885,7 +3885,7 @@ func (x *CreateSandboxRequest) String() string {
 func (*CreateSandboxRequest) ProtoMessage() {}
 
 func (x *CreateSandboxRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[63]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[63]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3898,7 +3898,7 @@ func (x *CreateSandboxRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateSandboxRequest.ProtoReflect.Descriptor instead.
 func (*CreateSandboxRequest) Descriptor() ([]byte, []int) {
-	return file_cauteum_control_v1_console_proto_rawDescGZIP(), []int{63}
+	return file_cautem_control_v1_console_proto_rawDescGZIP(), []int{63}
 }
 
 func (x *CreateSandboxRequest) GetWorkspace() string {
@@ -3962,7 +3962,7 @@ type CreateSandboxResponse struct {
 
 func (x *CreateSandboxResponse) Reset() {
 	*x = CreateSandboxResponse{}
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[64]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[64]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3974,7 +3974,7 @@ func (x *CreateSandboxResponse) String() string {
 func (*CreateSandboxResponse) ProtoMessage() {}
 
 func (x *CreateSandboxResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[64]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[64]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3987,7 +3987,7 @@ func (x *CreateSandboxResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateSandboxResponse.ProtoReflect.Descriptor instead.
 func (*CreateSandboxResponse) Descriptor() ([]byte, []int) {
-	return file_cauteum_control_v1_console_proto_rawDescGZIP(), []int{64}
+	return file_cautem_control_v1_console_proto_rawDescGZIP(), []int{64}
 }
 
 func (x *CreateSandboxResponse) GetSandbox() *SandboxSummary {
@@ -4024,7 +4024,7 @@ type StartSandboxRequest struct {
 
 func (x *StartSandboxRequest) Reset() {
 	*x = StartSandboxRequest{}
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[65]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[65]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4036,7 +4036,7 @@ func (x *StartSandboxRequest) String() string {
 func (*StartSandboxRequest) ProtoMessage() {}
 
 func (x *StartSandboxRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[65]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[65]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4049,7 +4049,7 @@ func (x *StartSandboxRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use StartSandboxRequest.ProtoReflect.Descriptor instead.
 func (*StartSandboxRequest) Descriptor() ([]byte, []int) {
-	return file_cauteum_control_v1_console_proto_rawDescGZIP(), []int{65}
+	return file_cautem_control_v1_console_proto_rawDescGZIP(), []int{65}
 }
 
 func (x *StartSandboxRequest) GetWorkspace() string {
@@ -4092,7 +4092,7 @@ type StartSandboxResponse struct {
 
 func (x *StartSandboxResponse) Reset() {
 	*x = StartSandboxResponse{}
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[66]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[66]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4104,7 +4104,7 @@ func (x *StartSandboxResponse) String() string {
 func (*StartSandboxResponse) ProtoMessage() {}
 
 func (x *StartSandboxResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[66]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[66]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4117,7 +4117,7 @@ func (x *StartSandboxResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use StartSandboxResponse.ProtoReflect.Descriptor instead.
 func (*StartSandboxResponse) Descriptor() ([]byte, []int) {
-	return file_cauteum_control_v1_console_proto_rawDescGZIP(), []int{66}
+	return file_cautem_control_v1_console_proto_rawDescGZIP(), []int{66}
 }
 
 func (x *StartSandboxResponse) GetSandbox() *SandboxSummary {
@@ -4153,7 +4153,7 @@ type StopSandboxRequest struct {
 
 func (x *StopSandboxRequest) Reset() {
 	*x = StopSandboxRequest{}
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[67]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[67]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4165,7 +4165,7 @@ func (x *StopSandboxRequest) String() string {
 func (*StopSandboxRequest) ProtoMessage() {}
 
 func (x *StopSandboxRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[67]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[67]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4178,7 +4178,7 @@ func (x *StopSandboxRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use StopSandboxRequest.ProtoReflect.Descriptor instead.
 func (*StopSandboxRequest) Descriptor() ([]byte, []int) {
-	return file_cauteum_control_v1_console_proto_rawDescGZIP(), []int{67}
+	return file_cautem_control_v1_console_proto_rawDescGZIP(), []int{67}
 }
 
 func (x *StopSandboxRequest) GetWorkspace() string {
@@ -4220,7 +4220,7 @@ type StopSandboxResponse struct {
 
 func (x *StopSandboxResponse) Reset() {
 	*x = StopSandboxResponse{}
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[68]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[68]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4232,7 +4232,7 @@ func (x *StopSandboxResponse) String() string {
 func (*StopSandboxResponse) ProtoMessage() {}
 
 func (x *StopSandboxResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[68]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[68]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4245,7 +4245,7 @@ func (x *StopSandboxResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use StopSandboxResponse.ProtoReflect.Descriptor instead.
 func (*StopSandboxResponse) Descriptor() ([]byte, []int) {
-	return file_cauteum_control_v1_console_proto_rawDescGZIP(), []int{68}
+	return file_cautem_control_v1_console_proto_rawDescGZIP(), []int{68}
 }
 
 func (x *StopSandboxResponse) GetSandbox() *SandboxSummary {
@@ -4281,7 +4281,7 @@ type DeleteSandboxRequest struct {
 
 func (x *DeleteSandboxRequest) Reset() {
 	*x = DeleteSandboxRequest{}
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[69]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[69]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4293,7 +4293,7 @@ func (x *DeleteSandboxRequest) String() string {
 func (*DeleteSandboxRequest) ProtoMessage() {}
 
 func (x *DeleteSandboxRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[69]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[69]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4306,7 +4306,7 @@ func (x *DeleteSandboxRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteSandboxRequest.ProtoReflect.Descriptor instead.
 func (*DeleteSandboxRequest) Descriptor() ([]byte, []int) {
-	return file_cauteum_control_v1_console_proto_rawDescGZIP(), []int{69}
+	return file_cautem_control_v1_console_proto_rawDescGZIP(), []int{69}
 }
 
 func (x *DeleteSandboxRequest) GetWorkspace() string {
@@ -4348,7 +4348,7 @@ type DeleteSandboxResponse struct {
 
 func (x *DeleteSandboxResponse) Reset() {
 	*x = DeleteSandboxResponse{}
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[70]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[70]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4360,7 +4360,7 @@ func (x *DeleteSandboxResponse) String() string {
 func (*DeleteSandboxResponse) ProtoMessage() {}
 
 func (x *DeleteSandboxResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[70]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[70]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4373,7 +4373,7 @@ func (x *DeleteSandboxResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteSandboxResponse.ProtoReflect.Descriptor instead.
 func (*DeleteSandboxResponse) Descriptor() ([]byte, []int) {
-	return file_cauteum_control_v1_console_proto_rawDescGZIP(), []int{70}
+	return file_cautem_control_v1_console_proto_rawDescGZIP(), []int{70}
 }
 
 func (x *DeleteSandboxResponse) GetDeleted() bool {
@@ -4401,7 +4401,7 @@ type GetOperationRequest struct {
 
 func (x *GetOperationRequest) Reset() {
 	*x = GetOperationRequest{}
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[71]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[71]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4413,7 +4413,7 @@ func (x *GetOperationRequest) String() string {
 func (*GetOperationRequest) ProtoMessage() {}
 
 func (x *GetOperationRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[71]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[71]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4426,7 +4426,7 @@ func (x *GetOperationRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetOperationRequest.ProtoReflect.Descriptor instead.
 func (*GetOperationRequest) Descriptor() ([]byte, []int) {
-	return file_cauteum_control_v1_console_proto_rawDescGZIP(), []int{71}
+	return file_cautem_control_v1_console_proto_rawDescGZIP(), []int{71}
 }
 
 func (x *GetOperationRequest) GetWorkspace() string {
@@ -4452,7 +4452,7 @@ type GetOperationResponse struct {
 
 func (x *GetOperationResponse) Reset() {
 	*x = GetOperationResponse{}
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[72]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[72]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4464,7 +4464,7 @@ func (x *GetOperationResponse) String() string {
 func (*GetOperationResponse) ProtoMessage() {}
 
 func (x *GetOperationResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[72]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[72]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4477,7 +4477,7 @@ func (x *GetOperationResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetOperationResponse.ProtoReflect.Descriptor instead.
 func (*GetOperationResponse) Descriptor() ([]byte, []int) {
-	return file_cauteum_control_v1_console_proto_rawDescGZIP(), []int{72}
+	return file_cautem_control_v1_console_proto_rawDescGZIP(), []int{72}
 }
 
 func (x *GetOperationResponse) GetOperation() *OperationSummary {
@@ -4498,7 +4498,7 @@ type ListOperationsRequest struct {
 
 func (x *ListOperationsRequest) Reset() {
 	*x = ListOperationsRequest{}
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[73]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[73]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4510,7 +4510,7 @@ func (x *ListOperationsRequest) String() string {
 func (*ListOperationsRequest) ProtoMessage() {}
 
 func (x *ListOperationsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[73]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[73]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4523,7 +4523,7 @@ func (x *ListOperationsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListOperationsRequest.ProtoReflect.Descriptor instead.
 func (*ListOperationsRequest) Descriptor() ([]byte, []int) {
-	return file_cauteum_control_v1_console_proto_rawDescGZIP(), []int{73}
+	return file_cautem_control_v1_console_proto_rawDescGZIP(), []int{73}
 }
 
 func (x *ListOperationsRequest) GetWorkspace() string {
@@ -4557,7 +4557,7 @@ type ListOperationsResponse struct {
 
 func (x *ListOperationsResponse) Reset() {
 	*x = ListOperationsResponse{}
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[74]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[74]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4569,7 +4569,7 @@ func (x *ListOperationsResponse) String() string {
 func (*ListOperationsResponse) ProtoMessage() {}
 
 func (x *ListOperationsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[74]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[74]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4582,7 +4582,7 @@ func (x *ListOperationsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListOperationsResponse.ProtoReflect.Descriptor instead.
 func (*ListOperationsResponse) Descriptor() ([]byte, []int) {
-	return file_cauteum_control_v1_console_proto_rawDescGZIP(), []int{74}
+	return file_cautem_control_v1_console_proto_rawDescGZIP(), []int{74}
 }
 
 func (x *ListOperationsResponse) GetOperations() []*OperationSummary {
@@ -4610,7 +4610,7 @@ type ListAuditEventsRequest struct {
 
 func (x *ListAuditEventsRequest) Reset() {
 	*x = ListAuditEventsRequest{}
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[75]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[75]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4622,7 +4622,7 @@ func (x *ListAuditEventsRequest) String() string {
 func (*ListAuditEventsRequest) ProtoMessage() {}
 
 func (x *ListAuditEventsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[75]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[75]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4635,7 +4635,7 @@ func (x *ListAuditEventsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListAuditEventsRequest.ProtoReflect.Descriptor instead.
 func (*ListAuditEventsRequest) Descriptor() ([]byte, []int) {
-	return file_cauteum_control_v1_console_proto_rawDescGZIP(), []int{75}
+	return file_cautem_control_v1_console_proto_rawDescGZIP(), []int{75}
 }
 
 func (x *ListAuditEventsRequest) GetWorkspace() string {
@@ -4669,7 +4669,7 @@ type ListAuditEventsResponse struct {
 
 func (x *ListAuditEventsResponse) Reset() {
 	*x = ListAuditEventsResponse{}
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[76]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[76]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4681,7 +4681,7 @@ func (x *ListAuditEventsResponse) String() string {
 func (*ListAuditEventsResponse) ProtoMessage() {}
 
 func (x *ListAuditEventsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[76]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[76]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4694,7 +4694,7 @@ func (x *ListAuditEventsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListAuditEventsResponse.ProtoReflect.Descriptor instead.
 func (*ListAuditEventsResponse) Descriptor() ([]byte, []int) {
-	return file_cauteum_control_v1_console_proto_rawDescGZIP(), []int{76}
+	return file_cautem_control_v1_console_proto_rawDescGZIP(), []int{76}
 }
 
 func (x *ListAuditEventsResponse) GetEvents() []*AuditEventSummary {
@@ -4733,7 +4733,7 @@ type OperationSummary struct {
 
 func (x *OperationSummary) Reset() {
 	*x = OperationSummary{}
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[77]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[77]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4745,7 +4745,7 @@ func (x *OperationSummary) String() string {
 func (*OperationSummary) ProtoMessage() {}
 
 func (x *OperationSummary) ProtoReflect() protoreflect.Message {
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[77]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[77]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4758,7 +4758,7 @@ func (x *OperationSummary) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use OperationSummary.ProtoReflect.Descriptor instead.
 func (*OperationSummary) Descriptor() ([]byte, []int) {
-	return file_cauteum_control_v1_console_proto_rawDescGZIP(), []int{77}
+	return file_cautem_control_v1_console_proto_rawDescGZIP(), []int{77}
 }
 
 func (x *OperationSummary) GetId() string {
@@ -4868,7 +4868,7 @@ type AuditEventSummary struct {
 
 func (x *AuditEventSummary) Reset() {
 	*x = AuditEventSummary{}
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[78]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[78]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4880,7 +4880,7 @@ func (x *AuditEventSummary) String() string {
 func (*AuditEventSummary) ProtoMessage() {}
 
 func (x *AuditEventSummary) ProtoReflect() protoreflect.Message {
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[78]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[78]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4893,7 +4893,7 @@ func (x *AuditEventSummary) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AuditEventSummary.ProtoReflect.Descriptor instead.
 func (*AuditEventSummary) Descriptor() ([]byte, []int) {
-	return file_cauteum_control_v1_console_proto_rawDescGZIP(), []int{78}
+	return file_cautem_control_v1_console_proto_rawDescGZIP(), []int{78}
 }
 
 func (x *AuditEventSummary) GetId() uint64 {
@@ -4972,7 +4972,7 @@ type SandboxSummary struct {
 
 func (x *SandboxSummary) Reset() {
 	*x = SandboxSummary{}
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[79]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[79]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4984,7 +4984,7 @@ func (x *SandboxSummary) String() string {
 func (*SandboxSummary) ProtoMessage() {}
 
 func (x *SandboxSummary) ProtoReflect() protoreflect.Message {
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[79]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[79]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4997,7 +4997,7 @@ func (x *SandboxSummary) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SandboxSummary.ProtoReflect.Descriptor instead.
 func (*SandboxSummary) Descriptor() ([]byte, []int) {
-	return file_cauteum_control_v1_console_proto_rawDescGZIP(), []int{79}
+	return file_cautem_control_v1_console_proto_rawDescGZIP(), []int{79}
 }
 
 func (x *SandboxSummary) GetName() string {
@@ -5079,7 +5079,7 @@ type ListServicesRequest struct {
 
 func (x *ListServicesRequest) Reset() {
 	*x = ListServicesRequest{}
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[80]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[80]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5091,7 +5091,7 @@ func (x *ListServicesRequest) String() string {
 func (*ListServicesRequest) ProtoMessage() {}
 
 func (x *ListServicesRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[80]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[80]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5104,7 +5104,7 @@ func (x *ListServicesRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListServicesRequest.ProtoReflect.Descriptor instead.
 func (*ListServicesRequest) Descriptor() ([]byte, []int) {
-	return file_cauteum_control_v1_console_proto_rawDescGZIP(), []int{80}
+	return file_cautem_control_v1_console_proto_rawDescGZIP(), []int{80}
 }
 
 func (x *ListServicesRequest) GetWorkspace() string {
@@ -5123,7 +5123,7 @@ type ListServicesResponse struct {
 
 func (x *ListServicesResponse) Reset() {
 	*x = ListServicesResponse{}
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[81]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[81]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5135,7 +5135,7 @@ func (x *ListServicesResponse) String() string {
 func (*ListServicesResponse) ProtoMessage() {}
 
 func (x *ListServicesResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[81]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[81]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5148,7 +5148,7 @@ func (x *ListServicesResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListServicesResponse.ProtoReflect.Descriptor instead.
 func (*ListServicesResponse) Descriptor() ([]byte, []int) {
-	return file_cauteum_control_v1_console_proto_rawDescGZIP(), []int{81}
+	return file_cautem_control_v1_console_proto_rawDescGZIP(), []int{81}
 }
 
 func (x *ListServicesResponse) GetServices() []*ServiceSummary {
@@ -5170,7 +5170,7 @@ type ServiceSummary struct {
 
 func (x *ServiceSummary) Reset() {
 	*x = ServiceSummary{}
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[82]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[82]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5182,7 +5182,7 @@ func (x *ServiceSummary) String() string {
 func (*ServiceSummary) ProtoMessage() {}
 
 func (x *ServiceSummary) ProtoReflect() protoreflect.Message {
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[82]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[82]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5195,7 +5195,7 @@ func (x *ServiceSummary) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ServiceSummary.ProtoReflect.Descriptor instead.
 func (*ServiceSummary) Descriptor() ([]byte, []int) {
-	return file_cauteum_control_v1_console_proto_rawDescGZIP(), []int{82}
+	return file_cautem_control_v1_console_proto_rawDescGZIP(), []int{82}
 }
 
 func (x *ServiceSummary) GetName() string {
@@ -5235,7 +5235,7 @@ type ListTemplatesRequest struct {
 
 func (x *ListTemplatesRequest) Reset() {
 	*x = ListTemplatesRequest{}
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[83]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[83]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5247,7 +5247,7 @@ func (x *ListTemplatesRequest) String() string {
 func (*ListTemplatesRequest) ProtoMessage() {}
 
 func (x *ListTemplatesRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[83]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[83]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5260,7 +5260,7 @@ func (x *ListTemplatesRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListTemplatesRequest.ProtoReflect.Descriptor instead.
 func (*ListTemplatesRequest) Descriptor() ([]byte, []int) {
-	return file_cauteum_control_v1_console_proto_rawDescGZIP(), []int{83}
+	return file_cautem_control_v1_console_proto_rawDescGZIP(), []int{83}
 }
 
 func (x *ListTemplatesRequest) GetWorkspace() string {
@@ -5279,7 +5279,7 @@ type ListTemplatesResponse struct {
 
 func (x *ListTemplatesResponse) Reset() {
 	*x = ListTemplatesResponse{}
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[84]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[84]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5291,7 +5291,7 @@ func (x *ListTemplatesResponse) String() string {
 func (*ListTemplatesResponse) ProtoMessage() {}
 
 func (x *ListTemplatesResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[84]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[84]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5304,7 +5304,7 @@ func (x *ListTemplatesResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListTemplatesResponse.ProtoReflect.Descriptor instead.
 func (*ListTemplatesResponse) Descriptor() ([]byte, []int) {
-	return file_cauteum_control_v1_console_proto_rawDescGZIP(), []int{84}
+	return file_cautem_control_v1_console_proto_rawDescGZIP(), []int{84}
 }
 
 func (x *ListTemplatesResponse) GetTemplates() []*TemplateSummary {
@@ -5328,7 +5328,7 @@ type TemplateSummary struct {
 
 func (x *TemplateSummary) Reset() {
 	*x = TemplateSummary{}
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[85]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[85]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5340,7 +5340,7 @@ func (x *TemplateSummary) String() string {
 func (*TemplateSummary) ProtoMessage() {}
 
 func (x *TemplateSummary) ProtoReflect() protoreflect.Message {
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[85]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[85]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5353,7 +5353,7 @@ func (x *TemplateSummary) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TemplateSummary.ProtoReflect.Descriptor instead.
 func (*TemplateSummary) Descriptor() ([]byte, []int) {
-	return file_cauteum_control_v1_console_proto_rawDescGZIP(), []int{85}
+	return file_cautem_control_v1_console_proto_rawDescGZIP(), []int{85}
 }
 
 func (x *TemplateSummary) GetName() string {
@@ -5406,7 +5406,7 @@ type ListWorkspacesRequest struct {
 
 func (x *ListWorkspacesRequest) Reset() {
 	*x = ListWorkspacesRequest{}
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[86]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[86]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5418,7 +5418,7 @@ func (x *ListWorkspacesRequest) String() string {
 func (*ListWorkspacesRequest) ProtoMessage() {}
 
 func (x *ListWorkspacesRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[86]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[86]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5431,7 +5431,7 @@ func (x *ListWorkspacesRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListWorkspacesRequest.ProtoReflect.Descriptor instead.
 func (*ListWorkspacesRequest) Descriptor() ([]byte, []int) {
-	return file_cauteum_control_v1_console_proto_rawDescGZIP(), []int{86}
+	return file_cautem_control_v1_console_proto_rawDescGZIP(), []int{86}
 }
 
 type ListWorkspacesResponse struct {
@@ -5443,7 +5443,7 @@ type ListWorkspacesResponse struct {
 
 func (x *ListWorkspacesResponse) Reset() {
 	*x = ListWorkspacesResponse{}
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[87]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[87]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5455,7 +5455,7 @@ func (x *ListWorkspacesResponse) String() string {
 func (*ListWorkspacesResponse) ProtoMessage() {}
 
 func (x *ListWorkspacesResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[87]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[87]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5468,7 +5468,7 @@ func (x *ListWorkspacesResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListWorkspacesResponse.ProtoReflect.Descriptor instead.
 func (*ListWorkspacesResponse) Descriptor() ([]byte, []int) {
-	return file_cauteum_control_v1_console_proto_rawDescGZIP(), []int{87}
+	return file_cautem_control_v1_console_proto_rawDescGZIP(), []int{87}
 }
 
 func (x *ListWorkspacesResponse) GetWorkspaces() []*WorkspaceSummary {
@@ -5487,7 +5487,7 @@ type GetWorkspaceRequest struct {
 
 func (x *GetWorkspaceRequest) Reset() {
 	*x = GetWorkspaceRequest{}
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[88]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[88]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5499,7 +5499,7 @@ func (x *GetWorkspaceRequest) String() string {
 func (*GetWorkspaceRequest) ProtoMessage() {}
 
 func (x *GetWorkspaceRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[88]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[88]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5512,7 +5512,7 @@ func (x *GetWorkspaceRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetWorkspaceRequest.ProtoReflect.Descriptor instead.
 func (*GetWorkspaceRequest) Descriptor() ([]byte, []int) {
-	return file_cauteum_control_v1_console_proto_rawDescGZIP(), []int{88}
+	return file_cautem_control_v1_console_proto_rawDescGZIP(), []int{88}
 }
 
 func (x *GetWorkspaceRequest) GetName() string {
@@ -5531,7 +5531,7 @@ type GetWorkspaceResponse struct {
 
 func (x *GetWorkspaceResponse) Reset() {
 	*x = GetWorkspaceResponse{}
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[89]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[89]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5543,7 +5543,7 @@ func (x *GetWorkspaceResponse) String() string {
 func (*GetWorkspaceResponse) ProtoMessage() {}
 
 func (x *GetWorkspaceResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[89]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[89]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5556,7 +5556,7 @@ func (x *GetWorkspaceResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetWorkspaceResponse.ProtoReflect.Descriptor instead.
 func (*GetWorkspaceResponse) Descriptor() ([]byte, []int) {
-	return file_cauteum_control_v1_console_proto_rawDescGZIP(), []int{89}
+	return file_cautem_control_v1_console_proto_rawDescGZIP(), []int{89}
 }
 
 func (x *GetWorkspaceResponse) GetWorkspace() *WorkspaceSummary {
@@ -5579,7 +5579,7 @@ type WorkspaceSummary struct {
 
 func (x *WorkspaceSummary) Reset() {
 	*x = WorkspaceSummary{}
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[90]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[90]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5591,7 +5591,7 @@ func (x *WorkspaceSummary) String() string {
 func (*WorkspaceSummary) ProtoMessage() {}
 
 func (x *WorkspaceSummary) ProtoReflect() protoreflect.Message {
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[90]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[90]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5604,7 +5604,7 @@ func (x *WorkspaceSummary) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use WorkspaceSummary.ProtoReflect.Descriptor instead.
 func (*WorkspaceSummary) Descriptor() ([]byte, []int) {
-	return file_cauteum_control_v1_console_proto_rawDescGZIP(), []int{90}
+	return file_cautem_control_v1_console_proto_rawDescGZIP(), []int{90}
 }
 
 func (x *WorkspaceSummary) GetName() string {
@@ -5655,7 +5655,7 @@ type ListPolicyProposalsRequest struct {
 
 func (x *ListPolicyProposalsRequest) Reset() {
 	*x = ListPolicyProposalsRequest{}
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[91]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[91]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5667,7 +5667,7 @@ func (x *ListPolicyProposalsRequest) String() string {
 func (*ListPolicyProposalsRequest) ProtoMessage() {}
 
 func (x *ListPolicyProposalsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[91]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[91]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5680,7 +5680,7 @@ func (x *ListPolicyProposalsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListPolicyProposalsRequest.ProtoReflect.Descriptor instead.
 func (*ListPolicyProposalsRequest) Descriptor() ([]byte, []int) {
-	return file_cauteum_control_v1_console_proto_rawDescGZIP(), []int{91}
+	return file_cautem_control_v1_console_proto_rawDescGZIP(), []int{91}
 }
 
 func (x *ListPolicyProposalsRequest) GetWorkspace() string {
@@ -5728,7 +5728,7 @@ type ListPolicyProposalsResponse struct {
 
 func (x *ListPolicyProposalsResponse) Reset() {
 	*x = ListPolicyProposalsResponse{}
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[92]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[92]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5740,7 +5740,7 @@ func (x *ListPolicyProposalsResponse) String() string {
 func (*ListPolicyProposalsResponse) ProtoMessage() {}
 
 func (x *ListPolicyProposalsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[92]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[92]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5753,7 +5753,7 @@ func (x *ListPolicyProposalsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListPolicyProposalsResponse.ProtoReflect.Descriptor instead.
 func (*ListPolicyProposalsResponse) Descriptor() ([]byte, []int) {
-	return file_cauteum_control_v1_console_proto_rawDescGZIP(), []int{92}
+	return file_cautem_control_v1_console_proto_rawDescGZIP(), []int{92}
 }
 
 func (x *ListPolicyProposalsResponse) GetProposals() []*PolicyProposalSummary {
@@ -5780,7 +5780,7 @@ type GetPolicyProposalRequest struct {
 
 func (x *GetPolicyProposalRequest) Reset() {
 	*x = GetPolicyProposalRequest{}
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[93]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[93]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5792,7 +5792,7 @@ func (x *GetPolicyProposalRequest) String() string {
 func (*GetPolicyProposalRequest) ProtoMessage() {}
 
 func (x *GetPolicyProposalRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[93]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[93]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5805,7 +5805,7 @@ func (x *GetPolicyProposalRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetPolicyProposalRequest.ProtoReflect.Descriptor instead.
 func (*GetPolicyProposalRequest) Descriptor() ([]byte, []int) {
-	return file_cauteum_control_v1_console_proto_rawDescGZIP(), []int{93}
+	return file_cautem_control_v1_console_proto_rawDescGZIP(), []int{93}
 }
 
 func (x *GetPolicyProposalRequest) GetWorkspace() string {
@@ -5831,7 +5831,7 @@ type GetPolicyProposalResponse struct {
 
 func (x *GetPolicyProposalResponse) Reset() {
 	*x = GetPolicyProposalResponse{}
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[94]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[94]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5843,7 +5843,7 @@ func (x *GetPolicyProposalResponse) String() string {
 func (*GetPolicyProposalResponse) ProtoMessage() {}
 
 func (x *GetPolicyProposalResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[94]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[94]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5856,7 +5856,7 @@ func (x *GetPolicyProposalResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetPolicyProposalResponse.ProtoReflect.Descriptor instead.
 func (*GetPolicyProposalResponse) Descriptor() ([]byte, []int) {
-	return file_cauteum_control_v1_console_proto_rawDescGZIP(), []int{94}
+	return file_cautem_control_v1_console_proto_rawDescGZIP(), []int{94}
 }
 
 func (x *GetPolicyProposalResponse) GetProposal() *PolicyProposalSummary {
@@ -5875,7 +5875,7 @@ type ApprovePolicyProposalResponse struct {
 
 func (x *ApprovePolicyProposalResponse) Reset() {
 	*x = ApprovePolicyProposalResponse{}
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[95]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[95]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5887,7 +5887,7 @@ func (x *ApprovePolicyProposalResponse) String() string {
 func (*ApprovePolicyProposalResponse) ProtoMessage() {}
 
 func (x *ApprovePolicyProposalResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[95]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[95]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5900,7 +5900,7 @@ func (x *ApprovePolicyProposalResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ApprovePolicyProposalResponse.ProtoReflect.Descriptor instead.
 func (*ApprovePolicyProposalResponse) Descriptor() ([]byte, []int) {
-	return file_cauteum_control_v1_console_proto_rawDescGZIP(), []int{95}
+	return file_cautem_control_v1_console_proto_rawDescGZIP(), []int{95}
 }
 
 func (x *ApprovePolicyProposalResponse) GetProposal() *PolicyProposalSummary {
@@ -5919,7 +5919,7 @@ type RejectPolicyProposalResponse struct {
 
 func (x *RejectPolicyProposalResponse) Reset() {
 	*x = RejectPolicyProposalResponse{}
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[96]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[96]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5931,7 +5931,7 @@ func (x *RejectPolicyProposalResponse) String() string {
 func (*RejectPolicyProposalResponse) ProtoMessage() {}
 
 func (x *RejectPolicyProposalResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[96]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[96]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5944,7 +5944,7 @@ func (x *RejectPolicyProposalResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RejectPolicyProposalResponse.ProtoReflect.Descriptor instead.
 func (*RejectPolicyProposalResponse) Descriptor() ([]byte, []int) {
-	return file_cauteum_control_v1_console_proto_rawDescGZIP(), []int{96}
+	return file_cautem_control_v1_console_proto_rawDescGZIP(), []int{96}
 }
 
 func (x *RejectPolicyProposalResponse) GetProposal() *PolicyProposalSummary {
@@ -5964,7 +5964,7 @@ type ApprovePolicyProposalRequest struct {
 
 func (x *ApprovePolicyProposalRequest) Reset() {
 	*x = ApprovePolicyProposalRequest{}
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[97]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[97]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5976,7 +5976,7 @@ func (x *ApprovePolicyProposalRequest) String() string {
 func (*ApprovePolicyProposalRequest) ProtoMessage() {}
 
 func (x *ApprovePolicyProposalRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[97]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[97]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5989,7 +5989,7 @@ func (x *ApprovePolicyProposalRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ApprovePolicyProposalRequest.ProtoReflect.Descriptor instead.
 func (*ApprovePolicyProposalRequest) Descriptor() ([]byte, []int) {
-	return file_cauteum_control_v1_console_proto_rawDescGZIP(), []int{97}
+	return file_cautem_control_v1_console_proto_rawDescGZIP(), []int{97}
 }
 
 func (x *ApprovePolicyProposalRequest) GetWorkspace() string {
@@ -6017,7 +6017,7 @@ type RejectPolicyProposalRequest struct {
 
 func (x *RejectPolicyProposalRequest) Reset() {
 	*x = RejectPolicyProposalRequest{}
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[98]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[98]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -6029,7 +6029,7 @@ func (x *RejectPolicyProposalRequest) String() string {
 func (*RejectPolicyProposalRequest) ProtoMessage() {}
 
 func (x *RejectPolicyProposalRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[98]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[98]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6042,7 +6042,7 @@ func (x *RejectPolicyProposalRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RejectPolicyProposalRequest.ProtoReflect.Descriptor instead.
 func (*RejectPolicyProposalRequest) Descriptor() ([]byte, []int) {
-	return file_cauteum_control_v1_console_proto_rawDescGZIP(), []int{98}
+	return file_cautem_control_v1_console_proto_rawDescGZIP(), []int{98}
 }
 
 func (x *RejectPolicyProposalRequest) GetWorkspace() string {
@@ -6089,7 +6089,7 @@ type PolicyProposalSummary struct {
 
 func (x *PolicyProposalSummary) Reset() {
 	*x = PolicyProposalSummary{}
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[99]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[99]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -6101,7 +6101,7 @@ func (x *PolicyProposalSummary) String() string {
 func (*PolicyProposalSummary) ProtoMessage() {}
 
 func (x *PolicyProposalSummary) ProtoReflect() protoreflect.Message {
-	mi := &file_cauteum_control_v1_console_proto_msgTypes[99]
+	mi := &file_cautem_control_v1_console_proto_msgTypes[99]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6114,7 +6114,7 @@ func (x *PolicyProposalSummary) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PolicyProposalSummary.ProtoReflect.Descriptor instead.
 func (*PolicyProposalSummary) Descriptor() ([]byte, []int) {
-	return file_cauteum_control_v1_console_proto_rawDescGZIP(), []int{99}
+	return file_cautem_control_v1_console_proto_rawDescGZIP(), []int{99}
 }
 
 func (x *PolicyProposalSummary) GetId() string {
@@ -6222,18 +6222,18 @@ func (x *PolicyProposalSummary) GetDecidedAtUnixMs() int64 {
 	return 0
 }
 
-var File_cauteum_control_v1_console_proto protoreflect.FileDescriptor
+var File_cautem_control_v1_console_proto protoreflect.FileDescriptor
 
-const file_cauteum_control_v1_console_proto_rawDesc = "" +
+const file_cautem_control_v1_console_proto_rawDesc = "" +
 	"\n" +
-	" cauteum/control/v1/console.proto\x12\x12cauteum.control.v1\"\x17\n" +
-	"\x15GetGatewayInfoRequest\"\xbe\x05\n" +
+	"\x1fcautem/control/v1/console.proto\x12\x11cautem.control.v1\"\x17\n" +
+	"\x15GetGatewayInfoRequest\"\xbd\x05\n" +
 	"\x16GetGatewayInfoResponse\x12\x1d\n" +
 	"\n" +
 	"gateway_id\x18\x01 \x01(\tR\tgatewayId\x12#\n" +
 	"\rsandbox_count\x18\x02 \x01(\x04R\fsandboxCount\x12\x1b\n" +
-	"\tauth_mode\x18\x03 \x01(\tR\bauthMode\x12P\n" +
-	"\x0fcompute_drivers\x18\x04 \x03(\v2'.cauteum.control.v1.ComputeDriverStatusR\x0ecomputeDrivers\x12-\n" +
+	"\tauth_mode\x18\x03 \x01(\tR\bauthMode\x12O\n" +
+	"\x0fcompute_drivers\x18\x04 \x03(\v2&.cautem.control.v1.ComputeDriverStatusR\x0ecomputeDrivers\x12-\n" +
 	"\x12credential_drivers\x18\x05 \x03(\tR\x11credentialDrivers\x12:\n" +
 	"\x19default_credential_driver\x18\x06 \x01(\tR\x17defaultCredentialDriver\x123\n" +
 	"\x15allow_unauthenticated\x18\a \x01(\bR\x14allowUnauthenticated\x12\x1f\n" +
@@ -6251,7 +6251,7 @@ const file_cauteum_control_v1_console_proto_rawDesc = "" +
 	"\x05state\x18\x02 \x01(\tR\x05state\"L\n" +
 	"\x18GetManagedSandboxRequest\x12\x1c\n" +
 	"\tworkspace\x18\x01 \x01(\tR\tworkspace\x12\x12\n" +
-	"\x04name\x18\x02 \x01(\tR\x04name\"\xc6\x03\n" +
+	"\x04name\x18\x02 \x01(\tR\x04name\"\xc5\x03\n" +
 	"\x19GetManagedSandboxResponse\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12\x1d\n" +
 	"\n" +
@@ -6259,15 +6259,15 @@ const file_cauteum_control_v1_console_proto_rawDesc = "" +
 	"\x05image\x18\x03 \x01(\tR\x05image\x12\x1c\n" +
 	"\tworkspace\x18\x04 \x01(\tR\tworkspace\x12\x18\n" +
 	"\anetwork\x18\x05 \x01(\tR\anetwork\x12\x16\n" +
-	"\x06status\x18\x06 \x01(\tR\x06status\x12Q\n" +
-	"\x06labels\x18\a \x03(\v29.cauteum.control.v1.GetManagedSandboxResponse.LabelsEntryR\x06labels\x12(\n" +
+	"\x06status\x18\x06 \x01(\tR\x06status\x12P\n" +
+	"\x06labels\x18\a \x03(\v28.cautem.control.v1.GetManagedSandboxResponse.LabelsEntryR\x06labels\x12(\n" +
 	"\x10base_policy_yaml\x18\b \x01(\tR\x0ebasePolicyYaml\x12-\n" +
 	"\x12attached_providers\x18\t \x03(\tR\x11attachedProviders\x12)\n" +
 	"\x10resource_version\x18\n" +
 	" \x01(\x04R\x0fresourceVersion\x1a9\n" +
 	"\vLabelsEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
-	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"\x9b\x03\n" +
+	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"\x9a\x03\n" +
 	"\x19SyncManagedSandboxRequest\x12\x1c\n" +
 	"\tworkspace\x18\x01 \x01(\tR\tworkspace\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x1d\n" +
@@ -6275,8 +6275,8 @@ const file_cauteum_control_v1_console_proto_rawDesc = "" +
 	"runtime_id\x18\x03 \x01(\tR\truntimeId\x12\x14\n" +
 	"\x05image\x18\x04 \x01(\tR\x05image\x12\x18\n" +
 	"\anetwork\x18\x05 \x01(\tR\anetwork\x12\x16\n" +
-	"\x06status\x18\x06 \x01(\tR\x06status\x12Q\n" +
-	"\x06labels\x18\a \x03(\v29.cauteum.control.v1.SyncManagedSandboxRequest.LabelsEntryR\x06labels\x12(\n" +
+	"\x06status\x18\x06 \x01(\tR\x06status\x12P\n" +
+	"\x06labels\x18\a \x03(\v28.cautem.control.v1.SyncManagedSandboxRequest.LabelsEntryR\x06labels\x12(\n" +
 	"\x10base_policy_yaml\x18\b \x01(\tR\x0ebasePolicyYaml\x12-\n" +
 	"\x12attached_providers\x18\t \x03(\tR\x11attachedProviders\x1a9\n" +
 	"\vLabelsEntry\x12\x10\n" +
@@ -6293,11 +6293,11 @@ const file_cauteum_control_v1_console_proto_rawDesc = "" +
 	"\tworkspace\x18\x01 \x01(\tR\tworkspace\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\"8\n" +
 	" IssueManagedSandboxTokenResponse\x12\x14\n" +
-	"\x05token\x18\x01 \x01(\tR\x05token\"\x94\x01\n" +
+	"\x05token\x18\x01 \x01(\tR\x05token\"\x93\x01\n" +
 	"\x18AppendSandboxLogsRequest\x12\x1c\n" +
 	"\tworkspace\x18\x01 \x01(\tR\tworkspace\x12!\n" +
-	"\fsandbox_name\x18\x02 \x01(\tR\vsandboxName\x127\n" +
-	"\x05lines\x18\x03 \x03(\v2!.cauteum.control.v1.ClientLogLineR\x05lines\"}\n" +
+	"\fsandbox_name\x18\x02 \x01(\tR\vsandboxName\x126\n" +
+	"\x05lines\x18\x03 \x03(\v2 .cautem.control.v1.ClientLogLineR\x05lines\"}\n" +
 	"\rClientLogLine\x12*\n" +
 	"\x11timestamp_unix_ms\x18\x01 \x01(\x03R\x0ftimestampUnixMs\x12\x16\n" +
 	"\x06source\x18\x02 \x01(\tR\x06source\x12\x14\n" +
@@ -6356,26 +6356,26 @@ const file_cauteum_control_v1_console_proto_rawDesc = "" +
 	"\x0fpolicy_revision\x18\x03 \x01(\x04R\x0epolicyRevision\"d\n" +
 	"!ListSandboxPolicyRevisionsRequest\x12\x1c\n" +
 	"\tworkspace\x18\x01 \x01(\tR\tworkspace\x12!\n" +
-	"\fsandbox_name\x18\x02 \x01(\tR\vsandboxName\"m\n" +
-	"\"ListSandboxPolicyRevisionsResponse\x12G\n" +
-	"\trevisions\x18\x01 \x03(\v2).cauteum.control.v1.PolicyRevisionSummaryR\trevisions\"~\n" +
+	"\fsandbox_name\x18\x02 \x01(\tR\vsandboxName\"l\n" +
+	"\"ListSandboxPolicyRevisionsResponse\x12F\n" +
+	"\trevisions\x18\x01 \x03(\v2(.cautem.control.v1.PolicyRevisionSummaryR\trevisions\"~\n" +
 	"\x1fGetSandboxPolicyRevisionRequest\x12\x1c\n" +
 	"\tworkspace\x18\x01 \x01(\tR\tworkspace\x12!\n" +
 	"\fsandbox_name\x18\x02 \x01(\tR\vsandboxName\x12\x1a\n" +
-	"\brevision\x18\x03 \x01(\x04R\brevision\"\x8a\x01\n" +
+	"\brevision\x18\x03 \x01(\x04R\brevision\"\x89\x01\n" +
 	" GetSandboxPolicyRevisionResponse\x12\x1f\n" +
 	"\vpolicy_yaml\x18\x01 \x01(\tR\n" +
-	"policyYaml\x12E\n" +
-	"\brevision\x18\x02 \x01(\v2).cauteum.control.v1.PolicyRevisionSummaryR\brevision\"\x8e\x01\n" +
+	"policyYaml\x12D\n" +
+	"\brevision\x18\x02 \x01(\v2(.cautem.control.v1.PolicyRevisionSummaryR\brevision\"\x8e\x01\n" +
 	"\x15PolicyRevisionSummary\x12\x1a\n" +
 	"\brevision\x18\x01 \x01(\x04R\brevision\x12+\n" +
 	"\x12updated_at_unix_ms\x18\x02 \x01(\x03R\x0fupdatedAtUnixMs\x12\x14\n" +
 	"\x05bytes\x18\x03 \x01(\rR\x05bytes\x12\x16\n" +
-	"\x06status\x18\x04 \x01(\tR\x06status\"\x8e\x02\n" +
+	"\x06status\x18\x04 \x01(\tR\x06status\"\x8d\x02\n" +
 	" UpdateProviderCredentialsRequest\x12\x1c\n" +
 	"\tworkspace\x18\x01 \x01(\tR\tworkspace\x12#\n" +
-	"\rprovider_name\x18\x02 \x01(\tR\fproviderName\x12g\n" +
-	"\vcredentials\x18\x03 \x03(\v2E.cauteum.control.v1.UpdateProviderCredentialsRequest.CredentialsEntryR\vcredentials\x1a>\n" +
+	"\rprovider_name\x18\x02 \x01(\tR\fproviderName\x12f\n" +
+	"\vcredentials\x18\x03 \x03(\v2D.cautem.control.v1.UpdateProviderCredentialsRequest.CredentialsEntryR\vcredentials\x1a>\n" +
 	"\x10CredentialsEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
 	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"F\n" +
@@ -6388,9 +6388,9 @@ const file_cauteum_control_v1_console_proto_rawDesc = "" +
 	"\bcategory\x18\x02 \x01(\tR\bcategory\x12\x16\n" +
 	"\x06source\x18\x03 \x01(\tR\x06source\x12\x14\n" +
 	"\x05scope\x18\x04 \x01(\tR\x05scope\x12)\n" +
-	"\x10resource_version\x18\x05 \x01(\x04R\x0fresourceVersion\"f\n" +
-	"\x1cListProviderProfilesResponse\x12F\n" +
-	"\bprofiles\x18\x01 \x03(\v2*.cauteum.control.v1.ProviderProfileSummaryR\bprofiles\"I\n" +
+	"\x10resource_version\x18\x05 \x01(\x04R\x0fresourceVersion\"e\n" +
+	"\x1cListProviderProfilesResponse\x12E\n" +
+	"\bprofiles\x18\x01 \x03(\v2).cautem.control.v1.ProviderProfileSummaryR\bprofiles\"I\n" +
 	"\x19GetProviderProfileRequest\x12\x1c\n" +
 	"\tworkspace\x18\x01 \x01(\tR\tworkspace\x12\x0e\n" +
 	"\x02id\x18\x02 \x01(\tR\x02id\"\x82\x01\n" +
@@ -6437,7 +6437,7 @@ const file_cauteum_control_v1_console_proto_rawDesc = "" +
 	"\rsandbox_count\x18\x03 \x01(\x04R\fsandboxCount\x124\n" +
 	"\x16registry_running_count\x18\x04 \x01(\x04R\x14registryRunningCount\x12-\n" +
 	"\x13snapshot_at_unix_ms\x18\x05 \x01(\x03R\x10snapshotAtUnixMs\x128\n" +
-	"\x18runtime_status_available\x18\x06 \x01(\bR\x16runtimeStatusAvailable\"\xea\x02\n" +
+	"\x18runtime_status_available\x18\x06 \x01(\bR\x16runtimeStatusAvailable\"\xe9\x02\n" +
 	"\x14ListSandboxesRequest\x12\x1c\n" +
 	"\tworkspace\x18\x01 \x01(\tR\tworkspace\x12\x1b\n" +
 	"\tpage_size\x18\x02 \x01(\rR\bpageSize\x12\x1d\n" +
@@ -6446,25 +6446,25 @@ const file_cauteum_control_v1_console_proto_rawDesc = "" +
 	"\vname_prefix\x18\x04 \x01(\tR\n" +
 	"namePrefix\x12'\n" +
 	"\x0fregistry_status\x18\x05 \x01(\tR\x0eregistryStatus\x12%\n" +
-	"\x0ecompute_driver\x18\x06 \x01(\tR\rcomputeDriver\x12L\n" +
-	"\x06labels\x18\a \x03(\v24.cauteum.control.v1.ListSandboxesRequest.LabelsEntryR\x06labels\x1a9\n" +
+	"\x0ecompute_driver\x18\x06 \x01(\tR\rcomputeDriver\x12K\n" +
+	"\x06labels\x18\a \x03(\v23.cautem.control.v1.ListSandboxesRequest.LabelsEntryR\x06labels\x1a9\n" +
 	"\vLabelsEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
-	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"\x81\x01\n" +
-	"\x15ListSandboxesResponse\x12@\n" +
-	"\tsandboxes\x18\x01 \x03(\v2\".cauteum.control.v1.SandboxSummaryR\tsandboxes\x12&\n" +
+	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"\x80\x01\n" +
+	"\x15ListSandboxesResponse\x12?\n" +
+	"\tsandboxes\x18\x01 \x03(\v2!.cautem.control.v1.SandboxSummaryR\tsandboxes\x12&\n" +
 	"\x0fnext_page_token\x18\x02 \x01(\tR\rnextPageToken\"E\n" +
 	"\x11GetSandboxRequest\x12\x1c\n" +
 	"\tworkspace\x18\x01 \x01(\tR\tworkspace\x12\x12\n" +
-	"\x04name\x18\x02 \x01(\tR\x04name\"R\n" +
-	"\x12GetSandboxResponse\x12<\n" +
-	"\asandbox\x18\x01 \x01(\v2\".cauteum.control.v1.SandboxSummaryR\asandbox\"5\n" +
+	"\x04name\x18\x02 \x01(\tR\x04name\"Q\n" +
+	"\x12GetSandboxResponse\x12;\n" +
+	"\asandbox\x18\x01 \x01(\v2!.cautem.control.v1.SandboxSummaryR\asandbox\"5\n" +
 	"\x15WatchSandboxesRequest\x12\x1c\n" +
-	"\tworkspace\x18\x01 \x01(\tR\tworkspace\"\x90\x02\n" +
-	"\x16WatchSandboxesResponse\x12=\n" +
-	"\x04kind\x18\x01 \x01(\x0e2).cauteum.control.v1.SandboxWatchEventKindR\x04kind\x12'\n" +
-	"\x0fstream_sequence\x18\x02 \x01(\x04R\x0estreamSequence\x12<\n" +
-	"\asandbox\x18\x03 \x01(\v2\".cauteum.control.v1.SandboxSummaryR\asandbox\x12!\n" +
+	"\tworkspace\x18\x01 \x01(\tR\tworkspace\"\x8e\x02\n" +
+	"\x16WatchSandboxesResponse\x12<\n" +
+	"\x04kind\x18\x01 \x01(\x0e2(.cautem.control.v1.SandboxWatchEventKindR\x04kind\x12'\n" +
+	"\x0fstream_sequence\x18\x02 \x01(\x04R\x0estreamSequence\x12;\n" +
+	"\asandbox\x18\x03 \x01(\v2!.cautem.control.v1.SandboxSummaryR\asandbox\x12!\n" +
 	"\fdeleted_name\x18\x04 \x01(\tR\vdeletedName\x12-\n" +
 	"\x13observed_at_unix_ms\x18\x05 \x01(\x03R\x10observedAtUnixMs\"\xb1\x01\n" +
 	"\x15GetSandboxLogsRequest\x12\x1c\n" +
@@ -6473,9 +6473,9 @@ const file_cauteum_control_v1_console_proto_rawDesc = "" +
 	"\x05limit\x18\x03 \x01(\rR\x05limit\x12\"\n" +
 	"\rsince_unix_ms\x18\x04 \x01(\x03R\vsinceUnixMs\x12\x16\n" +
 	"\x06source\x18\x05 \x01(\tR\x06source\x12\x14\n" +
-	"\x05level\x18\x06 \x01(\tR\x05level\"j\n" +
-	"\x16GetSandboxLogsResponse\x128\n" +
-	"\x05lines\x18\x01 \x03(\v2\".cauteum.control.v1.SandboxLogLineR\x05lines\x12\x16\n" +
+	"\x05level\x18\x06 \x01(\tR\x05level\"i\n" +
+	"\x16GetSandboxLogsResponse\x127\n" +
+	"\x05lines\x18\x01 \x03(\v2!.cautem.control.v1.SandboxLogLineR\x05lines\x12\x16\n" +
 	"\x06cursor\x18\x02 \x01(\x04R\x06cursor\"\xe5\x01\n" +
 	"\x17WatchSandboxLogsRequest\x12\x1c\n" +
 	"\tworkspace\x18\x01 \x01(\tR\tworkspace\x12\x12\n" +
@@ -6484,10 +6484,10 @@ const file_cauteum_control_v1_console_proto_rawDesc = "" +
 	"\fafter_cursor\x18\x04 \x01(\x04R\vafterCursor\x12\"\n" +
 	"\rsince_unix_ms\x18\x05 \x01(\x03R\vsinceUnixMs\x12\x16\n" +
 	"\x06source\x18\x06 \x01(\tR\x06source\x12\x14\n" +
-	"\x05level\x18\a \x01(\tR\x05level\"\xd6\x01\n" +
-	"\x18WatchSandboxLogsResponse\x12;\n" +
-	"\x04kind\x18\x01 \x01(\x0e2'.cauteum.control.v1.SandboxLogWatchKindR\x04kind\x126\n" +
-	"\x04line\x18\x02 \x01(\v2\".cauteum.control.v1.SandboxLogLineR\x04line\x12\x16\n" +
+	"\x05level\x18\a \x01(\tR\x05level\"\xd4\x01\n" +
+	"\x18WatchSandboxLogsResponse\x12:\n" +
+	"\x04kind\x18\x01 \x01(\x0e2&.cautem.control.v1.SandboxLogWatchKindR\x04kind\x125\n" +
+	"\x04line\x18\x02 \x01(\v2!.cautem.control.v1.SandboxLogLineR\x04line\x12\x16\n" +
 	"\x06cursor\x18\x03 \x01(\x04R\x06cursor\x12-\n" +
 	"\x13observed_at_unix_ms\x18\x04 \x01(\x03R\x10observedAtUnixMs\"\xb4\x01\n" +
 	"\x0eSandboxLogLine\x12\x16\n" +
@@ -6496,7 +6496,7 @@ const file_cauteum_control_v1_console_proto_rawDesc = "" +
 	"\x06source\x18\x03 \x01(\tR\x06source\x12\x14\n" +
 	"\x05level\x18\x04 \x01(\tR\x05level\x12\x16\n" +
 	"\x06target\x18\x05 \x01(\tR\x06target\x12\x18\n" +
-	"\amessage\x18\x06 \x01(\tR\amessage\"\xd6\x02\n" +
+	"\amessage\x18\x06 \x01(\tR\amessage\"\xd5\x02\n" +
 	"\x14CreateSandboxRequest\x12\x1c\n" +
 	"\tworkspace\x18\x01 \x01(\tR\tworkspace\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x14\n" +
@@ -6504,13 +6504,13 @@ const file_cauteum_control_v1_console_proto_rawDesc = "" +
 	"\x16workload_template_name\x18\x04 \x01(\tR\x14workloadTemplateName\x12\x18\n" +
 	"\acommand\x18\x05 \x03(\tR\acommand\x12\x1d\n" +
 	"\n" +
-	"request_id\x18\x06 \x01(\tR\trequestId\x12L\n" +
-	"\x06labels\x18\a \x03(\v24.cauteum.control.v1.CreateSandboxRequest.LabelsEntryR\x06labels\x1a9\n" +
+	"request_id\x18\x06 \x01(\tR\trequestId\x12K\n" +
+	"\x06labels\x18\a \x03(\v23.cautem.control.v1.CreateSandboxRequest.LabelsEntryR\x06labels\x1a9\n" +
 	"\vLabelsEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
-	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"\x96\x01\n" +
-	"\x15CreateSandboxResponse\x12<\n" +
-	"\asandbox\x18\x01 \x01(\v2\".cauteum.control.v1.SandboxSummaryR\asandbox\x12\x1c\n" +
+	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"\x95\x01\n" +
+	"\x15CreateSandboxResponse\x12;\n" +
+	"\asandbox\x18\x01 \x01(\v2!.cautem.control.v1.SandboxSummaryR\asandbox\x12\x1c\n" +
 	"\tcompleted\x18\x02 \x01(\bR\tcompleted\x12!\n" +
 	"\foperation_id\x18\x03 \x01(\tR\voperationId\"\xa2\x01\n" +
 	"\x13StartSandboxRequest\x12\x1c\n" +
@@ -6518,9 +6518,9 @@ const file_cauteum_control_v1_console_proto_rawDesc = "" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12:\n" +
 	"\x19expected_resource_version\x18\x03 \x01(\x04R\x17expectedResourceVersion\x12\x1d\n" +
 	"\n" +
-	"request_id\x18\x04 \x01(\tR\trequestId\"\x95\x01\n" +
-	"\x14StartSandboxResponse\x12<\n" +
-	"\asandbox\x18\x01 \x01(\v2\".cauteum.control.v1.SandboxSummaryR\asandbox\x12\x1c\n" +
+	"request_id\x18\x04 \x01(\tR\trequestId\"\x94\x01\n" +
+	"\x14StartSandboxResponse\x12;\n" +
+	"\asandbox\x18\x01 \x01(\v2!.cautem.control.v1.SandboxSummaryR\asandbox\x12\x1c\n" +
 	"\tcompleted\x18\x02 \x01(\bR\tcompleted\x12!\n" +
 	"\foperation_id\x18\x03 \x01(\tR\voperationId\"\xa1\x01\n" +
 	"\x12StopSandboxRequest\x12\x1c\n" +
@@ -6528,9 +6528,9 @@ const file_cauteum_control_v1_console_proto_rawDesc = "" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12:\n" +
 	"\x19expected_resource_version\x18\x03 \x01(\x04R\x17expectedResourceVersion\x12\x1d\n" +
 	"\n" +
-	"request_id\x18\x04 \x01(\tR\trequestId\"\x94\x01\n" +
-	"\x13StopSandboxResponse\x12<\n" +
-	"\asandbox\x18\x01 \x01(\v2\".cauteum.control.v1.SandboxSummaryR\asandbox\x12\x1c\n" +
+	"request_id\x18\x04 \x01(\tR\trequestId\"\x93\x01\n" +
+	"\x13StopSandboxResponse\x12;\n" +
+	"\asandbox\x18\x01 \x01(\v2!.cautem.control.v1.SandboxSummaryR\asandbox\x12\x1c\n" +
 	"\tcompleted\x18\x02 \x01(\bR\tcompleted\x12!\n" +
 	"\foperation_id\x18\x03 \x01(\tR\voperationId\"\xa3\x01\n" +
 	"\x14DeleteSandboxRequest\x12\x1c\n" +
@@ -6545,24 +6545,24 @@ const file_cauteum_control_v1_console_proto_rawDesc = "" +
 	"\x13GetOperationRequest\x12\x1c\n" +
 	"\tworkspace\x18\x01 \x01(\tR\tworkspace\x12\x1d\n" +
 	"\n" +
-	"request_id\x18\x02 \x01(\tR\trequestId\"Z\n" +
-	"\x14GetOperationResponse\x12B\n" +
-	"\toperation\x18\x01 \x01(\v2$.cauteum.control.v1.OperationSummaryR\toperation\"n\n" +
+	"request_id\x18\x02 \x01(\tR\trequestId\"Y\n" +
+	"\x14GetOperationResponse\x12A\n" +
+	"\toperation\x18\x01 \x01(\v2#.cautem.control.v1.OperationSummaryR\toperation\"n\n" +
 	"\x15ListOperationsRequest\x12\x1c\n" +
 	"\tworkspace\x18\x01 \x01(\tR\tworkspace\x12!\n" +
 	"\fafter_number\x18\x02 \x01(\x04R\vafterNumber\x12\x14\n" +
-	"\x05limit\x18\x03 \x01(\rR\x05limit\"\x8a\x01\n" +
-	"\x16ListOperationsResponse\x12D\n" +
+	"\x05limit\x18\x03 \x01(\rR\x05limit\"\x89\x01\n" +
+	"\x16ListOperationsResponse\x12C\n" +
 	"\n" +
-	"operations\x18\x01 \x03(\v2$.cauteum.control.v1.OperationSummaryR\n" +
+	"operations\x18\x01 \x03(\v2#.cautem.control.v1.OperationSummaryR\n" +
 	"operations\x12*\n" +
 	"\x11next_after_number\x18\x02 \x01(\x04R\x0fnextAfterNumber\"g\n" +
 	"\x16ListAuditEventsRequest\x12\x1c\n" +
 	"\tworkspace\x18\x01 \x01(\tR\tworkspace\x12\x19\n" +
 	"\bafter_id\x18\x02 \x01(\x04R\aafterId\x12\x14\n" +
-	"\x05limit\x18\x03 \x01(\rR\x05limit\"|\n" +
-	"\x17ListAuditEventsResponse\x12=\n" +
-	"\x06events\x18\x01 \x03(\v2%.cauteum.control.v1.AuditEventSummaryR\x06events\x12\"\n" +
+	"\x05limit\x18\x03 \x01(\rR\x05limit\"{\n" +
+	"\x17ListAuditEventsResponse\x12<\n" +
+	"\x06events\x18\x01 \x03(\v2$.cautem.control.v1.AuditEventSummaryR\x06events\x12\"\n" +
 	"\rnext_after_id\x18\x02 \x01(\x04R\vnextAfterId\"\xbc\x03\n" +
 	"\x10OperationSummary\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x16\n" +
@@ -6589,7 +6589,7 @@ const file_cauteum_control_v1_console_proto_rawDesc = "" +
 	"\tworkspace\x18\x05 \x01(\tR\tworkspace\x12\x18\n" +
 	"\asandbox\x18\x06 \x01(\tR\asandbox\x12\x18\n" +
 	"\aoutcome\x18\a \x01(\tR\aoutcome\x12\x12\n" +
-	"\x04code\x18\b \x01(\tR\x04code\"\xcd\x03\n" +
+	"\x04code\x18\b \x01(\tR\x04code\"\xcc\x03\n" +
 	"\x0eSandboxSummary\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12\x1c\n" +
 	"\tworkspace\x18\x02 \x01(\tR\tworkspace\x12'\n" +
@@ -6599,25 +6599,25 @@ const file_cauteum_control_v1_console_proto_rawDesc = "" +
 	"\x12updated_at_unix_ms\x18\x06 \x01(\x03R\x0fupdatedAtUnixMs\x128\n" +
 	"\x18runtime_status_available\x18\a \x01(\bR\x16runtimeStatusAvailable\x12\x0e\n" +
 	"\x02id\x18\b \x01(\tR\x02id\x12\x14\n" +
-	"\x05image\x18\t \x01(\tR\x05image\x12F\n" +
+	"\x05image\x18\t \x01(\tR\x05image\x12E\n" +
 	"\x06labels\x18\n" +
-	" \x03(\v2..cauteum.control.v1.SandboxSummary.LabelsEntryR\x06labels\x1a9\n" +
+	" \x03(\v2-.cautem.control.v1.SandboxSummary.LabelsEntryR\x06labels\x1a9\n" +
 	"\vLabelsEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
 	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"3\n" +
 	"\x13ListServicesRequest\x12\x1c\n" +
-	"\tworkspace\x18\x01 \x01(\tR\tworkspace\"V\n" +
-	"\x14ListServicesResponse\x12>\n" +
-	"\bservices\x18\x01 \x03(\v2\".cauteum.control.v1.ServiceSummaryR\bservices\"\x88\x01\n" +
+	"\tworkspace\x18\x01 \x01(\tR\tworkspace\"U\n" +
+	"\x14ListServicesResponse\x12=\n" +
+	"\bservices\x18\x01 \x03(\v2!.cautem.control.v1.ServiceSummaryR\bservices\"\x88\x01\n" +
 	"\x0eServiceSummary\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12!\n" +
 	"\fsandbox_name\x18\x02 \x01(\tR\vsandboxName\x12\x12\n" +
 	"\x04port\x18\x03 \x01(\rR\x04port\x12+\n" +
 	"\x12updated_at_unix_ms\x18\x04 \x01(\x03R\x0fupdatedAtUnixMs\"4\n" +
 	"\x14ListTemplatesRequest\x12\x1c\n" +
-	"\tworkspace\x18\x01 \x01(\tR\tworkspace\"Z\n" +
-	"\x15ListTemplatesResponse\x12A\n" +
-	"\ttemplates\x18\x01 \x03(\v2#.cauteum.control.v1.TemplateSummaryR\ttemplates\"\xcf\x01\n" +
+	"\tworkspace\x18\x01 \x01(\tR\tworkspace\"Y\n" +
+	"\x15ListTemplatesResponse\x12@\n" +
+	"\ttemplates\x18\x01 \x03(\v2\".cautem.control.v1.TemplateSummaryR\ttemplates\"\xcf\x01\n" +
 	"\x0fTemplateSummary\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12\x1c\n" +
 	"\tworkspace\x18\x02 \x01(\tR\tworkspace\x12\x14\n" +
@@ -6625,15 +6625,15 @@ const file_cauteum_control_v1_console_proto_rawDesc = "" +
 	"\tproviders\x18\x04 \x03(\tR\tproviders\x12)\n" +
 	"\x10resource_version\x18\x05 \x01(\x04R\x0fresourceVersion\x12+\n" +
 	"\x12created_at_unix_ms\x18\x06 \x01(\x03R\x0fcreatedAtUnixMs\"\x17\n" +
-	"\x15ListWorkspacesRequest\"^\n" +
-	"\x16ListWorkspacesResponse\x12D\n" +
+	"\x15ListWorkspacesRequest\"]\n" +
+	"\x16ListWorkspacesResponse\x12C\n" +
 	"\n" +
-	"workspaces\x18\x01 \x03(\v2$.cauteum.control.v1.WorkspaceSummaryR\n" +
+	"workspaces\x18\x01 \x03(\v2#.cautem.control.v1.WorkspaceSummaryR\n" +
 	"workspaces\")\n" +
 	"\x13GetWorkspaceRequest\x12\x12\n" +
-	"\x04name\x18\x01 \x01(\tR\x04name\"Z\n" +
-	"\x14GetWorkspaceResponse\x12B\n" +
-	"\tworkspace\x18\x01 \x01(\v2$.cauteum.control.v1.WorkspaceSummaryR\tworkspace\"\xc2\x01\n" +
+	"\x04name\x18\x01 \x01(\tR\x04name\"Y\n" +
+	"\x14GetWorkspaceResponse\x12A\n" +
+	"\tworkspace\x18\x01 \x01(\v2#.cautem.control.v1.WorkspaceSummaryR\tworkspace\"\xc2\x01\n" +
 	"\x10WorkspaceSummary\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12\x1f\n" +
 	"\vcaller_role\x18\x02 \x01(\tR\n" +
@@ -6646,19 +6646,19 @@ const file_cauteum_control_v1_console_proto_rawDesc = "" +
 	"\fsandbox_name\x18\x02 \x01(\tR\vsandboxName\x12\x16\n" +
 	"\x06status\x18\x03 \x01(\tR\x06status\x12\x1b\n" +
 	"\tpage_size\x18\x04 \x01(\rR\bpageSize\x12\x19\n" +
-	"\bafter_id\x18\x05 \x01(\tR\aafterId\"\x8a\x01\n" +
-	"\x1bListPolicyProposalsResponse\x12G\n" +
-	"\tproposals\x18\x01 \x03(\v2).cauteum.control.v1.PolicyProposalSummaryR\tproposals\x12\"\n" +
+	"\bafter_id\x18\x05 \x01(\tR\aafterId\"\x89\x01\n" +
+	"\x1bListPolicyProposalsResponse\x12F\n" +
+	"\tproposals\x18\x01 \x03(\v2(.cautem.control.v1.PolicyProposalSummaryR\tproposals\x12\"\n" +
 	"\rnext_after_id\x18\x02 \x01(\tR\vnextAfterId\"H\n" +
 	"\x18GetPolicyProposalRequest\x12\x1c\n" +
 	"\tworkspace\x18\x01 \x01(\tR\tworkspace\x12\x0e\n" +
-	"\x02id\x18\x02 \x01(\tR\x02id\"b\n" +
-	"\x19GetPolicyProposalResponse\x12E\n" +
-	"\bproposal\x18\x01 \x01(\v2).cauteum.control.v1.PolicyProposalSummaryR\bproposal\"f\n" +
-	"\x1dApprovePolicyProposalResponse\x12E\n" +
-	"\bproposal\x18\x01 \x01(\v2).cauteum.control.v1.PolicyProposalSummaryR\bproposal\"e\n" +
-	"\x1cRejectPolicyProposalResponse\x12E\n" +
-	"\bproposal\x18\x01 \x01(\v2).cauteum.control.v1.PolicyProposalSummaryR\bproposal\"L\n" +
+	"\x02id\x18\x02 \x01(\tR\x02id\"a\n" +
+	"\x19GetPolicyProposalResponse\x12D\n" +
+	"\bproposal\x18\x01 \x01(\v2(.cautem.control.v1.PolicyProposalSummaryR\bproposal\"e\n" +
+	"\x1dApprovePolicyProposalResponse\x12D\n" +
+	"\bproposal\x18\x01 \x01(\v2(.cautem.control.v1.PolicyProposalSummaryR\bproposal\"d\n" +
+	"\x1cRejectPolicyProposalResponse\x12D\n" +
+	"\bproposal\x18\x01 \x01(\v2(.cautem.control.v1.PolicyProposalSummaryR\bproposal\"L\n" +
 	"\x1cApprovePolicyProposalRequest\x12\x1c\n" +
 	"\tworkspace\x18\x01 \x01(\tR\tworkspace\x12\x0e\n" +
 	"\x02id\x18\x02 \x01(\tR\x02id\"c\n" +
@@ -6696,308 +6696,308 @@ const file_cauteum_control_v1_console_proto_rawDesc = "" +
 	"\"SANDBOX_LOG_WATCH_KIND_UNSPECIFIED\x10\x00\x12 \n" +
 	"\x1cSANDBOX_LOG_WATCH_KIND_RESET\x10\x01\x12\x1f\n" +
 	"\x1bSANDBOX_LOG_WATCH_KIND_LINE\x10\x02\x12$\n" +
-	" SANDBOX_LOG_WATCH_KIND_HEARTBEAT\x10\x032\xcb\x02\n" +
-	"\x0eConsoleService\x12X\n" +
-	"\tGetViewer\x12$.cauteum.control.v1.GetViewerRequest\x1a%.cauteum.control.v1.GetViewerResponse\x12\x7f\n" +
-	"\x16GetConsoleCapabilities\x121.cauteum.control.v1.GetConsoleCapabilitiesRequest\x1a2.cauteum.control.v1.GetConsoleCapabilitiesResponse\x12^\n" +
-	"\vGetOverview\x12&.cauteum.control.v1.GetOverviewRequest\x1a'.cauteum.control.v1.GetOverviewResponse2~\n" +
-	"\x13GatewayAdminService\x12g\n" +
-	"\x0eGetGatewayInfo\x12).cauteum.control.v1.GetGatewayInfoRequest\x1a*.cauteum.control.v1.GetGatewayInfoResponse2\x99\b\n" +
-	"\x0eSandboxService\x12d\n" +
-	"\rListSandboxes\x12(.cauteum.control.v1.ListSandboxesRequest\x1a).cauteum.control.v1.ListSandboxesResponse\x12[\n" +
+	" SANDBOX_LOG_WATCH_KIND_HEARTBEAT\x10\x032\xc5\x02\n" +
+	"\x0eConsoleService\x12V\n" +
+	"\tGetViewer\x12#.cautem.control.v1.GetViewerRequest\x1a$.cautem.control.v1.GetViewerResponse\x12}\n" +
+	"\x16GetConsoleCapabilities\x120.cautem.control.v1.GetConsoleCapabilitiesRequest\x1a1.cautem.control.v1.GetConsoleCapabilitiesResponse\x12\\\n" +
+	"\vGetOverview\x12%.cautem.control.v1.GetOverviewRequest\x1a&.cautem.control.v1.GetOverviewResponse2|\n" +
+	"\x13GatewayAdminService\x12e\n" +
+	"\x0eGetGatewayInfo\x12(.cautem.control.v1.GetGatewayInfoRequest\x1a).cautem.control.v1.GetGatewayInfoResponse2\x85\b\n" +
+	"\x0eSandboxService\x12b\n" +
+	"\rListSandboxes\x12'.cautem.control.v1.ListSandboxesRequest\x1a(.cautem.control.v1.ListSandboxesResponse\x12Y\n" +
 	"\n" +
-	"GetSandbox\x12%.cauteum.control.v1.GetSandboxRequest\x1a&.cauteum.control.v1.GetSandboxResponse\x12i\n" +
-	"\x0eWatchSandboxes\x12).cauteum.control.v1.WatchSandboxesRequest\x1a*.cauteum.control.v1.WatchSandboxesResponse0\x01\x12g\n" +
-	"\x0eGetSandboxLogs\x12).cauteum.control.v1.GetSandboxLogsRequest\x1a*.cauteum.control.v1.GetSandboxLogsResponse\x12p\n" +
-	"\x11AppendSandboxLogs\x12,.cauteum.control.v1.AppendSandboxLogsRequest\x1a-.cauteum.control.v1.AppendSandboxLogsResponse\x12o\n" +
-	"\x10WatchSandboxLogs\x12+.cauteum.control.v1.WatchSandboxLogsRequest\x1a,.cauteum.control.v1.WatchSandboxLogsResponse0\x01\x12d\n" +
-	"\rCreateSandbox\x12(.cauteum.control.v1.CreateSandboxRequest\x1a).cauteum.control.v1.CreateSandboxResponse\x12a\n" +
-	"\fStartSandbox\x12'.cauteum.control.v1.StartSandboxRequest\x1a(.cauteum.control.v1.StartSandboxResponse\x12^\n" +
-	"\vStopSandbox\x12&.cauteum.control.v1.StopSandboxRequest\x1a'.cauteum.control.v1.StopSandboxResponse\x12d\n" +
-	"\rDeleteSandbox\x12(.cauteum.control.v1.DeleteSandboxRequest\x1a).cauteum.control.v1.DeleteSandboxResponse2\x81\x04\n" +
-	"\x15ManagedSandboxService\x12s\n" +
-	"\x12SyncManagedSandbox\x12-.cauteum.control.v1.SyncManagedSandboxRequest\x1a..cauteum.control.v1.SyncManagedSandboxResponse\x12p\n" +
-	"\x11GetManagedSandbox\x12,.cauteum.control.v1.GetManagedSandboxRequest\x1a-.cauteum.control.v1.GetManagedSandboxResponse\x12y\n" +
-	"\x14DeleteManagedSandbox\x12/.cauteum.control.v1.DeleteManagedSandboxRequest\x1a0.cauteum.control.v1.DeleteManagedSandboxResponse\x12\x85\x01\n" +
-	"\x18IssueManagedSandboxToken\x123.cauteum.control.v1.IssueManagedSandboxTokenRequest\x1a4.cauteum.control.v1.IssueManagedSandboxTokenResponse2\xcb\x02\n" +
-	"\x11OperationsService\x12a\n" +
-	"\fGetOperation\x12'.cauteum.control.v1.GetOperationRequest\x1a(.cauteum.control.v1.GetOperationResponse\x12g\n" +
-	"\x0eListOperations\x12).cauteum.control.v1.ListOperationsRequest\x1a*.cauteum.control.v1.ListOperationsResponse\x12j\n" +
-	"\x0fListAuditEvents\x12*.cauteum.control.v1.ListAuditEventsRequest\x1a+.cauteum.control.v1.ListAuditEventsResponse2\xa5\x03\n" +
-	"\x0eCatalogService\x12a\n" +
-	"\fListServices\x12'.cauteum.control.v1.ListServicesRequest\x1a(.cauteum.control.v1.ListServicesResponse\x12d\n" +
-	"\rListTemplates\x12(.cauteum.control.v1.ListTemplatesRequest\x1a).cauteum.control.v1.ListTemplatesResponse\x12g\n" +
-	"\x0eListWorkspaces\x12).cauteum.control.v1.ListWorkspacesRequest\x1a*.cauteum.control.v1.ListWorkspacesResponse\x12a\n" +
-	"\fGetWorkspace\x12'.cauteum.control.v1.GetWorkspaceRequest\x1a(.cauteum.control.v1.GetWorkspaceResponse2\xf7\x02\n" +
-	"\x10InferenceService\x12p\n" +
-	"\x11GetInferenceRoute\x12,.cauteum.control.v1.GetInferenceRouteRequest\x1a-.cauteum.control.v1.GetInferenceRouteResponse\x12y\n" +
-	"\x14UpdateInferenceRoute\x12/.cauteum.control.v1.UpdateInferenceRouteRequest\x1a0.cauteum.control.v1.UpdateInferenceRouteResponse\x12v\n" +
-	"\x13ClearInferenceRoute\x12..cauteum.control.v1.ClearInferenceRouteRequest\x1a/.cauteum.control.v1.ClearInferenceRouteResponse2\xd0\t\n" +
-	"\rPolicyService\x12j\n" +
-	"\x0fGetGlobalPolicy\x12*.cauteum.control.v1.GetGlobalPolicyRequest\x1a+.cauteum.control.v1.GetGlobalPolicyResponse\x12s\n" +
-	"\x12UpdateGlobalPolicy\x12-.cauteum.control.v1.UpdateGlobalPolicyRequest\x1a..cauteum.control.v1.UpdateGlobalPolicyResponse\x12m\n" +
-	"\x10GetSandboxPolicy\x12+.cauteum.control.v1.GetSandboxPolicyRequest\x1a,.cauteum.control.v1.GetSandboxPolicyResponse\x12v\n" +
-	"\x13UpdateSandboxPolicy\x12..cauteum.control.v1.UpdateSandboxPolicyRequest\x1a/.cauteum.control.v1.UpdateSandboxPolicyResponse\x12\x8b\x01\n" +
-	"\x1aListSandboxPolicyRevisions\x125.cauteum.control.v1.ListSandboxPolicyRevisionsRequest\x1a6.cauteum.control.v1.ListSandboxPolicyRevisionsResponse\x12\x85\x01\n" +
-	"\x18GetSandboxPolicyRevision\x123.cauteum.control.v1.GetSandboxPolicyRevisionRequest\x1a4.cauteum.control.v1.GetSandboxPolicyRevisionResponse\x12v\n" +
-	"\x13ListPolicyProposals\x12..cauteum.control.v1.ListPolicyProposalsRequest\x1a/.cauteum.control.v1.ListPolicyProposalsResponse\x12p\n" +
-	"\x11GetPolicyProposal\x12,.cauteum.control.v1.GetPolicyProposalRequest\x1a-.cauteum.control.v1.GetPolicyProposalResponse\x12|\n" +
-	"\x15ApprovePolicyProposal\x120.cauteum.control.v1.ApprovePolicyProposalRequest\x1a1.cauteum.control.v1.ApprovePolicyProposalResponse\x12y\n" +
-	"\x14RejectPolicyProposal\x12/.cauteum.control.v1.RejectPolicyProposalRequest\x1a0.cauteum.control.v1.RejectPolicyProposalResponse2\x82\x05\n" +
-	"\x16ProviderProfileService\x12y\n" +
-	"\x14ListProviderProfiles\x12/.cauteum.control.v1.ListProviderProfilesRequest\x1a0.cauteum.control.v1.ListProviderProfilesResponse\x12s\n" +
-	"\x12GetProviderProfile\x12-.cauteum.control.v1.GetProviderProfileRequest\x1a..cauteum.control.v1.GetProviderProfileResponse\x12|\n" +
-	"\x15ImportProviderProfile\x120.cauteum.control.v1.ImportProviderProfileRequest\x1a1.cauteum.control.v1.ImportProviderProfileResponse\x12|\n" +
-	"\x15UpdateProviderProfile\x120.cauteum.control.v1.UpdateProviderProfileRequest\x1a1.cauteum.control.v1.UpdateProviderProfileResponse\x12|\n" +
-	"\x15DeleteProviderProfile\x120.cauteum.control.v1.DeleteProviderProfileRequest\x1a1.cauteum.control.v1.DeleteProviderProfileResponse2\xa6\x01\n" +
-	"\x19ProviderCredentialService\x12\x88\x01\n" +
-	"\x19UpdateProviderCredentials\x124.cauteum.control.v1.UpdateProviderCredentialsRequest\x1a5.cauteum.control.v1.UpdateProviderCredentialsResponseBHZFgithub.com/cautem/cauteum-gateway/api/gen/cauteum/control/v1;controlv1b\x06proto3"
+	"GetSandbox\x12$.cautem.control.v1.GetSandboxRequest\x1a%.cautem.control.v1.GetSandboxResponse\x12g\n" +
+	"\x0eWatchSandboxes\x12(.cautem.control.v1.WatchSandboxesRequest\x1a).cautem.control.v1.WatchSandboxesResponse0\x01\x12e\n" +
+	"\x0eGetSandboxLogs\x12(.cautem.control.v1.GetSandboxLogsRequest\x1a).cautem.control.v1.GetSandboxLogsResponse\x12n\n" +
+	"\x11AppendSandboxLogs\x12+.cautem.control.v1.AppendSandboxLogsRequest\x1a,.cautem.control.v1.AppendSandboxLogsResponse\x12m\n" +
+	"\x10WatchSandboxLogs\x12*.cautem.control.v1.WatchSandboxLogsRequest\x1a+.cautem.control.v1.WatchSandboxLogsResponse0\x01\x12b\n" +
+	"\rCreateSandbox\x12'.cautem.control.v1.CreateSandboxRequest\x1a(.cautem.control.v1.CreateSandboxResponse\x12_\n" +
+	"\fStartSandbox\x12&.cautem.control.v1.StartSandboxRequest\x1a'.cautem.control.v1.StartSandboxResponse\x12\\\n" +
+	"\vStopSandbox\x12%.cautem.control.v1.StopSandboxRequest\x1a&.cautem.control.v1.StopSandboxResponse\x12b\n" +
+	"\rDeleteSandbox\x12'.cautem.control.v1.DeleteSandboxRequest\x1a(.cautem.control.v1.DeleteSandboxResponse2\xf9\x03\n" +
+	"\x15ManagedSandboxService\x12q\n" +
+	"\x12SyncManagedSandbox\x12,.cautem.control.v1.SyncManagedSandboxRequest\x1a-.cautem.control.v1.SyncManagedSandboxResponse\x12n\n" +
+	"\x11GetManagedSandbox\x12+.cautem.control.v1.GetManagedSandboxRequest\x1a,.cautem.control.v1.GetManagedSandboxResponse\x12w\n" +
+	"\x14DeleteManagedSandbox\x12..cautem.control.v1.DeleteManagedSandboxRequest\x1a/.cautem.control.v1.DeleteManagedSandboxResponse\x12\x83\x01\n" +
+	"\x18IssueManagedSandboxToken\x122.cautem.control.v1.IssueManagedSandboxTokenRequest\x1a3.cautem.control.v1.IssueManagedSandboxTokenResponse2\xc5\x02\n" +
+	"\x11OperationsService\x12_\n" +
+	"\fGetOperation\x12&.cautem.control.v1.GetOperationRequest\x1a'.cautem.control.v1.GetOperationResponse\x12e\n" +
+	"\x0eListOperations\x12(.cautem.control.v1.ListOperationsRequest\x1a).cautem.control.v1.ListOperationsResponse\x12h\n" +
+	"\x0fListAuditEvents\x12).cautem.control.v1.ListAuditEventsRequest\x1a*.cautem.control.v1.ListAuditEventsResponse2\x9d\x03\n" +
+	"\x0eCatalogService\x12_\n" +
+	"\fListServices\x12&.cautem.control.v1.ListServicesRequest\x1a'.cautem.control.v1.ListServicesResponse\x12b\n" +
+	"\rListTemplates\x12'.cautem.control.v1.ListTemplatesRequest\x1a(.cautem.control.v1.ListTemplatesResponse\x12e\n" +
+	"\x0eListWorkspaces\x12(.cautem.control.v1.ListWorkspacesRequest\x1a).cautem.control.v1.ListWorkspacesResponse\x12_\n" +
+	"\fGetWorkspace\x12&.cautem.control.v1.GetWorkspaceRequest\x1a'.cautem.control.v1.GetWorkspaceResponse2\xf1\x02\n" +
+	"\x10InferenceService\x12n\n" +
+	"\x11GetInferenceRoute\x12+.cautem.control.v1.GetInferenceRouteRequest\x1a,.cautem.control.v1.GetInferenceRouteResponse\x12w\n" +
+	"\x14UpdateInferenceRoute\x12..cautem.control.v1.UpdateInferenceRouteRequest\x1a/.cautem.control.v1.UpdateInferenceRouteResponse\x12t\n" +
+	"\x13ClearInferenceRoute\x12-.cautem.control.v1.ClearInferenceRouteRequest\x1a..cautem.control.v1.ClearInferenceRouteResponse2\xbc\t\n" +
+	"\rPolicyService\x12h\n" +
+	"\x0fGetGlobalPolicy\x12).cautem.control.v1.GetGlobalPolicyRequest\x1a*.cautem.control.v1.GetGlobalPolicyResponse\x12q\n" +
+	"\x12UpdateGlobalPolicy\x12,.cautem.control.v1.UpdateGlobalPolicyRequest\x1a-.cautem.control.v1.UpdateGlobalPolicyResponse\x12k\n" +
+	"\x10GetSandboxPolicy\x12*.cautem.control.v1.GetSandboxPolicyRequest\x1a+.cautem.control.v1.GetSandboxPolicyResponse\x12t\n" +
+	"\x13UpdateSandboxPolicy\x12-.cautem.control.v1.UpdateSandboxPolicyRequest\x1a..cautem.control.v1.UpdateSandboxPolicyResponse\x12\x89\x01\n" +
+	"\x1aListSandboxPolicyRevisions\x124.cautem.control.v1.ListSandboxPolicyRevisionsRequest\x1a5.cautem.control.v1.ListSandboxPolicyRevisionsResponse\x12\x83\x01\n" +
+	"\x18GetSandboxPolicyRevision\x122.cautem.control.v1.GetSandboxPolicyRevisionRequest\x1a3.cautem.control.v1.GetSandboxPolicyRevisionResponse\x12t\n" +
+	"\x13ListPolicyProposals\x12-.cautem.control.v1.ListPolicyProposalsRequest\x1a..cautem.control.v1.ListPolicyProposalsResponse\x12n\n" +
+	"\x11GetPolicyProposal\x12+.cautem.control.v1.GetPolicyProposalRequest\x1a,.cautem.control.v1.GetPolicyProposalResponse\x12z\n" +
+	"\x15ApprovePolicyProposal\x12/.cautem.control.v1.ApprovePolicyProposalRequest\x1a0.cautem.control.v1.ApprovePolicyProposalResponse\x12w\n" +
+	"\x14RejectPolicyProposal\x12..cautem.control.v1.RejectPolicyProposalRequest\x1a/.cautem.control.v1.RejectPolicyProposalResponse2\xf8\x04\n" +
+	"\x16ProviderProfileService\x12w\n" +
+	"\x14ListProviderProfiles\x12..cautem.control.v1.ListProviderProfilesRequest\x1a/.cautem.control.v1.ListProviderProfilesResponse\x12q\n" +
+	"\x12GetProviderProfile\x12,.cautem.control.v1.GetProviderProfileRequest\x1a-.cautem.control.v1.GetProviderProfileResponse\x12z\n" +
+	"\x15ImportProviderProfile\x12/.cautem.control.v1.ImportProviderProfileRequest\x1a0.cautem.control.v1.ImportProviderProfileResponse\x12z\n" +
+	"\x15UpdateProviderProfile\x12/.cautem.control.v1.UpdateProviderProfileRequest\x1a0.cautem.control.v1.UpdateProviderProfileResponse\x12z\n" +
+	"\x15DeleteProviderProfile\x12/.cautem.control.v1.DeleteProviderProfileRequest\x1a0.cautem.control.v1.DeleteProviderProfileResponse2\xa4\x01\n" +
+	"\x19ProviderCredentialService\x12\x86\x01\n" +
+	"\x19UpdateProviderCredentials\x123.cautem.control.v1.UpdateProviderCredentialsRequest\x1a4.cautem.control.v1.UpdateProviderCredentialsResponseBFZDgithub.com/cautem/cautem-gateway/api/gen/cautem/control/v1;controlv1b\x06proto3"
 
 var (
-	file_cauteum_control_v1_console_proto_rawDescOnce sync.Once
-	file_cauteum_control_v1_console_proto_rawDescData []byte
+	file_cautem_control_v1_console_proto_rawDescOnce sync.Once
+	file_cautem_control_v1_console_proto_rawDescData []byte
 )
 
-func file_cauteum_control_v1_console_proto_rawDescGZIP() []byte {
-	file_cauteum_control_v1_console_proto_rawDescOnce.Do(func() {
-		file_cauteum_control_v1_console_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_cauteum_control_v1_console_proto_rawDesc), len(file_cauteum_control_v1_console_proto_rawDesc)))
+func file_cautem_control_v1_console_proto_rawDescGZIP() []byte {
+	file_cautem_control_v1_console_proto_rawDescOnce.Do(func() {
+		file_cautem_control_v1_console_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_cautem_control_v1_console_proto_rawDesc), len(file_cautem_control_v1_console_proto_rawDesc)))
 	})
-	return file_cauteum_control_v1_console_proto_rawDescData
+	return file_cautem_control_v1_console_proto_rawDescData
 }
 
-var file_cauteum_control_v1_console_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
-var file_cauteum_control_v1_console_proto_msgTypes = make([]protoimpl.MessageInfo, 106)
-var file_cauteum_control_v1_console_proto_goTypes = []any{
-	(SandboxWatchEventKind)(0),                 // 0: cauteum.control.v1.SandboxWatchEventKind
-	(SandboxLogWatchKind)(0),                   // 1: cauteum.control.v1.SandboxLogWatchKind
-	(*GetGatewayInfoRequest)(nil),              // 2: cauteum.control.v1.GetGatewayInfoRequest
-	(*GetGatewayInfoResponse)(nil),             // 3: cauteum.control.v1.GetGatewayInfoResponse
-	(*ComputeDriverStatus)(nil),                // 4: cauteum.control.v1.ComputeDriverStatus
-	(*GetManagedSandboxRequest)(nil),           // 5: cauteum.control.v1.GetManagedSandboxRequest
-	(*GetManagedSandboxResponse)(nil),          // 6: cauteum.control.v1.GetManagedSandboxResponse
-	(*SyncManagedSandboxRequest)(nil),          // 7: cauteum.control.v1.SyncManagedSandboxRequest
-	(*SyncManagedSandboxResponse)(nil),         // 8: cauteum.control.v1.SyncManagedSandboxResponse
-	(*DeleteManagedSandboxRequest)(nil),        // 9: cauteum.control.v1.DeleteManagedSandboxRequest
-	(*DeleteManagedSandboxResponse)(nil),       // 10: cauteum.control.v1.DeleteManagedSandboxResponse
-	(*IssueManagedSandboxTokenRequest)(nil),    // 11: cauteum.control.v1.IssueManagedSandboxTokenRequest
-	(*IssueManagedSandboxTokenResponse)(nil),   // 12: cauteum.control.v1.IssueManagedSandboxTokenResponse
-	(*AppendSandboxLogsRequest)(nil),           // 13: cauteum.control.v1.AppendSandboxLogsRequest
-	(*ClientLogLine)(nil),                      // 14: cauteum.control.v1.ClientLogLine
-	(*AppendSandboxLogsResponse)(nil),          // 15: cauteum.control.v1.AppendSandboxLogsResponse
-	(*GetInferenceRouteRequest)(nil),           // 16: cauteum.control.v1.GetInferenceRouteRequest
-	(*GetInferenceRouteResponse)(nil),          // 17: cauteum.control.v1.GetInferenceRouteResponse
-	(*UpdateInferenceRouteRequest)(nil),        // 18: cauteum.control.v1.UpdateInferenceRouteRequest
-	(*UpdateInferenceRouteResponse)(nil),       // 19: cauteum.control.v1.UpdateInferenceRouteResponse
-	(*ClearInferenceRouteRequest)(nil),         // 20: cauteum.control.v1.ClearInferenceRouteRequest
-	(*ClearInferenceRouteResponse)(nil),        // 21: cauteum.control.v1.ClearInferenceRouteResponse
-	(*GetGlobalPolicyRequest)(nil),             // 22: cauteum.control.v1.GetGlobalPolicyRequest
-	(*GetGlobalPolicyResponse)(nil),            // 23: cauteum.control.v1.GetGlobalPolicyResponse
-	(*UpdateGlobalPolicyRequest)(nil),          // 24: cauteum.control.v1.UpdateGlobalPolicyRequest
-	(*UpdateGlobalPolicyResponse)(nil),         // 25: cauteum.control.v1.UpdateGlobalPolicyResponse
-	(*GetSandboxPolicyRequest)(nil),            // 26: cauteum.control.v1.GetSandboxPolicyRequest
-	(*GetSandboxPolicyResponse)(nil),           // 27: cauteum.control.v1.GetSandboxPolicyResponse
-	(*UpdateSandboxPolicyRequest)(nil),         // 28: cauteum.control.v1.UpdateSandboxPolicyRequest
-	(*UpdateSandboxPolicyResponse)(nil),        // 29: cauteum.control.v1.UpdateSandboxPolicyResponse
-	(*ListSandboxPolicyRevisionsRequest)(nil),  // 30: cauteum.control.v1.ListSandboxPolicyRevisionsRequest
-	(*ListSandboxPolicyRevisionsResponse)(nil), // 31: cauteum.control.v1.ListSandboxPolicyRevisionsResponse
-	(*GetSandboxPolicyRevisionRequest)(nil),    // 32: cauteum.control.v1.GetSandboxPolicyRevisionRequest
-	(*GetSandboxPolicyRevisionResponse)(nil),   // 33: cauteum.control.v1.GetSandboxPolicyRevisionResponse
-	(*PolicyRevisionSummary)(nil),              // 34: cauteum.control.v1.PolicyRevisionSummary
-	(*UpdateProviderCredentialsRequest)(nil),   // 35: cauteum.control.v1.UpdateProviderCredentialsRequest
-	(*UpdateProviderCredentialsResponse)(nil),  // 36: cauteum.control.v1.UpdateProviderCredentialsResponse
-	(*ListProviderProfilesRequest)(nil),        // 37: cauteum.control.v1.ListProviderProfilesRequest
-	(*ProviderProfileSummary)(nil),             // 38: cauteum.control.v1.ProviderProfileSummary
-	(*ListProviderProfilesResponse)(nil),       // 39: cauteum.control.v1.ListProviderProfilesResponse
-	(*GetProviderProfileRequest)(nil),          // 40: cauteum.control.v1.GetProviderProfileRequest
-	(*GetProviderProfileResponse)(nil),         // 41: cauteum.control.v1.GetProviderProfileResponse
-	(*ImportProviderProfileRequest)(nil),       // 42: cauteum.control.v1.ImportProviderProfileRequest
-	(*ImportProviderProfileResponse)(nil),      // 43: cauteum.control.v1.ImportProviderProfileResponse
-	(*UpdateProviderProfileRequest)(nil),       // 44: cauteum.control.v1.UpdateProviderProfileRequest
-	(*UpdateProviderProfileResponse)(nil),      // 45: cauteum.control.v1.UpdateProviderProfileResponse
-	(*DeleteProviderProfileRequest)(nil),       // 46: cauteum.control.v1.DeleteProviderProfileRequest
-	(*DeleteProviderProfileResponse)(nil),      // 47: cauteum.control.v1.DeleteProviderProfileResponse
-	(*GetViewerRequest)(nil),                   // 48: cauteum.control.v1.GetViewerRequest
-	(*GetViewerResponse)(nil),                  // 49: cauteum.control.v1.GetViewerResponse
-	(*GetConsoleCapabilitiesRequest)(nil),      // 50: cauteum.control.v1.GetConsoleCapabilitiesRequest
-	(*GetConsoleCapabilitiesResponse)(nil),     // 51: cauteum.control.v1.GetConsoleCapabilitiesResponse
-	(*GetOverviewRequest)(nil),                 // 52: cauteum.control.v1.GetOverviewRequest
-	(*GetOverviewResponse)(nil),                // 53: cauteum.control.v1.GetOverviewResponse
-	(*ListSandboxesRequest)(nil),               // 54: cauteum.control.v1.ListSandboxesRequest
-	(*ListSandboxesResponse)(nil),              // 55: cauteum.control.v1.ListSandboxesResponse
-	(*GetSandboxRequest)(nil),                  // 56: cauteum.control.v1.GetSandboxRequest
-	(*GetSandboxResponse)(nil),                 // 57: cauteum.control.v1.GetSandboxResponse
-	(*WatchSandboxesRequest)(nil),              // 58: cauteum.control.v1.WatchSandboxesRequest
-	(*WatchSandboxesResponse)(nil),             // 59: cauteum.control.v1.WatchSandboxesResponse
-	(*GetSandboxLogsRequest)(nil),              // 60: cauteum.control.v1.GetSandboxLogsRequest
-	(*GetSandboxLogsResponse)(nil),             // 61: cauteum.control.v1.GetSandboxLogsResponse
-	(*WatchSandboxLogsRequest)(nil),            // 62: cauteum.control.v1.WatchSandboxLogsRequest
-	(*WatchSandboxLogsResponse)(nil),           // 63: cauteum.control.v1.WatchSandboxLogsResponse
-	(*SandboxLogLine)(nil),                     // 64: cauteum.control.v1.SandboxLogLine
-	(*CreateSandboxRequest)(nil),               // 65: cauteum.control.v1.CreateSandboxRequest
-	(*CreateSandboxResponse)(nil),              // 66: cauteum.control.v1.CreateSandboxResponse
-	(*StartSandboxRequest)(nil),                // 67: cauteum.control.v1.StartSandboxRequest
-	(*StartSandboxResponse)(nil),               // 68: cauteum.control.v1.StartSandboxResponse
-	(*StopSandboxRequest)(nil),                 // 69: cauteum.control.v1.StopSandboxRequest
-	(*StopSandboxResponse)(nil),                // 70: cauteum.control.v1.StopSandboxResponse
-	(*DeleteSandboxRequest)(nil),               // 71: cauteum.control.v1.DeleteSandboxRequest
-	(*DeleteSandboxResponse)(nil),              // 72: cauteum.control.v1.DeleteSandboxResponse
-	(*GetOperationRequest)(nil),                // 73: cauteum.control.v1.GetOperationRequest
-	(*GetOperationResponse)(nil),               // 74: cauteum.control.v1.GetOperationResponse
-	(*ListOperationsRequest)(nil),              // 75: cauteum.control.v1.ListOperationsRequest
-	(*ListOperationsResponse)(nil),             // 76: cauteum.control.v1.ListOperationsResponse
-	(*ListAuditEventsRequest)(nil),             // 77: cauteum.control.v1.ListAuditEventsRequest
-	(*ListAuditEventsResponse)(nil),            // 78: cauteum.control.v1.ListAuditEventsResponse
-	(*OperationSummary)(nil),                   // 79: cauteum.control.v1.OperationSummary
-	(*AuditEventSummary)(nil),                  // 80: cauteum.control.v1.AuditEventSummary
-	(*SandboxSummary)(nil),                     // 81: cauteum.control.v1.SandboxSummary
-	(*ListServicesRequest)(nil),                // 82: cauteum.control.v1.ListServicesRequest
-	(*ListServicesResponse)(nil),               // 83: cauteum.control.v1.ListServicesResponse
-	(*ServiceSummary)(nil),                     // 84: cauteum.control.v1.ServiceSummary
-	(*ListTemplatesRequest)(nil),               // 85: cauteum.control.v1.ListTemplatesRequest
-	(*ListTemplatesResponse)(nil),              // 86: cauteum.control.v1.ListTemplatesResponse
-	(*TemplateSummary)(nil),                    // 87: cauteum.control.v1.TemplateSummary
-	(*ListWorkspacesRequest)(nil),              // 88: cauteum.control.v1.ListWorkspacesRequest
-	(*ListWorkspacesResponse)(nil),             // 89: cauteum.control.v1.ListWorkspacesResponse
-	(*GetWorkspaceRequest)(nil),                // 90: cauteum.control.v1.GetWorkspaceRequest
-	(*GetWorkspaceResponse)(nil),               // 91: cauteum.control.v1.GetWorkspaceResponse
-	(*WorkspaceSummary)(nil),                   // 92: cauteum.control.v1.WorkspaceSummary
-	(*ListPolicyProposalsRequest)(nil),         // 93: cauteum.control.v1.ListPolicyProposalsRequest
-	(*ListPolicyProposalsResponse)(nil),        // 94: cauteum.control.v1.ListPolicyProposalsResponse
-	(*GetPolicyProposalRequest)(nil),           // 95: cauteum.control.v1.GetPolicyProposalRequest
-	(*GetPolicyProposalResponse)(nil),          // 96: cauteum.control.v1.GetPolicyProposalResponse
-	(*ApprovePolicyProposalResponse)(nil),      // 97: cauteum.control.v1.ApprovePolicyProposalResponse
-	(*RejectPolicyProposalResponse)(nil),       // 98: cauteum.control.v1.RejectPolicyProposalResponse
-	(*ApprovePolicyProposalRequest)(nil),       // 99: cauteum.control.v1.ApprovePolicyProposalRequest
-	(*RejectPolicyProposalRequest)(nil),        // 100: cauteum.control.v1.RejectPolicyProposalRequest
-	(*PolicyProposalSummary)(nil),              // 101: cauteum.control.v1.PolicyProposalSummary
-	nil,                                        // 102: cauteum.control.v1.GetManagedSandboxResponse.LabelsEntry
-	nil,                                        // 103: cauteum.control.v1.SyncManagedSandboxRequest.LabelsEntry
-	nil,                                        // 104: cauteum.control.v1.UpdateProviderCredentialsRequest.CredentialsEntry
-	nil,                                        // 105: cauteum.control.v1.ListSandboxesRequest.LabelsEntry
-	nil,                                        // 106: cauteum.control.v1.CreateSandboxRequest.LabelsEntry
-	nil,                                        // 107: cauteum.control.v1.SandboxSummary.LabelsEntry
+var file_cautem_control_v1_console_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
+var file_cautem_control_v1_console_proto_msgTypes = make([]protoimpl.MessageInfo, 106)
+var file_cautem_control_v1_console_proto_goTypes = []any{
+	(SandboxWatchEventKind)(0),                 // 0: cautem.control.v1.SandboxWatchEventKind
+	(SandboxLogWatchKind)(0),                   // 1: cautem.control.v1.SandboxLogWatchKind
+	(*GetGatewayInfoRequest)(nil),              // 2: cautem.control.v1.GetGatewayInfoRequest
+	(*GetGatewayInfoResponse)(nil),             // 3: cautem.control.v1.GetGatewayInfoResponse
+	(*ComputeDriverStatus)(nil),                // 4: cautem.control.v1.ComputeDriverStatus
+	(*GetManagedSandboxRequest)(nil),           // 5: cautem.control.v1.GetManagedSandboxRequest
+	(*GetManagedSandboxResponse)(nil),          // 6: cautem.control.v1.GetManagedSandboxResponse
+	(*SyncManagedSandboxRequest)(nil),          // 7: cautem.control.v1.SyncManagedSandboxRequest
+	(*SyncManagedSandboxResponse)(nil),         // 8: cautem.control.v1.SyncManagedSandboxResponse
+	(*DeleteManagedSandboxRequest)(nil),        // 9: cautem.control.v1.DeleteManagedSandboxRequest
+	(*DeleteManagedSandboxResponse)(nil),       // 10: cautem.control.v1.DeleteManagedSandboxResponse
+	(*IssueManagedSandboxTokenRequest)(nil),    // 11: cautem.control.v1.IssueManagedSandboxTokenRequest
+	(*IssueManagedSandboxTokenResponse)(nil),   // 12: cautem.control.v1.IssueManagedSandboxTokenResponse
+	(*AppendSandboxLogsRequest)(nil),           // 13: cautem.control.v1.AppendSandboxLogsRequest
+	(*ClientLogLine)(nil),                      // 14: cautem.control.v1.ClientLogLine
+	(*AppendSandboxLogsResponse)(nil),          // 15: cautem.control.v1.AppendSandboxLogsResponse
+	(*GetInferenceRouteRequest)(nil),           // 16: cautem.control.v1.GetInferenceRouteRequest
+	(*GetInferenceRouteResponse)(nil),          // 17: cautem.control.v1.GetInferenceRouteResponse
+	(*UpdateInferenceRouteRequest)(nil),        // 18: cautem.control.v1.UpdateInferenceRouteRequest
+	(*UpdateInferenceRouteResponse)(nil),       // 19: cautem.control.v1.UpdateInferenceRouteResponse
+	(*ClearInferenceRouteRequest)(nil),         // 20: cautem.control.v1.ClearInferenceRouteRequest
+	(*ClearInferenceRouteResponse)(nil),        // 21: cautem.control.v1.ClearInferenceRouteResponse
+	(*GetGlobalPolicyRequest)(nil),             // 22: cautem.control.v1.GetGlobalPolicyRequest
+	(*GetGlobalPolicyResponse)(nil),            // 23: cautem.control.v1.GetGlobalPolicyResponse
+	(*UpdateGlobalPolicyRequest)(nil),          // 24: cautem.control.v1.UpdateGlobalPolicyRequest
+	(*UpdateGlobalPolicyResponse)(nil),         // 25: cautem.control.v1.UpdateGlobalPolicyResponse
+	(*GetSandboxPolicyRequest)(nil),            // 26: cautem.control.v1.GetSandboxPolicyRequest
+	(*GetSandboxPolicyResponse)(nil),           // 27: cautem.control.v1.GetSandboxPolicyResponse
+	(*UpdateSandboxPolicyRequest)(nil),         // 28: cautem.control.v1.UpdateSandboxPolicyRequest
+	(*UpdateSandboxPolicyResponse)(nil),        // 29: cautem.control.v1.UpdateSandboxPolicyResponse
+	(*ListSandboxPolicyRevisionsRequest)(nil),  // 30: cautem.control.v1.ListSandboxPolicyRevisionsRequest
+	(*ListSandboxPolicyRevisionsResponse)(nil), // 31: cautem.control.v1.ListSandboxPolicyRevisionsResponse
+	(*GetSandboxPolicyRevisionRequest)(nil),    // 32: cautem.control.v1.GetSandboxPolicyRevisionRequest
+	(*GetSandboxPolicyRevisionResponse)(nil),   // 33: cautem.control.v1.GetSandboxPolicyRevisionResponse
+	(*PolicyRevisionSummary)(nil),              // 34: cautem.control.v1.PolicyRevisionSummary
+	(*UpdateProviderCredentialsRequest)(nil),   // 35: cautem.control.v1.UpdateProviderCredentialsRequest
+	(*UpdateProviderCredentialsResponse)(nil),  // 36: cautem.control.v1.UpdateProviderCredentialsResponse
+	(*ListProviderProfilesRequest)(nil),        // 37: cautem.control.v1.ListProviderProfilesRequest
+	(*ProviderProfileSummary)(nil),             // 38: cautem.control.v1.ProviderProfileSummary
+	(*ListProviderProfilesResponse)(nil),       // 39: cautem.control.v1.ListProviderProfilesResponse
+	(*GetProviderProfileRequest)(nil),          // 40: cautem.control.v1.GetProviderProfileRequest
+	(*GetProviderProfileResponse)(nil),         // 41: cautem.control.v1.GetProviderProfileResponse
+	(*ImportProviderProfileRequest)(nil),       // 42: cautem.control.v1.ImportProviderProfileRequest
+	(*ImportProviderProfileResponse)(nil),      // 43: cautem.control.v1.ImportProviderProfileResponse
+	(*UpdateProviderProfileRequest)(nil),       // 44: cautem.control.v1.UpdateProviderProfileRequest
+	(*UpdateProviderProfileResponse)(nil),      // 45: cautem.control.v1.UpdateProviderProfileResponse
+	(*DeleteProviderProfileRequest)(nil),       // 46: cautem.control.v1.DeleteProviderProfileRequest
+	(*DeleteProviderProfileResponse)(nil),      // 47: cautem.control.v1.DeleteProviderProfileResponse
+	(*GetViewerRequest)(nil),                   // 48: cautem.control.v1.GetViewerRequest
+	(*GetViewerResponse)(nil),                  // 49: cautem.control.v1.GetViewerResponse
+	(*GetConsoleCapabilitiesRequest)(nil),      // 50: cautem.control.v1.GetConsoleCapabilitiesRequest
+	(*GetConsoleCapabilitiesResponse)(nil),     // 51: cautem.control.v1.GetConsoleCapabilitiesResponse
+	(*GetOverviewRequest)(nil),                 // 52: cautem.control.v1.GetOverviewRequest
+	(*GetOverviewResponse)(nil),                // 53: cautem.control.v1.GetOverviewResponse
+	(*ListSandboxesRequest)(nil),               // 54: cautem.control.v1.ListSandboxesRequest
+	(*ListSandboxesResponse)(nil),              // 55: cautem.control.v1.ListSandboxesResponse
+	(*GetSandboxRequest)(nil),                  // 56: cautem.control.v1.GetSandboxRequest
+	(*GetSandboxResponse)(nil),                 // 57: cautem.control.v1.GetSandboxResponse
+	(*WatchSandboxesRequest)(nil),              // 58: cautem.control.v1.WatchSandboxesRequest
+	(*WatchSandboxesResponse)(nil),             // 59: cautem.control.v1.WatchSandboxesResponse
+	(*GetSandboxLogsRequest)(nil),              // 60: cautem.control.v1.GetSandboxLogsRequest
+	(*GetSandboxLogsResponse)(nil),             // 61: cautem.control.v1.GetSandboxLogsResponse
+	(*WatchSandboxLogsRequest)(nil),            // 62: cautem.control.v1.WatchSandboxLogsRequest
+	(*WatchSandboxLogsResponse)(nil),           // 63: cautem.control.v1.WatchSandboxLogsResponse
+	(*SandboxLogLine)(nil),                     // 64: cautem.control.v1.SandboxLogLine
+	(*CreateSandboxRequest)(nil),               // 65: cautem.control.v1.CreateSandboxRequest
+	(*CreateSandboxResponse)(nil),              // 66: cautem.control.v1.CreateSandboxResponse
+	(*StartSandboxRequest)(nil),                // 67: cautem.control.v1.StartSandboxRequest
+	(*StartSandboxResponse)(nil),               // 68: cautem.control.v1.StartSandboxResponse
+	(*StopSandboxRequest)(nil),                 // 69: cautem.control.v1.StopSandboxRequest
+	(*StopSandboxResponse)(nil),                // 70: cautem.control.v1.StopSandboxResponse
+	(*DeleteSandboxRequest)(nil),               // 71: cautem.control.v1.DeleteSandboxRequest
+	(*DeleteSandboxResponse)(nil),              // 72: cautem.control.v1.DeleteSandboxResponse
+	(*GetOperationRequest)(nil),                // 73: cautem.control.v1.GetOperationRequest
+	(*GetOperationResponse)(nil),               // 74: cautem.control.v1.GetOperationResponse
+	(*ListOperationsRequest)(nil),              // 75: cautem.control.v1.ListOperationsRequest
+	(*ListOperationsResponse)(nil),             // 76: cautem.control.v1.ListOperationsResponse
+	(*ListAuditEventsRequest)(nil),             // 77: cautem.control.v1.ListAuditEventsRequest
+	(*ListAuditEventsResponse)(nil),            // 78: cautem.control.v1.ListAuditEventsResponse
+	(*OperationSummary)(nil),                   // 79: cautem.control.v1.OperationSummary
+	(*AuditEventSummary)(nil),                  // 80: cautem.control.v1.AuditEventSummary
+	(*SandboxSummary)(nil),                     // 81: cautem.control.v1.SandboxSummary
+	(*ListServicesRequest)(nil),                // 82: cautem.control.v1.ListServicesRequest
+	(*ListServicesResponse)(nil),               // 83: cautem.control.v1.ListServicesResponse
+	(*ServiceSummary)(nil),                     // 84: cautem.control.v1.ServiceSummary
+	(*ListTemplatesRequest)(nil),               // 85: cautem.control.v1.ListTemplatesRequest
+	(*ListTemplatesResponse)(nil),              // 86: cautem.control.v1.ListTemplatesResponse
+	(*TemplateSummary)(nil),                    // 87: cautem.control.v1.TemplateSummary
+	(*ListWorkspacesRequest)(nil),              // 88: cautem.control.v1.ListWorkspacesRequest
+	(*ListWorkspacesResponse)(nil),             // 89: cautem.control.v1.ListWorkspacesResponse
+	(*GetWorkspaceRequest)(nil),                // 90: cautem.control.v1.GetWorkspaceRequest
+	(*GetWorkspaceResponse)(nil),               // 91: cautem.control.v1.GetWorkspaceResponse
+	(*WorkspaceSummary)(nil),                   // 92: cautem.control.v1.WorkspaceSummary
+	(*ListPolicyProposalsRequest)(nil),         // 93: cautem.control.v1.ListPolicyProposalsRequest
+	(*ListPolicyProposalsResponse)(nil),        // 94: cautem.control.v1.ListPolicyProposalsResponse
+	(*GetPolicyProposalRequest)(nil),           // 95: cautem.control.v1.GetPolicyProposalRequest
+	(*GetPolicyProposalResponse)(nil),          // 96: cautem.control.v1.GetPolicyProposalResponse
+	(*ApprovePolicyProposalResponse)(nil),      // 97: cautem.control.v1.ApprovePolicyProposalResponse
+	(*RejectPolicyProposalResponse)(nil),       // 98: cautem.control.v1.RejectPolicyProposalResponse
+	(*ApprovePolicyProposalRequest)(nil),       // 99: cautem.control.v1.ApprovePolicyProposalRequest
+	(*RejectPolicyProposalRequest)(nil),        // 100: cautem.control.v1.RejectPolicyProposalRequest
+	(*PolicyProposalSummary)(nil),              // 101: cautem.control.v1.PolicyProposalSummary
+	nil,                                        // 102: cautem.control.v1.GetManagedSandboxResponse.LabelsEntry
+	nil,                                        // 103: cautem.control.v1.SyncManagedSandboxRequest.LabelsEntry
+	nil,                                        // 104: cautem.control.v1.UpdateProviderCredentialsRequest.CredentialsEntry
+	nil,                                        // 105: cautem.control.v1.ListSandboxesRequest.LabelsEntry
+	nil,                                        // 106: cautem.control.v1.CreateSandboxRequest.LabelsEntry
+	nil,                                        // 107: cautem.control.v1.SandboxSummary.LabelsEntry
 }
-var file_cauteum_control_v1_console_proto_depIdxs = []int32{
-	4,   // 0: cauteum.control.v1.GetGatewayInfoResponse.compute_drivers:type_name -> cauteum.control.v1.ComputeDriverStatus
-	102, // 1: cauteum.control.v1.GetManagedSandboxResponse.labels:type_name -> cauteum.control.v1.GetManagedSandboxResponse.LabelsEntry
-	103, // 2: cauteum.control.v1.SyncManagedSandboxRequest.labels:type_name -> cauteum.control.v1.SyncManagedSandboxRequest.LabelsEntry
-	14,  // 3: cauteum.control.v1.AppendSandboxLogsRequest.lines:type_name -> cauteum.control.v1.ClientLogLine
-	34,  // 4: cauteum.control.v1.ListSandboxPolicyRevisionsResponse.revisions:type_name -> cauteum.control.v1.PolicyRevisionSummary
-	34,  // 5: cauteum.control.v1.GetSandboxPolicyRevisionResponse.revision:type_name -> cauteum.control.v1.PolicyRevisionSummary
-	104, // 6: cauteum.control.v1.UpdateProviderCredentialsRequest.credentials:type_name -> cauteum.control.v1.UpdateProviderCredentialsRequest.CredentialsEntry
-	38,  // 7: cauteum.control.v1.ListProviderProfilesResponse.profiles:type_name -> cauteum.control.v1.ProviderProfileSummary
-	105, // 8: cauteum.control.v1.ListSandboxesRequest.labels:type_name -> cauteum.control.v1.ListSandboxesRequest.LabelsEntry
-	81,  // 9: cauteum.control.v1.ListSandboxesResponse.sandboxes:type_name -> cauteum.control.v1.SandboxSummary
-	81,  // 10: cauteum.control.v1.GetSandboxResponse.sandbox:type_name -> cauteum.control.v1.SandboxSummary
-	0,   // 11: cauteum.control.v1.WatchSandboxesResponse.kind:type_name -> cauteum.control.v1.SandboxWatchEventKind
-	81,  // 12: cauteum.control.v1.WatchSandboxesResponse.sandbox:type_name -> cauteum.control.v1.SandboxSummary
-	64,  // 13: cauteum.control.v1.GetSandboxLogsResponse.lines:type_name -> cauteum.control.v1.SandboxLogLine
-	1,   // 14: cauteum.control.v1.WatchSandboxLogsResponse.kind:type_name -> cauteum.control.v1.SandboxLogWatchKind
-	64,  // 15: cauteum.control.v1.WatchSandboxLogsResponse.line:type_name -> cauteum.control.v1.SandboxLogLine
-	106, // 16: cauteum.control.v1.CreateSandboxRequest.labels:type_name -> cauteum.control.v1.CreateSandboxRequest.LabelsEntry
-	81,  // 17: cauteum.control.v1.CreateSandboxResponse.sandbox:type_name -> cauteum.control.v1.SandboxSummary
-	81,  // 18: cauteum.control.v1.StartSandboxResponse.sandbox:type_name -> cauteum.control.v1.SandboxSummary
-	81,  // 19: cauteum.control.v1.StopSandboxResponse.sandbox:type_name -> cauteum.control.v1.SandboxSummary
-	79,  // 20: cauteum.control.v1.GetOperationResponse.operation:type_name -> cauteum.control.v1.OperationSummary
-	79,  // 21: cauteum.control.v1.ListOperationsResponse.operations:type_name -> cauteum.control.v1.OperationSummary
-	80,  // 22: cauteum.control.v1.ListAuditEventsResponse.events:type_name -> cauteum.control.v1.AuditEventSummary
-	107, // 23: cauteum.control.v1.SandboxSummary.labels:type_name -> cauteum.control.v1.SandboxSummary.LabelsEntry
-	84,  // 24: cauteum.control.v1.ListServicesResponse.services:type_name -> cauteum.control.v1.ServiceSummary
-	87,  // 25: cauteum.control.v1.ListTemplatesResponse.templates:type_name -> cauteum.control.v1.TemplateSummary
-	92,  // 26: cauteum.control.v1.ListWorkspacesResponse.workspaces:type_name -> cauteum.control.v1.WorkspaceSummary
-	92,  // 27: cauteum.control.v1.GetWorkspaceResponse.workspace:type_name -> cauteum.control.v1.WorkspaceSummary
-	101, // 28: cauteum.control.v1.ListPolicyProposalsResponse.proposals:type_name -> cauteum.control.v1.PolicyProposalSummary
-	101, // 29: cauteum.control.v1.GetPolicyProposalResponse.proposal:type_name -> cauteum.control.v1.PolicyProposalSummary
-	101, // 30: cauteum.control.v1.ApprovePolicyProposalResponse.proposal:type_name -> cauteum.control.v1.PolicyProposalSummary
-	101, // 31: cauteum.control.v1.RejectPolicyProposalResponse.proposal:type_name -> cauteum.control.v1.PolicyProposalSummary
-	48,  // 32: cauteum.control.v1.ConsoleService.GetViewer:input_type -> cauteum.control.v1.GetViewerRequest
-	50,  // 33: cauteum.control.v1.ConsoleService.GetConsoleCapabilities:input_type -> cauteum.control.v1.GetConsoleCapabilitiesRequest
-	52,  // 34: cauteum.control.v1.ConsoleService.GetOverview:input_type -> cauteum.control.v1.GetOverviewRequest
-	2,   // 35: cauteum.control.v1.GatewayAdminService.GetGatewayInfo:input_type -> cauteum.control.v1.GetGatewayInfoRequest
-	54,  // 36: cauteum.control.v1.SandboxService.ListSandboxes:input_type -> cauteum.control.v1.ListSandboxesRequest
-	56,  // 37: cauteum.control.v1.SandboxService.GetSandbox:input_type -> cauteum.control.v1.GetSandboxRequest
-	58,  // 38: cauteum.control.v1.SandboxService.WatchSandboxes:input_type -> cauteum.control.v1.WatchSandboxesRequest
-	60,  // 39: cauteum.control.v1.SandboxService.GetSandboxLogs:input_type -> cauteum.control.v1.GetSandboxLogsRequest
-	13,  // 40: cauteum.control.v1.SandboxService.AppendSandboxLogs:input_type -> cauteum.control.v1.AppendSandboxLogsRequest
-	62,  // 41: cauteum.control.v1.SandboxService.WatchSandboxLogs:input_type -> cauteum.control.v1.WatchSandboxLogsRequest
-	65,  // 42: cauteum.control.v1.SandboxService.CreateSandbox:input_type -> cauteum.control.v1.CreateSandboxRequest
-	67,  // 43: cauteum.control.v1.SandboxService.StartSandbox:input_type -> cauteum.control.v1.StartSandboxRequest
-	69,  // 44: cauteum.control.v1.SandboxService.StopSandbox:input_type -> cauteum.control.v1.StopSandboxRequest
-	71,  // 45: cauteum.control.v1.SandboxService.DeleteSandbox:input_type -> cauteum.control.v1.DeleteSandboxRequest
-	7,   // 46: cauteum.control.v1.ManagedSandboxService.SyncManagedSandbox:input_type -> cauteum.control.v1.SyncManagedSandboxRequest
-	5,   // 47: cauteum.control.v1.ManagedSandboxService.GetManagedSandbox:input_type -> cauteum.control.v1.GetManagedSandboxRequest
-	9,   // 48: cauteum.control.v1.ManagedSandboxService.DeleteManagedSandbox:input_type -> cauteum.control.v1.DeleteManagedSandboxRequest
-	11,  // 49: cauteum.control.v1.ManagedSandboxService.IssueManagedSandboxToken:input_type -> cauteum.control.v1.IssueManagedSandboxTokenRequest
-	73,  // 50: cauteum.control.v1.OperationsService.GetOperation:input_type -> cauteum.control.v1.GetOperationRequest
-	75,  // 51: cauteum.control.v1.OperationsService.ListOperations:input_type -> cauteum.control.v1.ListOperationsRequest
-	77,  // 52: cauteum.control.v1.OperationsService.ListAuditEvents:input_type -> cauteum.control.v1.ListAuditEventsRequest
-	82,  // 53: cauteum.control.v1.CatalogService.ListServices:input_type -> cauteum.control.v1.ListServicesRequest
-	85,  // 54: cauteum.control.v1.CatalogService.ListTemplates:input_type -> cauteum.control.v1.ListTemplatesRequest
-	88,  // 55: cauteum.control.v1.CatalogService.ListWorkspaces:input_type -> cauteum.control.v1.ListWorkspacesRequest
-	90,  // 56: cauteum.control.v1.CatalogService.GetWorkspace:input_type -> cauteum.control.v1.GetWorkspaceRequest
-	16,  // 57: cauteum.control.v1.InferenceService.GetInferenceRoute:input_type -> cauteum.control.v1.GetInferenceRouteRequest
-	18,  // 58: cauteum.control.v1.InferenceService.UpdateInferenceRoute:input_type -> cauteum.control.v1.UpdateInferenceRouteRequest
-	20,  // 59: cauteum.control.v1.InferenceService.ClearInferenceRoute:input_type -> cauteum.control.v1.ClearInferenceRouteRequest
-	22,  // 60: cauteum.control.v1.PolicyService.GetGlobalPolicy:input_type -> cauteum.control.v1.GetGlobalPolicyRequest
-	24,  // 61: cauteum.control.v1.PolicyService.UpdateGlobalPolicy:input_type -> cauteum.control.v1.UpdateGlobalPolicyRequest
-	26,  // 62: cauteum.control.v1.PolicyService.GetSandboxPolicy:input_type -> cauteum.control.v1.GetSandboxPolicyRequest
-	28,  // 63: cauteum.control.v1.PolicyService.UpdateSandboxPolicy:input_type -> cauteum.control.v1.UpdateSandboxPolicyRequest
-	30,  // 64: cauteum.control.v1.PolicyService.ListSandboxPolicyRevisions:input_type -> cauteum.control.v1.ListSandboxPolicyRevisionsRequest
-	32,  // 65: cauteum.control.v1.PolicyService.GetSandboxPolicyRevision:input_type -> cauteum.control.v1.GetSandboxPolicyRevisionRequest
-	93,  // 66: cauteum.control.v1.PolicyService.ListPolicyProposals:input_type -> cauteum.control.v1.ListPolicyProposalsRequest
-	95,  // 67: cauteum.control.v1.PolicyService.GetPolicyProposal:input_type -> cauteum.control.v1.GetPolicyProposalRequest
-	99,  // 68: cauteum.control.v1.PolicyService.ApprovePolicyProposal:input_type -> cauteum.control.v1.ApprovePolicyProposalRequest
-	100, // 69: cauteum.control.v1.PolicyService.RejectPolicyProposal:input_type -> cauteum.control.v1.RejectPolicyProposalRequest
-	37,  // 70: cauteum.control.v1.ProviderProfileService.ListProviderProfiles:input_type -> cauteum.control.v1.ListProviderProfilesRequest
-	40,  // 71: cauteum.control.v1.ProviderProfileService.GetProviderProfile:input_type -> cauteum.control.v1.GetProviderProfileRequest
-	42,  // 72: cauteum.control.v1.ProviderProfileService.ImportProviderProfile:input_type -> cauteum.control.v1.ImportProviderProfileRequest
-	44,  // 73: cauteum.control.v1.ProviderProfileService.UpdateProviderProfile:input_type -> cauteum.control.v1.UpdateProviderProfileRequest
-	46,  // 74: cauteum.control.v1.ProviderProfileService.DeleteProviderProfile:input_type -> cauteum.control.v1.DeleteProviderProfileRequest
-	35,  // 75: cauteum.control.v1.ProviderCredentialService.UpdateProviderCredentials:input_type -> cauteum.control.v1.UpdateProviderCredentialsRequest
-	49,  // 76: cauteum.control.v1.ConsoleService.GetViewer:output_type -> cauteum.control.v1.GetViewerResponse
-	51,  // 77: cauteum.control.v1.ConsoleService.GetConsoleCapabilities:output_type -> cauteum.control.v1.GetConsoleCapabilitiesResponse
-	53,  // 78: cauteum.control.v1.ConsoleService.GetOverview:output_type -> cauteum.control.v1.GetOverviewResponse
-	3,   // 79: cauteum.control.v1.GatewayAdminService.GetGatewayInfo:output_type -> cauteum.control.v1.GetGatewayInfoResponse
-	55,  // 80: cauteum.control.v1.SandboxService.ListSandboxes:output_type -> cauteum.control.v1.ListSandboxesResponse
-	57,  // 81: cauteum.control.v1.SandboxService.GetSandbox:output_type -> cauteum.control.v1.GetSandboxResponse
-	59,  // 82: cauteum.control.v1.SandboxService.WatchSandboxes:output_type -> cauteum.control.v1.WatchSandboxesResponse
-	61,  // 83: cauteum.control.v1.SandboxService.GetSandboxLogs:output_type -> cauteum.control.v1.GetSandboxLogsResponse
-	15,  // 84: cauteum.control.v1.SandboxService.AppendSandboxLogs:output_type -> cauteum.control.v1.AppendSandboxLogsResponse
-	63,  // 85: cauteum.control.v1.SandboxService.WatchSandboxLogs:output_type -> cauteum.control.v1.WatchSandboxLogsResponse
-	66,  // 86: cauteum.control.v1.SandboxService.CreateSandbox:output_type -> cauteum.control.v1.CreateSandboxResponse
-	68,  // 87: cauteum.control.v1.SandboxService.StartSandbox:output_type -> cauteum.control.v1.StartSandboxResponse
-	70,  // 88: cauteum.control.v1.SandboxService.StopSandbox:output_type -> cauteum.control.v1.StopSandboxResponse
-	72,  // 89: cauteum.control.v1.SandboxService.DeleteSandbox:output_type -> cauteum.control.v1.DeleteSandboxResponse
-	8,   // 90: cauteum.control.v1.ManagedSandboxService.SyncManagedSandbox:output_type -> cauteum.control.v1.SyncManagedSandboxResponse
-	6,   // 91: cauteum.control.v1.ManagedSandboxService.GetManagedSandbox:output_type -> cauteum.control.v1.GetManagedSandboxResponse
-	10,  // 92: cauteum.control.v1.ManagedSandboxService.DeleteManagedSandbox:output_type -> cauteum.control.v1.DeleteManagedSandboxResponse
-	12,  // 93: cauteum.control.v1.ManagedSandboxService.IssueManagedSandboxToken:output_type -> cauteum.control.v1.IssueManagedSandboxTokenResponse
-	74,  // 94: cauteum.control.v1.OperationsService.GetOperation:output_type -> cauteum.control.v1.GetOperationResponse
-	76,  // 95: cauteum.control.v1.OperationsService.ListOperations:output_type -> cauteum.control.v1.ListOperationsResponse
-	78,  // 96: cauteum.control.v1.OperationsService.ListAuditEvents:output_type -> cauteum.control.v1.ListAuditEventsResponse
-	83,  // 97: cauteum.control.v1.CatalogService.ListServices:output_type -> cauteum.control.v1.ListServicesResponse
-	86,  // 98: cauteum.control.v1.CatalogService.ListTemplates:output_type -> cauteum.control.v1.ListTemplatesResponse
-	89,  // 99: cauteum.control.v1.CatalogService.ListWorkspaces:output_type -> cauteum.control.v1.ListWorkspacesResponse
-	91,  // 100: cauteum.control.v1.CatalogService.GetWorkspace:output_type -> cauteum.control.v1.GetWorkspaceResponse
-	17,  // 101: cauteum.control.v1.InferenceService.GetInferenceRoute:output_type -> cauteum.control.v1.GetInferenceRouteResponse
-	19,  // 102: cauteum.control.v1.InferenceService.UpdateInferenceRoute:output_type -> cauteum.control.v1.UpdateInferenceRouteResponse
-	21,  // 103: cauteum.control.v1.InferenceService.ClearInferenceRoute:output_type -> cauteum.control.v1.ClearInferenceRouteResponse
-	23,  // 104: cauteum.control.v1.PolicyService.GetGlobalPolicy:output_type -> cauteum.control.v1.GetGlobalPolicyResponse
-	25,  // 105: cauteum.control.v1.PolicyService.UpdateGlobalPolicy:output_type -> cauteum.control.v1.UpdateGlobalPolicyResponse
-	27,  // 106: cauteum.control.v1.PolicyService.GetSandboxPolicy:output_type -> cauteum.control.v1.GetSandboxPolicyResponse
-	29,  // 107: cauteum.control.v1.PolicyService.UpdateSandboxPolicy:output_type -> cauteum.control.v1.UpdateSandboxPolicyResponse
-	31,  // 108: cauteum.control.v1.PolicyService.ListSandboxPolicyRevisions:output_type -> cauteum.control.v1.ListSandboxPolicyRevisionsResponse
-	33,  // 109: cauteum.control.v1.PolicyService.GetSandboxPolicyRevision:output_type -> cauteum.control.v1.GetSandboxPolicyRevisionResponse
-	94,  // 110: cauteum.control.v1.PolicyService.ListPolicyProposals:output_type -> cauteum.control.v1.ListPolicyProposalsResponse
-	96,  // 111: cauteum.control.v1.PolicyService.GetPolicyProposal:output_type -> cauteum.control.v1.GetPolicyProposalResponse
-	97,  // 112: cauteum.control.v1.PolicyService.ApprovePolicyProposal:output_type -> cauteum.control.v1.ApprovePolicyProposalResponse
-	98,  // 113: cauteum.control.v1.PolicyService.RejectPolicyProposal:output_type -> cauteum.control.v1.RejectPolicyProposalResponse
-	39,  // 114: cauteum.control.v1.ProviderProfileService.ListProviderProfiles:output_type -> cauteum.control.v1.ListProviderProfilesResponse
-	41,  // 115: cauteum.control.v1.ProviderProfileService.GetProviderProfile:output_type -> cauteum.control.v1.GetProviderProfileResponse
-	43,  // 116: cauteum.control.v1.ProviderProfileService.ImportProviderProfile:output_type -> cauteum.control.v1.ImportProviderProfileResponse
-	45,  // 117: cauteum.control.v1.ProviderProfileService.UpdateProviderProfile:output_type -> cauteum.control.v1.UpdateProviderProfileResponse
-	47,  // 118: cauteum.control.v1.ProviderProfileService.DeleteProviderProfile:output_type -> cauteum.control.v1.DeleteProviderProfileResponse
-	36,  // 119: cauteum.control.v1.ProviderCredentialService.UpdateProviderCredentials:output_type -> cauteum.control.v1.UpdateProviderCredentialsResponse
+var file_cautem_control_v1_console_proto_depIdxs = []int32{
+	4,   // 0: cautem.control.v1.GetGatewayInfoResponse.compute_drivers:type_name -> cautem.control.v1.ComputeDriverStatus
+	102, // 1: cautem.control.v1.GetManagedSandboxResponse.labels:type_name -> cautem.control.v1.GetManagedSandboxResponse.LabelsEntry
+	103, // 2: cautem.control.v1.SyncManagedSandboxRequest.labels:type_name -> cautem.control.v1.SyncManagedSandboxRequest.LabelsEntry
+	14,  // 3: cautem.control.v1.AppendSandboxLogsRequest.lines:type_name -> cautem.control.v1.ClientLogLine
+	34,  // 4: cautem.control.v1.ListSandboxPolicyRevisionsResponse.revisions:type_name -> cautem.control.v1.PolicyRevisionSummary
+	34,  // 5: cautem.control.v1.GetSandboxPolicyRevisionResponse.revision:type_name -> cautem.control.v1.PolicyRevisionSummary
+	104, // 6: cautem.control.v1.UpdateProviderCredentialsRequest.credentials:type_name -> cautem.control.v1.UpdateProviderCredentialsRequest.CredentialsEntry
+	38,  // 7: cautem.control.v1.ListProviderProfilesResponse.profiles:type_name -> cautem.control.v1.ProviderProfileSummary
+	105, // 8: cautem.control.v1.ListSandboxesRequest.labels:type_name -> cautem.control.v1.ListSandboxesRequest.LabelsEntry
+	81,  // 9: cautem.control.v1.ListSandboxesResponse.sandboxes:type_name -> cautem.control.v1.SandboxSummary
+	81,  // 10: cautem.control.v1.GetSandboxResponse.sandbox:type_name -> cautem.control.v1.SandboxSummary
+	0,   // 11: cautem.control.v1.WatchSandboxesResponse.kind:type_name -> cautem.control.v1.SandboxWatchEventKind
+	81,  // 12: cautem.control.v1.WatchSandboxesResponse.sandbox:type_name -> cautem.control.v1.SandboxSummary
+	64,  // 13: cautem.control.v1.GetSandboxLogsResponse.lines:type_name -> cautem.control.v1.SandboxLogLine
+	1,   // 14: cautem.control.v1.WatchSandboxLogsResponse.kind:type_name -> cautem.control.v1.SandboxLogWatchKind
+	64,  // 15: cautem.control.v1.WatchSandboxLogsResponse.line:type_name -> cautem.control.v1.SandboxLogLine
+	106, // 16: cautem.control.v1.CreateSandboxRequest.labels:type_name -> cautem.control.v1.CreateSandboxRequest.LabelsEntry
+	81,  // 17: cautem.control.v1.CreateSandboxResponse.sandbox:type_name -> cautem.control.v1.SandboxSummary
+	81,  // 18: cautem.control.v1.StartSandboxResponse.sandbox:type_name -> cautem.control.v1.SandboxSummary
+	81,  // 19: cautem.control.v1.StopSandboxResponse.sandbox:type_name -> cautem.control.v1.SandboxSummary
+	79,  // 20: cautem.control.v1.GetOperationResponse.operation:type_name -> cautem.control.v1.OperationSummary
+	79,  // 21: cautem.control.v1.ListOperationsResponse.operations:type_name -> cautem.control.v1.OperationSummary
+	80,  // 22: cautem.control.v1.ListAuditEventsResponse.events:type_name -> cautem.control.v1.AuditEventSummary
+	107, // 23: cautem.control.v1.SandboxSummary.labels:type_name -> cautem.control.v1.SandboxSummary.LabelsEntry
+	84,  // 24: cautem.control.v1.ListServicesResponse.services:type_name -> cautem.control.v1.ServiceSummary
+	87,  // 25: cautem.control.v1.ListTemplatesResponse.templates:type_name -> cautem.control.v1.TemplateSummary
+	92,  // 26: cautem.control.v1.ListWorkspacesResponse.workspaces:type_name -> cautem.control.v1.WorkspaceSummary
+	92,  // 27: cautem.control.v1.GetWorkspaceResponse.workspace:type_name -> cautem.control.v1.WorkspaceSummary
+	101, // 28: cautem.control.v1.ListPolicyProposalsResponse.proposals:type_name -> cautem.control.v1.PolicyProposalSummary
+	101, // 29: cautem.control.v1.GetPolicyProposalResponse.proposal:type_name -> cautem.control.v1.PolicyProposalSummary
+	101, // 30: cautem.control.v1.ApprovePolicyProposalResponse.proposal:type_name -> cautem.control.v1.PolicyProposalSummary
+	101, // 31: cautem.control.v1.RejectPolicyProposalResponse.proposal:type_name -> cautem.control.v1.PolicyProposalSummary
+	48,  // 32: cautem.control.v1.ConsoleService.GetViewer:input_type -> cautem.control.v1.GetViewerRequest
+	50,  // 33: cautem.control.v1.ConsoleService.GetConsoleCapabilities:input_type -> cautem.control.v1.GetConsoleCapabilitiesRequest
+	52,  // 34: cautem.control.v1.ConsoleService.GetOverview:input_type -> cautem.control.v1.GetOverviewRequest
+	2,   // 35: cautem.control.v1.GatewayAdminService.GetGatewayInfo:input_type -> cautem.control.v1.GetGatewayInfoRequest
+	54,  // 36: cautem.control.v1.SandboxService.ListSandboxes:input_type -> cautem.control.v1.ListSandboxesRequest
+	56,  // 37: cautem.control.v1.SandboxService.GetSandbox:input_type -> cautem.control.v1.GetSandboxRequest
+	58,  // 38: cautem.control.v1.SandboxService.WatchSandboxes:input_type -> cautem.control.v1.WatchSandboxesRequest
+	60,  // 39: cautem.control.v1.SandboxService.GetSandboxLogs:input_type -> cautem.control.v1.GetSandboxLogsRequest
+	13,  // 40: cautem.control.v1.SandboxService.AppendSandboxLogs:input_type -> cautem.control.v1.AppendSandboxLogsRequest
+	62,  // 41: cautem.control.v1.SandboxService.WatchSandboxLogs:input_type -> cautem.control.v1.WatchSandboxLogsRequest
+	65,  // 42: cautem.control.v1.SandboxService.CreateSandbox:input_type -> cautem.control.v1.CreateSandboxRequest
+	67,  // 43: cautem.control.v1.SandboxService.StartSandbox:input_type -> cautem.control.v1.StartSandboxRequest
+	69,  // 44: cautem.control.v1.SandboxService.StopSandbox:input_type -> cautem.control.v1.StopSandboxRequest
+	71,  // 45: cautem.control.v1.SandboxService.DeleteSandbox:input_type -> cautem.control.v1.DeleteSandboxRequest
+	7,   // 46: cautem.control.v1.ManagedSandboxService.SyncManagedSandbox:input_type -> cautem.control.v1.SyncManagedSandboxRequest
+	5,   // 47: cautem.control.v1.ManagedSandboxService.GetManagedSandbox:input_type -> cautem.control.v1.GetManagedSandboxRequest
+	9,   // 48: cautem.control.v1.ManagedSandboxService.DeleteManagedSandbox:input_type -> cautem.control.v1.DeleteManagedSandboxRequest
+	11,  // 49: cautem.control.v1.ManagedSandboxService.IssueManagedSandboxToken:input_type -> cautem.control.v1.IssueManagedSandboxTokenRequest
+	73,  // 50: cautem.control.v1.OperationsService.GetOperation:input_type -> cautem.control.v1.GetOperationRequest
+	75,  // 51: cautem.control.v1.OperationsService.ListOperations:input_type -> cautem.control.v1.ListOperationsRequest
+	77,  // 52: cautem.control.v1.OperationsService.ListAuditEvents:input_type -> cautem.control.v1.ListAuditEventsRequest
+	82,  // 53: cautem.control.v1.CatalogService.ListServices:input_type -> cautem.control.v1.ListServicesRequest
+	85,  // 54: cautem.control.v1.CatalogService.ListTemplates:input_type -> cautem.control.v1.ListTemplatesRequest
+	88,  // 55: cautem.control.v1.CatalogService.ListWorkspaces:input_type -> cautem.control.v1.ListWorkspacesRequest
+	90,  // 56: cautem.control.v1.CatalogService.GetWorkspace:input_type -> cautem.control.v1.GetWorkspaceRequest
+	16,  // 57: cautem.control.v1.InferenceService.GetInferenceRoute:input_type -> cautem.control.v1.GetInferenceRouteRequest
+	18,  // 58: cautem.control.v1.InferenceService.UpdateInferenceRoute:input_type -> cautem.control.v1.UpdateInferenceRouteRequest
+	20,  // 59: cautem.control.v1.InferenceService.ClearInferenceRoute:input_type -> cautem.control.v1.ClearInferenceRouteRequest
+	22,  // 60: cautem.control.v1.PolicyService.GetGlobalPolicy:input_type -> cautem.control.v1.GetGlobalPolicyRequest
+	24,  // 61: cautem.control.v1.PolicyService.UpdateGlobalPolicy:input_type -> cautem.control.v1.UpdateGlobalPolicyRequest
+	26,  // 62: cautem.control.v1.PolicyService.GetSandboxPolicy:input_type -> cautem.control.v1.GetSandboxPolicyRequest
+	28,  // 63: cautem.control.v1.PolicyService.UpdateSandboxPolicy:input_type -> cautem.control.v1.UpdateSandboxPolicyRequest
+	30,  // 64: cautem.control.v1.PolicyService.ListSandboxPolicyRevisions:input_type -> cautem.control.v1.ListSandboxPolicyRevisionsRequest
+	32,  // 65: cautem.control.v1.PolicyService.GetSandboxPolicyRevision:input_type -> cautem.control.v1.GetSandboxPolicyRevisionRequest
+	93,  // 66: cautem.control.v1.PolicyService.ListPolicyProposals:input_type -> cautem.control.v1.ListPolicyProposalsRequest
+	95,  // 67: cautem.control.v1.PolicyService.GetPolicyProposal:input_type -> cautem.control.v1.GetPolicyProposalRequest
+	99,  // 68: cautem.control.v1.PolicyService.ApprovePolicyProposal:input_type -> cautem.control.v1.ApprovePolicyProposalRequest
+	100, // 69: cautem.control.v1.PolicyService.RejectPolicyProposal:input_type -> cautem.control.v1.RejectPolicyProposalRequest
+	37,  // 70: cautem.control.v1.ProviderProfileService.ListProviderProfiles:input_type -> cautem.control.v1.ListProviderProfilesRequest
+	40,  // 71: cautem.control.v1.ProviderProfileService.GetProviderProfile:input_type -> cautem.control.v1.GetProviderProfileRequest
+	42,  // 72: cautem.control.v1.ProviderProfileService.ImportProviderProfile:input_type -> cautem.control.v1.ImportProviderProfileRequest
+	44,  // 73: cautem.control.v1.ProviderProfileService.UpdateProviderProfile:input_type -> cautem.control.v1.UpdateProviderProfileRequest
+	46,  // 74: cautem.control.v1.ProviderProfileService.DeleteProviderProfile:input_type -> cautem.control.v1.DeleteProviderProfileRequest
+	35,  // 75: cautem.control.v1.ProviderCredentialService.UpdateProviderCredentials:input_type -> cautem.control.v1.UpdateProviderCredentialsRequest
+	49,  // 76: cautem.control.v1.ConsoleService.GetViewer:output_type -> cautem.control.v1.GetViewerResponse
+	51,  // 77: cautem.control.v1.ConsoleService.GetConsoleCapabilities:output_type -> cautem.control.v1.GetConsoleCapabilitiesResponse
+	53,  // 78: cautem.control.v1.ConsoleService.GetOverview:output_type -> cautem.control.v1.GetOverviewResponse
+	3,   // 79: cautem.control.v1.GatewayAdminService.GetGatewayInfo:output_type -> cautem.control.v1.GetGatewayInfoResponse
+	55,  // 80: cautem.control.v1.SandboxService.ListSandboxes:output_type -> cautem.control.v1.ListSandboxesResponse
+	57,  // 81: cautem.control.v1.SandboxService.GetSandbox:output_type -> cautem.control.v1.GetSandboxResponse
+	59,  // 82: cautem.control.v1.SandboxService.WatchSandboxes:output_type -> cautem.control.v1.WatchSandboxesResponse
+	61,  // 83: cautem.control.v1.SandboxService.GetSandboxLogs:output_type -> cautem.control.v1.GetSandboxLogsResponse
+	15,  // 84: cautem.control.v1.SandboxService.AppendSandboxLogs:output_type -> cautem.control.v1.AppendSandboxLogsResponse
+	63,  // 85: cautem.control.v1.SandboxService.WatchSandboxLogs:output_type -> cautem.control.v1.WatchSandboxLogsResponse
+	66,  // 86: cautem.control.v1.SandboxService.CreateSandbox:output_type -> cautem.control.v1.CreateSandboxResponse
+	68,  // 87: cautem.control.v1.SandboxService.StartSandbox:output_type -> cautem.control.v1.StartSandboxResponse
+	70,  // 88: cautem.control.v1.SandboxService.StopSandbox:output_type -> cautem.control.v1.StopSandboxResponse
+	72,  // 89: cautem.control.v1.SandboxService.DeleteSandbox:output_type -> cautem.control.v1.DeleteSandboxResponse
+	8,   // 90: cautem.control.v1.ManagedSandboxService.SyncManagedSandbox:output_type -> cautem.control.v1.SyncManagedSandboxResponse
+	6,   // 91: cautem.control.v1.ManagedSandboxService.GetManagedSandbox:output_type -> cautem.control.v1.GetManagedSandboxResponse
+	10,  // 92: cautem.control.v1.ManagedSandboxService.DeleteManagedSandbox:output_type -> cautem.control.v1.DeleteManagedSandboxResponse
+	12,  // 93: cautem.control.v1.ManagedSandboxService.IssueManagedSandboxToken:output_type -> cautem.control.v1.IssueManagedSandboxTokenResponse
+	74,  // 94: cautem.control.v1.OperationsService.GetOperation:output_type -> cautem.control.v1.GetOperationResponse
+	76,  // 95: cautem.control.v1.OperationsService.ListOperations:output_type -> cautem.control.v1.ListOperationsResponse
+	78,  // 96: cautem.control.v1.OperationsService.ListAuditEvents:output_type -> cautem.control.v1.ListAuditEventsResponse
+	83,  // 97: cautem.control.v1.CatalogService.ListServices:output_type -> cautem.control.v1.ListServicesResponse
+	86,  // 98: cautem.control.v1.CatalogService.ListTemplates:output_type -> cautem.control.v1.ListTemplatesResponse
+	89,  // 99: cautem.control.v1.CatalogService.ListWorkspaces:output_type -> cautem.control.v1.ListWorkspacesResponse
+	91,  // 100: cautem.control.v1.CatalogService.GetWorkspace:output_type -> cautem.control.v1.GetWorkspaceResponse
+	17,  // 101: cautem.control.v1.InferenceService.GetInferenceRoute:output_type -> cautem.control.v1.GetInferenceRouteResponse
+	19,  // 102: cautem.control.v1.InferenceService.UpdateInferenceRoute:output_type -> cautem.control.v1.UpdateInferenceRouteResponse
+	21,  // 103: cautem.control.v1.InferenceService.ClearInferenceRoute:output_type -> cautem.control.v1.ClearInferenceRouteResponse
+	23,  // 104: cautem.control.v1.PolicyService.GetGlobalPolicy:output_type -> cautem.control.v1.GetGlobalPolicyResponse
+	25,  // 105: cautem.control.v1.PolicyService.UpdateGlobalPolicy:output_type -> cautem.control.v1.UpdateGlobalPolicyResponse
+	27,  // 106: cautem.control.v1.PolicyService.GetSandboxPolicy:output_type -> cautem.control.v1.GetSandboxPolicyResponse
+	29,  // 107: cautem.control.v1.PolicyService.UpdateSandboxPolicy:output_type -> cautem.control.v1.UpdateSandboxPolicyResponse
+	31,  // 108: cautem.control.v1.PolicyService.ListSandboxPolicyRevisions:output_type -> cautem.control.v1.ListSandboxPolicyRevisionsResponse
+	33,  // 109: cautem.control.v1.PolicyService.GetSandboxPolicyRevision:output_type -> cautem.control.v1.GetSandboxPolicyRevisionResponse
+	94,  // 110: cautem.control.v1.PolicyService.ListPolicyProposals:output_type -> cautem.control.v1.ListPolicyProposalsResponse
+	96,  // 111: cautem.control.v1.PolicyService.GetPolicyProposal:output_type -> cautem.control.v1.GetPolicyProposalResponse
+	97,  // 112: cautem.control.v1.PolicyService.ApprovePolicyProposal:output_type -> cautem.control.v1.ApprovePolicyProposalResponse
+	98,  // 113: cautem.control.v1.PolicyService.RejectPolicyProposal:output_type -> cautem.control.v1.RejectPolicyProposalResponse
+	39,  // 114: cautem.control.v1.ProviderProfileService.ListProviderProfiles:output_type -> cautem.control.v1.ListProviderProfilesResponse
+	41,  // 115: cautem.control.v1.ProviderProfileService.GetProviderProfile:output_type -> cautem.control.v1.GetProviderProfileResponse
+	43,  // 116: cautem.control.v1.ProviderProfileService.ImportProviderProfile:output_type -> cautem.control.v1.ImportProviderProfileResponse
+	45,  // 117: cautem.control.v1.ProviderProfileService.UpdateProviderProfile:output_type -> cautem.control.v1.UpdateProviderProfileResponse
+	47,  // 118: cautem.control.v1.ProviderProfileService.DeleteProviderProfile:output_type -> cautem.control.v1.DeleteProviderProfileResponse
+	36,  // 119: cautem.control.v1.ProviderCredentialService.UpdateProviderCredentials:output_type -> cautem.control.v1.UpdateProviderCredentialsResponse
 	76,  // [76:120] is the sub-list for method output_type
 	32,  // [32:76] is the sub-list for method input_type
 	32,  // [32:32] is the sub-list for extension type_name
@@ -7005,27 +7005,27 @@ var file_cauteum_control_v1_console_proto_depIdxs = []int32{
 	0,   // [0:32] is the sub-list for field type_name
 }
 
-func init() { file_cauteum_control_v1_console_proto_init() }
-func file_cauteum_control_v1_console_proto_init() {
-	if File_cauteum_control_v1_console_proto != nil {
+func init() { file_cautem_control_v1_console_proto_init() }
+func file_cautem_control_v1_console_proto_init() {
+	if File_cautem_control_v1_console_proto != nil {
 		return
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
-			RawDescriptor: unsafe.Slice(unsafe.StringData(file_cauteum_control_v1_console_proto_rawDesc), len(file_cauteum_control_v1_console_proto_rawDesc)),
+			RawDescriptor: unsafe.Slice(unsafe.StringData(file_cautem_control_v1_console_proto_rawDesc), len(file_cautem_control_v1_console_proto_rawDesc)),
 			NumEnums:      2,
 			NumMessages:   106,
 			NumExtensions: 0,
 			NumServices:   10,
 		},
-		GoTypes:           file_cauteum_control_v1_console_proto_goTypes,
-		DependencyIndexes: file_cauteum_control_v1_console_proto_depIdxs,
-		EnumInfos:         file_cauteum_control_v1_console_proto_enumTypes,
-		MessageInfos:      file_cauteum_control_v1_console_proto_msgTypes,
+		GoTypes:           file_cautem_control_v1_console_proto_goTypes,
+		DependencyIndexes: file_cautem_control_v1_console_proto_depIdxs,
+		EnumInfos:         file_cautem_control_v1_console_proto_enumTypes,
+		MessageInfos:      file_cautem_control_v1_console_proto_msgTypes,
 	}.Build()
-	File_cauteum_control_v1_console_proto = out.File
-	file_cauteum_control_v1_console_proto_goTypes = nil
-	file_cauteum_control_v1_console_proto_depIdxs = nil
+	File_cautem_control_v1_console_proto = out.File
+	file_cautem_control_v1_console_proto_goTypes = nil
+	file_cautem_control_v1_console_proto_depIdxs = nil
 }

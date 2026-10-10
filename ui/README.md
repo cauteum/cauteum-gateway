@@ -1,6 +1,6 @@
-# Cauteum control console
+# cautem control console
 
-This is the first browser client for the `cauteum.control.v1` Connect API.
+This is the first browser client for the `cautem.control.v1` Connect API.
 It is a read-only inventory slice: sign in, inspect authorized sandbox records,
 filter the list, and read the gateway's bounded in-memory log tail.
 
@@ -15,7 +15,7 @@ cd ../../ui && npm ci && npm run dev
 
 Vite proxies `/v1/auth/oidc` and Connect requests to `https://127.0.0.1:7443`
 by default and accepts the local gateway's development certificate. Point it at
-another gateway with `CAUTEUM_GATEWAY_TARGET`. This proxy setting is for local
+another gateway with `CAUTEM_GATEWAY_TARGET`. This proxy setting is for local
 development only.
 
 Configure the gateway with its OIDC issuer, audience, and browser `client_id`.
@@ -34,7 +34,7 @@ receives the gateway owner token, supervisor tokens, or driver credentials.
 
 Production static hosting and the gateway's same-origin reverse-proxy route are
 not wired yet. Deploy the built `dist/` behind a same-origin reverse proxy that
-routes `/v1/auth/oidc` and `cauteum.control.v1` to the gateway and serves the
+routes `/v1/auth/oidc` and `cautem.control.v1` to the gateway and serves the
 SPA fallback for `/auth/callback`. Do not expose a development Vite proxy.
 
 The UI presents `registry_status` as registry data. Runtime health is explicitly

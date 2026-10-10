@@ -6,9 +6,9 @@ import (
 	"testing"
 
 	"connectrpc.com/connect"
-	controlv1 "github.com/cautem/cauteum-gateway/api/gen/cauteum/control/v1"
-	"github.com/cautem/cauteum-gateway/api/gen/cauteum/control/v1/controlv1connect"
-	"github.com/cautem/cauteum-gateway/internal/httpapi"
+	controlv1 "github.com/cautem/cautem-gateway/api/gen/cautem/control/v1"
+	"github.com/cautem/cautem-gateway/api/gen/cautem/control/v1/controlv1connect"
+	"github.com/cautem/cautem-gateway/internal/httpapi"
 )
 
 func TestAuthRequiredOnAPI(t *testing.T) {

@@ -11,8 +11,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/cautem/cauteum-gateway/internal/sshrelay"
-	"github.com/cautem/cauteum-gateway/internal/storage/store"
+	"github.com/cautem/cautem-gateway/internal/sshrelay"
+	"github.com/cautem/cautem-gateway/internal/storage/store"
 )
 
 func TestEdgeServiceName(t *testing.T) {
@@ -20,7 +20,7 @@ func TestEdgeServiceName(t *testing.T) {
 	if !ok || name != "web" {
 		t.Fatalf("got %q %v", name, ok)
 	}
-	name, ok = edgeServiceName("api.cauteum.localhost")
+	name, ok = edgeServiceName("api.cautem.localhost")
 	if !ok || name != "api" {
 		t.Fatalf("got %q %v", name, ok)
 	}

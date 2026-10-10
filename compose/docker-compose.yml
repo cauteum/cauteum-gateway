@@ -1,43 +1,43 @@
-# Control plane: cauteum-gateway (+ optional Dex OIDC via profile).
+# Control plane: cautem-gateway (+ optional Dex OIDC via profile).
 #
 # Local-dev (default):
-#   docker compose -f cauteum-gateway/compose/docker-compose.yml up -d --build
-#   cauteum gateway add http://127.0.0.1:7443 --local --name local
+#   docker compose -f cautem-gateway/compose/docker-compose.yml up -d --build
+#   cautem gateway add http://127.0.0.1:7443 --local --name local
 #
 # With OIDC (Dex on :5556):
-#   docker compose -f cauteum-gateway/compose/docker-compose.yml \
-#     -f cauteum-gateway/compose/docker-compose.oidc.yml --profile oidc up -d --build
-#   cauteum gateway add http://127.0.0.1:7443 --local --name local \
+#   docker compose -f cautem-gateway/compose/docker-compose.yml \
+#     -f cautem-gateway/compose/docker-compose.oidc.yml --profile oidc up -d --build
+#   cautem gateway add http://127.0.0.1:7443 --local --name local \
 #     --oidc-issuer http://127.0.0.1:5556/dex \
-#     --oidc-client-id cauteum-cli \
+#     --oidc-client-id cautem-cli \
 #     --oidc-allow-insecure-http
-#   cauteum gateway login   # admin@example.com / password
+#   cautem gateway login   # admin@example.com / password
 #
 # Local control plane: durable state + optional OIDC gateway login.
 
 services:
-  cauteum-gateway:
+  cautem-gateway:
     build:
       context: ../..
-      dockerfile: cauteum-gateway/Dockerfile
-    image: cauteum-gateway:local
+      dockerfile: cautem-gateway/Dockerfile
+    image: cautem-gateway:local
     ports:
       - "127.0.0.1:7443:7443"
     volumes:
-      - cauteum-gateway-data:/var/lib/cauteum-gateway
+      - cautem-gateway-data:/var/lib/cautem-gateway
     environment:
-      CAUTEUM_GATEWAY_DATA: /var/lib/cauteum-gateway
-      CAUTEUM_SECRETS_KEK: ${CAUTEUM_SECRETS_KEK:-}
-      CAUTEUM_OIDC_ISSUER: ${CAUTEUM_OIDC_ISSUER:-}
-      CAUTEUM_OIDC_CLIENT_ID: ${CAUTEUM_OIDC_CLIENT_ID:-}
-      CAUTEUM_OIDC_AUDIENCE: ${CAUTEUM_OIDC_AUDIENCE:-}
-      CAUTEUM_OIDC_ALLOW_INSECURE_HTTP: ${CAUTEUM_OIDC_ALLOW_INSECURE_HTTP:-}
+      CAUTEM_GATEWAY_DATA: /var/lib/cautem-gateway
+      CAUTEM_SECRETS_KEK: ${CAUTEM_SECRETS_KEK:-}
+      CAUTEM_OIDC_ISSUER: ${CAUTEM_OIDC_ISSUER:-}
+      CAUTEM_OIDC_CLIENT_ID: ${CAUTEM_OIDC_CLIENT_ID:-}
+      CAUTEM_OIDC_AUDIENCE: ${CAUTEM_OIDC_AUDIENCE:-}
+      CAUTEM_OIDC_ALLOW_INSECURE_HTTP: ${CAUTEM_OIDC_ALLOW_INSECURE_HTTP:-}
     restart: unless-stopped
     # OpenShell Linux parity: sandbox/sidecar callback via host-gateway aliases.
     extra_hosts:
-      - "host.cauteum.internal:host-gateway"
+      - "host.cautem.internal:host-gateway"
       - "host.docker.internal:host-gateway"
-    networks: [cauteum]
+    networks: [cautem]
     # HEALTHCHECK is optional; image may not ship wget — CLI uses /healthz via doctor.
   # Optional IdP for local OIDC login (profile: oidc).
   dex:
@@ -48,12 +48,12 @@ services:
       - "127.0.0.1:5556:5556"
     volumes:
       - ./dex/config.yaml:/etc/dex/config.yaml:ro
-    networks: [cauteum]
+    networks: [cautem]
     restart: unless-stopped
 
 networks:
-  cauteum:
+  cautem:
     driver: bridge
 
 volumes:
-  cauteum-gateway-data:
+  cautem-gateway-data:

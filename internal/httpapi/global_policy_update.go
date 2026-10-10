@@ -8,7 +8,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/cautem/cauteum-gateway/internal/storage/store"
+	"github.com/cautem/cautem-gateway/internal/storage/store"
 	"gopkg.in/yaml.v3"
 )
 

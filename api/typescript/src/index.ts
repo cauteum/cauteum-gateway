@@ -1,8 +1,8 @@
-export * from "./gen/cauteum/control/v1/console_pb.js";
+export * from "./gen/cautem/control/v1/console_pb.js";
 
 import { createClient, type Interceptor, type Transport } from "@connectrpc/connect";
 import { createConnectTransport } from "@connectrpc/connect-web";
-import { CatalogService, ConsoleService, OperationsService, PolicyService, ProviderCredentialService, ProviderProfileService, SandboxService } from "./gen/cauteum/control/v1/console_pb.js";
+import { CatalogService, ConsoleService, OperationsService, PolicyService, ProviderCredentialService, ProviderProfileService, SandboxService } from "./gen/cautem/control/v1/console_pb.js";
 
 export interface ControlClientOptions {
   baseUrl: string;

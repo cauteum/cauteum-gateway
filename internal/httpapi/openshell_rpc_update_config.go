@@ -16,8 +16,8 @@ import (
 
 	openshellv1 "github.com/NVIDIA/OpenShell/sdk/go/proto/openshellv1"
 	sandboxv1 "github.com/NVIDIA/OpenShell/sdk/go/proto/sandboxv1"
-	corepolicy "github.com/cautem/cauteum-core/policy"
-	"github.com/cautem/cauteum-gateway/internal/storage/store"
+	corepolicy "github.com/cautem/cautem-core/policy"
+	"github.com/cautem/cautem-gateway/internal/storage/store"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/proto"
@@ -248,7 +248,7 @@ func (s *openShellRPC) syncSandboxRuntimePolicy(name string, revision int) error
 	if err != nil {
 		return fmt.Errorf("open runtime policy: %w", err)
 	}
-	content := append([]byte(fmt.Sprintf("# cauteum-policy-revision: %d\n", revision)), serialized...)
+	content := append([]byte(fmt.Sprintf("# cautem-policy-revision: %d\n", revision)), serialized...)
 	if _, err := file.Write(content); err != nil {
 		_ = file.Close()
 		return fmt.Errorf("write runtime policy: %w", err)

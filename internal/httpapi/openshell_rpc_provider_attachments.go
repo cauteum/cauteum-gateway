@@ -8,7 +8,7 @@ import (
 
 	datamodelv1 "github.com/NVIDIA/OpenShell/sdk/go/proto/datamodelv1"
 	openshellv1 "github.com/NVIDIA/OpenShell/sdk/go/proto/openshellv1"
-	"github.com/cautem/cauteum-gateway/internal/storage/store"
+	"github.com/cautem/cautem-gateway/internal/storage/store"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -136,7 +136,7 @@ func providerAttachmentToProto(record store.ProviderRecord) *datamodelv1.Provide
 	return &datamodelv1.Provider{
 		Metadata: &datamodelv1.ObjectMeta{
 			Id: record.Name, Name: record.Name, Workspace: record.Workspace,
-			Annotations: map[string]string{"cauteum.io/runtime-credentials": strconv.FormatBool(record.RuntimeCredentials)},
+			Annotations: map[string]string{"cautem.io/runtime-credentials": strconv.FormatBool(record.RuntimeCredentials)},
 		},
 		Type: record.Type, Credentials: credentials, Config: cloneStringMap(record.Config),
 		CredentialExpiresAtMs: expires, ProfileWorkspace: record.Workspace,

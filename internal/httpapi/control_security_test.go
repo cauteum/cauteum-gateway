@@ -6,12 +6,12 @@ import (
 	"testing"
 
 	"connectrpc.com/connect"
-	controlv1 "github.com/cautem/cauteum-gateway/api/gen/cauteum/control/v1"
+	controlv1 "github.com/cautem/cautem-gateway/api/gen/cautem/control/v1"
 )
 
 func TestControlSecurityInventoryCoversDescriptor(t *testing.T) {
 	seen := make(map[string]bool)
-	services := controlv1.File_cauteum_control_v1_console_proto.Services()
+	services := controlv1.File_cautem_control_v1_console_proto.Services()
 	for serviceIndex := 0; serviceIndex < services.Len(); serviceIndex++ {
 		service := services.Get(serviceIndex)
 		methods := service.Methods()
@@ -46,8 +46,8 @@ func TestControlSecurityInventoryCoversDescriptor(t *testing.T) {
 
 func TestControlSecurityAuthorizationFailsClosed(t *testing.T) {
 	api := &controlAPI{opt: Options{OIDC: OIDCOptions{ScopesClaim: "scope"}}}
-	readProcedure := "/cauteum.control.v1.SandboxService/ListSandboxes"
-	writeProcedure := "/cauteum.control.v1.SandboxService/CreateSandbox"
+	readProcedure := "/cautem.control.v1.SandboxService/ListSandboxes"
+	writeProcedure := "/cautem.control.v1.SandboxService/CreateSandbox"
 	if code := connect.CodeOf(api.authorizeControlProcedure(context.Background(), readProcedure)); code != connect.CodeUnauthenticated {
 		t.Fatalf("anonymous code=%v", code)
 	}
@@ -55,7 +55,7 @@ func TestControlSecurityAuthorizationFailsClosed(t *testing.T) {
 	if code := connect.CodeOf(api.authorizeControlProcedure(sandbox, readProcedure)); code != connect.CodePermissionDenied {
 		t.Fatalf("sandbox principal code=%v", code)
 	}
-	if err := api.authorizeControlProcedure(sandbox, "/cauteum.control.v1.SandboxService/AppendSandboxLogs"); err != nil {
+	if err := api.authorizeControlProcedure(sandbox, "/cautem.control.v1.SandboxService/AppendSandboxLogs"); err != nil {
 		t.Fatalf("sandbox log append denied: %v", err)
 	}
 	reader := withPrincipal(context.Background(), Principal{Kind: PrincipalUser, IDP: "oidc", Subject: "reader", Scopes: []string{"sandbox:read"}})
@@ -65,7 +65,7 @@ func TestControlSecurityAuthorizationFailsClosed(t *testing.T) {
 	if code := connect.CodeOf(api.authorizeControlProcedure(reader, writeProcedure)); code != connect.CodePermissionDenied {
 		t.Fatalf("reader write code=%v", code)
 	}
-	if code := connect.CodeOf(api.authorizeControlProcedure(reader, "/cauteum.control.v1.Unknown/Method")); code != connect.CodeUnimplemented {
+	if code := connect.CodeOf(api.authorizeControlProcedure(reader, "/cautem.control.v1.Unknown/Method")); code != connect.CodeUnimplemented {
 		t.Fatalf("unknown procedure code=%v", code)
 	}
 }

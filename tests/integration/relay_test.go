@@ -15,10 +15,10 @@ import (
 	"time"
 
 	openshellv1 "github.com/NVIDIA/OpenShell/sdk/go/proto/openshellv1"
-	"github.com/cautem/cauteum-core/relayproto"
-	"github.com/cautem/cauteum-gateway/internal/httpapi"
-	"github.com/cautem/cauteum-runtime/relayclient"
-	"github.com/cautem/cauteum-runtime/sshserver"
+	"github.com/cautem/cautem-core/relayproto"
+	"github.com/cautem/cautem-gateway/internal/httpapi"
+	"github.com/cautem/cautem-runtime/relayclient"
+	"github.com/cautem/cautem-runtime/sshserver"
 	"golang.org/x/crypto/ssh"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -28,7 +28,7 @@ import (
 // dialing out to the gateway, like the proxy sidecar does.
 func (g *testGateway) startSupervisor(name, token string) {
 	g.t.Helper()
-	initPath := filepath.Join(g.t.TempDir(), "cauteum-init")
+	initPath := filepath.Join(g.t.TempDir(), "cautem-init")
 	if err := os.WriteFile(initPath, []byte("#!/bin/sh\n[ \"$1\" = \"--\" ] || exit 99\nshift\nexec \"$@\"\n"), 0o700); err != nil {
 		g.t.Fatal(err)
 	}

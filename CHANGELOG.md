@@ -2,6 +2,12 @@
 
 ## [Unreleased]
 
+## [v0.1.6] - 2026-10-11
+
+### Changed
+
+- Rename the module, runtime identifiers and project references to the `cautem` namespace.
+
 ## [v0.1.0-beta.2] - 2026-10-10
 
 ### Changed
@@ -13,14 +19,14 @@
 
 ### Added
 
-- Expose the versioned `cauteum.control.v1` management RPC contract with generated Go, Connect and TypeScript clients.
+- Expose the versioned `cautem.control.v1` management RPC contract with generated Go, Connect and TypeScript clients.
 - Add bounded management views, lifecycle operations, logs, inference, services and gateway information over Control RPC.
 - Persist operation, audit and policy state with authorization, resource-version checks and idempotency.
 
 ### Changed
 
 - Remove legacy REST management routes; retain health and authentication bootstrap endpoints.
-- Resolve `cauteum-core` v0.1.0-beta.2 and `slogx` v0.1.0-beta.1 from published tags.
+- Resolve `cautem-core` v0.1.0-beta.2 and `slogx` v0.1.0-beta.1 from published tags.
 
 ## [v0.1.0-beta.1] - 2026-10-07
 
@@ -30,7 +36,7 @@
 
 ### Changed
 
-- Use `cauteum-core` v0.1.0-beta.1 and `cauteum-runtime` v0.1.0-beta.1.
+- Use `cautem-core` v0.1.0-beta.1 and `cautem-runtime` v0.1.0-beta.1.
 - Update AWS SDK, go-jose, and SPIFFE dependencies to their latest compatible releases.
 
 ### Fixed

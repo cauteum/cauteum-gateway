@@ -10,18 +10,18 @@ import (
 	"time"
 
 	"connectrpc.com/connect"
-	controlv1 "github.com/cautem/cauteum-gateway/api/gen/cauteum/control/v1"
-	"github.com/cautem/cauteum-gateway/api/gen/cauteum/control/v1/controlv1connect"
-	"github.com/cautem/cauteum-gateway/internal/logbuf"
-	"github.com/cautem/cauteum-gateway/internal/service"
-	"github.com/cautem/cauteum-gateway/internal/storage/store"
-	"github.com/cautem/cauteum-runtime/idp"
+	controlv1 "github.com/cautem/cautem-gateway/api/gen/cautem/control/v1"
+	"github.com/cautem/cautem-gateway/api/gen/cautem/control/v1/controlv1connect"
+	"github.com/cautem/cautem-gateway/internal/logbuf"
+	"github.com/cautem/cautem-gateway/internal/service"
+	"github.com/cautem/cautem-gateway/internal/storage/store"
+	"github.com/cautem/cautem-runtime/idp"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/proto"
 )
 
-const controlAPIPathPrefix = "/cauteum.control.v1."
+const controlAPIPathPrefix = "/cautem.control.v1."
 
 type controlAPI struct {
 	reader     service.ConsoleReader
