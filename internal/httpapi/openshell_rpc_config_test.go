@@ -220,15 +220,28 @@ func TestUpdateConfigRejectsGlobalPolicyWithConnectedRuntime(t *testing.T) {
 	done := make(chan struct{})
 	remove := hub.RegisterOpenShellSupervisor("demo", "instance-1", func(string, string) error { return nil }, done, nil)
 	defer func() { close(done); remove() }()
-	rpc := &openShellRPC{runtime: &grpcRuntime{st: st, relay: hub}}
+	dataDir := t.TempDir()
+	rpc := &openShellRPC{runtime: &grpcRuntime{st: st, relay: hub, opt: Options{DataDir: dataDir}, policyApplyTimeout: 20 * time.Millisecond}}
 	ctx := withPrincipal(context.Background(), Principal{Kind: PrincipalUser, IDP: "local_dev"})
 	if _, err := rpc.UpdateConfig(ctx, &openshellv1.UpdateConfigRequest{
 		Global: true, Policy: &sandboxv1.SandboxPolicy{Version: 1},
 	}); status.Code(err) != codes.FailedPrecondition {
 		t.Fatalf("global policy update error=%v; want FailedPrecondition", err)
 	}
-	if policy := st.GetGlobalPolicy(); policy != "" {
+	if policy, revision := st.GlobalPolicySnapshot(); policy != "" {
 		t.Fatalf("global policy changed despite unavailable acknowledgement: %q", policy)
+	} else if revision != 2 {
+		t.Fatalf("global policy revision=%d after failed update and compensation; want monotonic revision 2", revision)
+	}
+	if sandbox, ok := st.GetSandbox("demo"); !ok || sandbox.PolicyRev != 2 {
+		t.Fatalf("sandbox policy after compensation=%+v exists=%t; want restored policy at monotonic revision 2", sandbox, ok)
+	}
+	policyFile, err := os.ReadFile(filepath.Join(dataDir, "sandboxes", "demo", "policy.yaml"))
+	if err != nil {
+		t.Fatalf("read compensated runtime policy: %v", err)
+	}
+	if !strings.HasPrefix(string(policyFile), "# cauteum-policy-revision: 2\n") {
+		t.Fatalf("runtime policy after compensation does not contain revision 2: %q", policyFile)
 	}
 }
 

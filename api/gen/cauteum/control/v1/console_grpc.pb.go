@@ -207,15 +207,122 @@ var ConsoleService_ServiceDesc = grpc.ServiceDesc{
 }
 
 const (
-	SandboxService_ListSandboxes_FullMethodName    = "/cauteum.control.v1.SandboxService/ListSandboxes"
-	SandboxService_GetSandbox_FullMethodName       = "/cauteum.control.v1.SandboxService/GetSandbox"
-	SandboxService_WatchSandboxes_FullMethodName   = "/cauteum.control.v1.SandboxService/WatchSandboxes"
-	SandboxService_GetSandboxLogs_FullMethodName   = "/cauteum.control.v1.SandboxService/GetSandboxLogs"
-	SandboxService_WatchSandboxLogs_FullMethodName = "/cauteum.control.v1.SandboxService/WatchSandboxLogs"
-	SandboxService_CreateSandbox_FullMethodName    = "/cauteum.control.v1.SandboxService/CreateSandbox"
-	SandboxService_StartSandbox_FullMethodName     = "/cauteum.control.v1.SandboxService/StartSandbox"
-	SandboxService_StopSandbox_FullMethodName      = "/cauteum.control.v1.SandboxService/StopSandbox"
-	SandboxService_DeleteSandbox_FullMethodName    = "/cauteum.control.v1.SandboxService/DeleteSandbox"
+	GatewayAdminService_GetGatewayInfo_FullMethodName = "/cauteum.control.v1.GatewayAdminService/GetGatewayInfo"
+)
+
+// GatewayAdminServiceClient is the client API for GatewayAdminService service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+//
+// GatewayAdminService exposes explicitly authorized gateway diagnostics.
+type GatewayAdminServiceClient interface {
+	GetGatewayInfo(ctx context.Context, in *GetGatewayInfoRequest, opts ...grpc.CallOption) (*GetGatewayInfoResponse, error)
+}
+
+type gatewayAdminServiceClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewGatewayAdminServiceClient(cc grpc.ClientConnInterface) GatewayAdminServiceClient {
+	return &gatewayAdminServiceClient{cc}
+}
+
+func (c *gatewayAdminServiceClient) GetGatewayInfo(ctx context.Context, in *GetGatewayInfoRequest, opts ...grpc.CallOption) (*GetGatewayInfoResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetGatewayInfoResponse)
+	err := c.cc.Invoke(ctx, GatewayAdminService_GetGatewayInfo_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// GatewayAdminServiceServer is the server API for GatewayAdminService service.
+// All implementations must embed UnimplementedGatewayAdminServiceServer
+// for forward compatibility.
+//
+// GatewayAdminService exposes explicitly authorized gateway diagnostics.
+type GatewayAdminServiceServer interface {
+	GetGatewayInfo(context.Context, *GetGatewayInfoRequest) (*GetGatewayInfoResponse, error)
+	mustEmbedUnimplementedGatewayAdminServiceServer()
+}
+
+// UnimplementedGatewayAdminServiceServer must be embedded to have
+// forward compatible implementations.
+//
+// NOTE: this should be embedded by value instead of pointer to avoid a nil
+// pointer dereference when methods are called.
+type UnimplementedGatewayAdminServiceServer struct{}
+
+func (UnimplementedGatewayAdminServiceServer) GetGatewayInfo(context.Context, *GetGatewayInfoRequest) (*GetGatewayInfoResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetGatewayInfo not implemented")
+}
+func (UnimplementedGatewayAdminServiceServer) mustEmbedUnimplementedGatewayAdminServiceServer() {}
+func (UnimplementedGatewayAdminServiceServer) testEmbeddedByValue()                             {}
+
+// UnsafeGatewayAdminServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to GatewayAdminServiceServer will
+// result in compilation errors.
+type UnsafeGatewayAdminServiceServer interface {
+	mustEmbedUnimplementedGatewayAdminServiceServer()
+}
+
+func RegisterGatewayAdminServiceServer(s grpc.ServiceRegistrar, srv GatewayAdminServiceServer) {
+	// If the following call pancis, it indicates UnimplementedGatewayAdminServiceServer was
+	// embedded by pointer and is nil.  This will cause panics if an
+	// unimplemented method is ever invoked, so we test this at initialization
+	// time to prevent it from happening at runtime later due to I/O.
+	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
+		t.testEmbeddedByValue()
+	}
+	s.RegisterService(&GatewayAdminService_ServiceDesc, srv)
+}
+
+func _GatewayAdminService_GetGatewayInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetGatewayInfoRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GatewayAdminServiceServer).GetGatewayInfo(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: GatewayAdminService_GetGatewayInfo_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GatewayAdminServiceServer).GetGatewayInfo(ctx, req.(*GetGatewayInfoRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// GatewayAdminService_ServiceDesc is the grpc.ServiceDesc for GatewayAdminService service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var GatewayAdminService_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "cauteum.control.v1.GatewayAdminService",
+	HandlerType: (*GatewayAdminServiceServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "GetGatewayInfo",
+			Handler:    _GatewayAdminService_GetGatewayInfo_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "cauteum/control/v1/console.proto",
+}
+
+const (
+	SandboxService_ListSandboxes_FullMethodName     = "/cauteum.control.v1.SandboxService/ListSandboxes"
+	SandboxService_GetSandbox_FullMethodName        = "/cauteum.control.v1.SandboxService/GetSandbox"
+	SandboxService_WatchSandboxes_FullMethodName    = "/cauteum.control.v1.SandboxService/WatchSandboxes"
+	SandboxService_GetSandboxLogs_FullMethodName    = "/cauteum.control.v1.SandboxService/GetSandboxLogs"
+	SandboxService_AppendSandboxLogs_FullMethodName = "/cauteum.control.v1.SandboxService/AppendSandboxLogs"
+	SandboxService_WatchSandboxLogs_FullMethodName  = "/cauteum.control.v1.SandboxService/WatchSandboxLogs"
+	SandboxService_CreateSandbox_FullMethodName     = "/cauteum.control.v1.SandboxService/CreateSandbox"
+	SandboxService_StartSandbox_FullMethodName      = "/cauteum.control.v1.SandboxService/StartSandbox"
+	SandboxService_StopSandbox_FullMethodName       = "/cauteum.control.v1.SandboxService/StopSandbox"
+	SandboxService_DeleteSandbox_FullMethodName     = "/cauteum.control.v1.SandboxService/DeleteSandbox"
 )
 
 // SandboxServiceClient is the client API for SandboxService service.
@@ -233,6 +340,8 @@ type SandboxServiceClient interface {
 	WatchSandboxes(ctx context.Context, in *WatchSandboxesRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[WatchSandboxesResponse], error)
 	// GetSandboxLogs returns a bounded tail of one visible sandbox's log buffer.
 	GetSandboxLogs(ctx context.Context, in *GetSandboxLogsRequest, opts ...grpc.CallOption) (*GetSandboxLogsResponse, error)
+	// Append bounded observations from an authorized user or matching sandbox token.
+	AppendSandboxLogs(ctx context.Context, in *AppendSandboxLogsRequest, opts ...grpc.CallOption) (*AppendSandboxLogsResponse, error)
 	// WatchSandboxLogs starts with a tail and then follows new buffered lines.
 	WatchSandboxLogs(ctx context.Context, in *WatchSandboxLogsRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[WatchSandboxLogsResponse], error)
 	// These actions execute against the configured runtime, never the REST registry.
@@ -293,6 +402,16 @@ func (c *sandboxServiceClient) GetSandboxLogs(ctx context.Context, in *GetSandbo
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetSandboxLogsResponse)
 	err := c.cc.Invoke(ctx, SandboxService_GetSandboxLogs_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *sandboxServiceClient) AppendSandboxLogs(ctx context.Context, in *AppendSandboxLogsRequest, opts ...grpc.CallOption) (*AppendSandboxLogsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AppendSandboxLogsResponse)
+	err := c.cc.Invoke(ctx, SandboxService_AppendSandboxLogs_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -373,6 +492,8 @@ type SandboxServiceServer interface {
 	WatchSandboxes(*WatchSandboxesRequest, grpc.ServerStreamingServer[WatchSandboxesResponse]) error
 	// GetSandboxLogs returns a bounded tail of one visible sandbox's log buffer.
 	GetSandboxLogs(context.Context, *GetSandboxLogsRequest) (*GetSandboxLogsResponse, error)
+	// Append bounded observations from an authorized user or matching sandbox token.
+	AppendSandboxLogs(context.Context, *AppendSandboxLogsRequest) (*AppendSandboxLogsResponse, error)
 	// WatchSandboxLogs starts with a tail and then follows new buffered lines.
 	WatchSandboxLogs(*WatchSandboxLogsRequest, grpc.ServerStreamingServer[WatchSandboxLogsResponse]) error
 	// These actions execute against the configured runtime, never the REST registry.
@@ -401,6 +522,9 @@ func (UnimplementedSandboxServiceServer) WatchSandboxes(*WatchSandboxesRequest, 
 }
 func (UnimplementedSandboxServiceServer) GetSandboxLogs(context.Context, *GetSandboxLogsRequest) (*GetSandboxLogsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetSandboxLogs not implemented")
+}
+func (UnimplementedSandboxServiceServer) AppendSandboxLogs(context.Context, *AppendSandboxLogsRequest) (*AppendSandboxLogsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AppendSandboxLogs not implemented")
 }
 func (UnimplementedSandboxServiceServer) WatchSandboxLogs(*WatchSandboxLogsRequest, grpc.ServerStreamingServer[WatchSandboxLogsResponse]) error {
 	return status.Errorf(codes.Unimplemented, "method WatchSandboxLogs not implemented")
@@ -499,6 +623,24 @@ func _SandboxService_GetSandboxLogs_Handler(srv interface{}, ctx context.Context
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(SandboxServiceServer).GetSandboxLogs(ctx, req.(*GetSandboxLogsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SandboxService_AppendSandboxLogs_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AppendSandboxLogsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SandboxServiceServer).AppendSandboxLogs(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SandboxService_AppendSandboxLogs_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SandboxServiceServer).AppendSandboxLogs(ctx, req.(*AppendSandboxLogsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -606,6 +748,10 @@ var SandboxService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _SandboxService_GetSandboxLogs_Handler,
 		},
 		{
+			MethodName: "AppendSandboxLogs",
+			Handler:    _SandboxService_AppendSandboxLogs_Handler,
+		},
+		{
 			MethodName: "CreateSandbox",
 			Handler:    _SandboxService_CreateSandbox_Handler,
 		},
@@ -634,6 +780,228 @@ var SandboxService_ServiceDesc = grpc.ServiceDesc{
 			ServerStreams: true,
 		},
 	},
+	Metadata: "cauteum/control/v1/console.proto",
+}
+
+const (
+	ManagedSandboxService_SyncManagedSandbox_FullMethodName       = "/cauteum.control.v1.ManagedSandboxService/SyncManagedSandbox"
+	ManagedSandboxService_GetManagedSandbox_FullMethodName        = "/cauteum.control.v1.ManagedSandboxService/GetManagedSandbox"
+	ManagedSandboxService_DeleteManagedSandbox_FullMethodName     = "/cauteum.control.v1.ManagedSandboxService/DeleteManagedSandbox"
+	ManagedSandboxService_IssueManagedSandboxToken_FullMethodName = "/cauteum.control.v1.ManagedSandboxService/IssueManagedSandboxToken"
+)
+
+// ManagedSandboxServiceClient is the client API for ManagedSandboxService service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+//
+// ManagedSandboxService records sandboxes whose runtime is controlled by the CLI.
+// It never provisions or deletes the underlying compute runtime.
+type ManagedSandboxServiceClient interface {
+	SyncManagedSandbox(ctx context.Context, in *SyncManagedSandboxRequest, opts ...grpc.CallOption) (*SyncManagedSandboxResponse, error)
+	GetManagedSandbox(ctx context.Context, in *GetManagedSandboxRequest, opts ...grpc.CallOption) (*GetManagedSandboxResponse, error)
+	DeleteManagedSandbox(ctx context.Context, in *DeleteManagedSandboxRequest, opts ...grpc.CallOption) (*DeleteManagedSandboxResponse, error)
+	IssueManagedSandboxToken(ctx context.Context, in *IssueManagedSandboxTokenRequest, opts ...grpc.CallOption) (*IssueManagedSandboxTokenResponse, error)
+}
+
+type managedSandboxServiceClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewManagedSandboxServiceClient(cc grpc.ClientConnInterface) ManagedSandboxServiceClient {
+	return &managedSandboxServiceClient{cc}
+}
+
+func (c *managedSandboxServiceClient) SyncManagedSandbox(ctx context.Context, in *SyncManagedSandboxRequest, opts ...grpc.CallOption) (*SyncManagedSandboxResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(SyncManagedSandboxResponse)
+	err := c.cc.Invoke(ctx, ManagedSandboxService_SyncManagedSandbox_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *managedSandboxServiceClient) GetManagedSandbox(ctx context.Context, in *GetManagedSandboxRequest, opts ...grpc.CallOption) (*GetManagedSandboxResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetManagedSandboxResponse)
+	err := c.cc.Invoke(ctx, ManagedSandboxService_GetManagedSandbox_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *managedSandboxServiceClient) DeleteManagedSandbox(ctx context.Context, in *DeleteManagedSandboxRequest, opts ...grpc.CallOption) (*DeleteManagedSandboxResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(DeleteManagedSandboxResponse)
+	err := c.cc.Invoke(ctx, ManagedSandboxService_DeleteManagedSandbox_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *managedSandboxServiceClient) IssueManagedSandboxToken(ctx context.Context, in *IssueManagedSandboxTokenRequest, opts ...grpc.CallOption) (*IssueManagedSandboxTokenResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(IssueManagedSandboxTokenResponse)
+	err := c.cc.Invoke(ctx, ManagedSandboxService_IssueManagedSandboxToken_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// ManagedSandboxServiceServer is the server API for ManagedSandboxService service.
+// All implementations must embed UnimplementedManagedSandboxServiceServer
+// for forward compatibility.
+//
+// ManagedSandboxService records sandboxes whose runtime is controlled by the CLI.
+// It never provisions or deletes the underlying compute runtime.
+type ManagedSandboxServiceServer interface {
+	SyncManagedSandbox(context.Context, *SyncManagedSandboxRequest) (*SyncManagedSandboxResponse, error)
+	GetManagedSandbox(context.Context, *GetManagedSandboxRequest) (*GetManagedSandboxResponse, error)
+	DeleteManagedSandbox(context.Context, *DeleteManagedSandboxRequest) (*DeleteManagedSandboxResponse, error)
+	IssueManagedSandboxToken(context.Context, *IssueManagedSandboxTokenRequest) (*IssueManagedSandboxTokenResponse, error)
+	mustEmbedUnimplementedManagedSandboxServiceServer()
+}
+
+// UnimplementedManagedSandboxServiceServer must be embedded to have
+// forward compatible implementations.
+//
+// NOTE: this should be embedded by value instead of pointer to avoid a nil
+// pointer dereference when methods are called.
+type UnimplementedManagedSandboxServiceServer struct{}
+
+func (UnimplementedManagedSandboxServiceServer) SyncManagedSandbox(context.Context, *SyncManagedSandboxRequest) (*SyncManagedSandboxResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SyncManagedSandbox not implemented")
+}
+func (UnimplementedManagedSandboxServiceServer) GetManagedSandbox(context.Context, *GetManagedSandboxRequest) (*GetManagedSandboxResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetManagedSandbox not implemented")
+}
+func (UnimplementedManagedSandboxServiceServer) DeleteManagedSandbox(context.Context, *DeleteManagedSandboxRequest) (*DeleteManagedSandboxResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteManagedSandbox not implemented")
+}
+func (UnimplementedManagedSandboxServiceServer) IssueManagedSandboxToken(context.Context, *IssueManagedSandboxTokenRequest) (*IssueManagedSandboxTokenResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method IssueManagedSandboxToken not implemented")
+}
+func (UnimplementedManagedSandboxServiceServer) mustEmbedUnimplementedManagedSandboxServiceServer() {}
+func (UnimplementedManagedSandboxServiceServer) testEmbeddedByValue()                               {}
+
+// UnsafeManagedSandboxServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to ManagedSandboxServiceServer will
+// result in compilation errors.
+type UnsafeManagedSandboxServiceServer interface {
+	mustEmbedUnimplementedManagedSandboxServiceServer()
+}
+
+func RegisterManagedSandboxServiceServer(s grpc.ServiceRegistrar, srv ManagedSandboxServiceServer) {
+	// If the following call pancis, it indicates UnimplementedManagedSandboxServiceServer was
+	// embedded by pointer and is nil.  This will cause panics if an
+	// unimplemented method is ever invoked, so we test this at initialization
+	// time to prevent it from happening at runtime later due to I/O.
+	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
+		t.testEmbeddedByValue()
+	}
+	s.RegisterService(&ManagedSandboxService_ServiceDesc, srv)
+}
+
+func _ManagedSandboxService_SyncManagedSandbox_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SyncManagedSandboxRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ManagedSandboxServiceServer).SyncManagedSandbox(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ManagedSandboxService_SyncManagedSandbox_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ManagedSandboxServiceServer).SyncManagedSandbox(ctx, req.(*SyncManagedSandboxRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ManagedSandboxService_GetManagedSandbox_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetManagedSandboxRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ManagedSandboxServiceServer).GetManagedSandbox(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ManagedSandboxService_GetManagedSandbox_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ManagedSandboxServiceServer).GetManagedSandbox(ctx, req.(*GetManagedSandboxRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ManagedSandboxService_DeleteManagedSandbox_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteManagedSandboxRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ManagedSandboxServiceServer).DeleteManagedSandbox(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ManagedSandboxService_DeleteManagedSandbox_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ManagedSandboxServiceServer).DeleteManagedSandbox(ctx, req.(*DeleteManagedSandboxRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ManagedSandboxService_IssueManagedSandboxToken_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(IssueManagedSandboxTokenRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ManagedSandboxServiceServer).IssueManagedSandboxToken(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ManagedSandboxService_IssueManagedSandboxToken_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ManagedSandboxServiceServer).IssueManagedSandboxToken(ctx, req.(*IssueManagedSandboxTokenRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// ManagedSandboxService_ServiceDesc is the grpc.ServiceDesc for ManagedSandboxService service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var ManagedSandboxService_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "cauteum.control.v1.ManagedSandboxService",
+	HandlerType: (*ManagedSandboxServiceServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "SyncManagedSandbox",
+			Handler:    _ManagedSandboxService_SyncManagedSandbox_Handler,
+		},
+		{
+			MethodName: "GetManagedSandbox",
+			Handler:    _ManagedSandboxService_GetManagedSandbox_Handler,
+		},
+		{
+			MethodName: "DeleteManagedSandbox",
+			Handler:    _ManagedSandboxService_DeleteManagedSandbox_Handler,
+		},
+		{
+			MethodName: "IssueManagedSandboxToken",
+			Handler:    _ManagedSandboxService_IssueManagedSandboxToken_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
 	Metadata: "cauteum/control/v1/console.proto",
 }
 
@@ -1033,6 +1401,188 @@ var CatalogService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetWorkspace",
 			Handler:    _CatalogService_GetWorkspace_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "cauteum/control/v1/console.proto",
+}
+
+const (
+	InferenceService_GetInferenceRoute_FullMethodName    = "/cauteum.control.v1.InferenceService/GetInferenceRoute"
+	InferenceService_UpdateInferenceRoute_FullMethodName = "/cauteum.control.v1.InferenceService/UpdateInferenceRoute"
+	InferenceService_ClearInferenceRoute_FullMethodName  = "/cauteum.control.v1.InferenceService/ClearInferenceRoute"
+)
+
+// InferenceServiceClient is the client API for InferenceService service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+//
+// InferenceService manages the gateway-wide inference.local route.
+type InferenceServiceClient interface {
+	GetInferenceRoute(ctx context.Context, in *GetInferenceRouteRequest, opts ...grpc.CallOption) (*GetInferenceRouteResponse, error)
+	UpdateInferenceRoute(ctx context.Context, in *UpdateInferenceRouteRequest, opts ...grpc.CallOption) (*UpdateInferenceRouteResponse, error)
+	ClearInferenceRoute(ctx context.Context, in *ClearInferenceRouteRequest, opts ...grpc.CallOption) (*ClearInferenceRouteResponse, error)
+}
+
+type inferenceServiceClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewInferenceServiceClient(cc grpc.ClientConnInterface) InferenceServiceClient {
+	return &inferenceServiceClient{cc}
+}
+
+func (c *inferenceServiceClient) GetInferenceRoute(ctx context.Context, in *GetInferenceRouteRequest, opts ...grpc.CallOption) (*GetInferenceRouteResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetInferenceRouteResponse)
+	err := c.cc.Invoke(ctx, InferenceService_GetInferenceRoute_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *inferenceServiceClient) UpdateInferenceRoute(ctx context.Context, in *UpdateInferenceRouteRequest, opts ...grpc.CallOption) (*UpdateInferenceRouteResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UpdateInferenceRouteResponse)
+	err := c.cc.Invoke(ctx, InferenceService_UpdateInferenceRoute_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *inferenceServiceClient) ClearInferenceRoute(ctx context.Context, in *ClearInferenceRouteRequest, opts ...grpc.CallOption) (*ClearInferenceRouteResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ClearInferenceRouteResponse)
+	err := c.cc.Invoke(ctx, InferenceService_ClearInferenceRoute_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// InferenceServiceServer is the server API for InferenceService service.
+// All implementations must embed UnimplementedInferenceServiceServer
+// for forward compatibility.
+//
+// InferenceService manages the gateway-wide inference.local route.
+type InferenceServiceServer interface {
+	GetInferenceRoute(context.Context, *GetInferenceRouteRequest) (*GetInferenceRouteResponse, error)
+	UpdateInferenceRoute(context.Context, *UpdateInferenceRouteRequest) (*UpdateInferenceRouteResponse, error)
+	ClearInferenceRoute(context.Context, *ClearInferenceRouteRequest) (*ClearInferenceRouteResponse, error)
+	mustEmbedUnimplementedInferenceServiceServer()
+}
+
+// UnimplementedInferenceServiceServer must be embedded to have
+// forward compatible implementations.
+//
+// NOTE: this should be embedded by value instead of pointer to avoid a nil
+// pointer dereference when methods are called.
+type UnimplementedInferenceServiceServer struct{}
+
+func (UnimplementedInferenceServiceServer) GetInferenceRoute(context.Context, *GetInferenceRouteRequest) (*GetInferenceRouteResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetInferenceRoute not implemented")
+}
+func (UnimplementedInferenceServiceServer) UpdateInferenceRoute(context.Context, *UpdateInferenceRouteRequest) (*UpdateInferenceRouteResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateInferenceRoute not implemented")
+}
+func (UnimplementedInferenceServiceServer) ClearInferenceRoute(context.Context, *ClearInferenceRouteRequest) (*ClearInferenceRouteResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ClearInferenceRoute not implemented")
+}
+func (UnimplementedInferenceServiceServer) mustEmbedUnimplementedInferenceServiceServer() {}
+func (UnimplementedInferenceServiceServer) testEmbeddedByValue()                          {}
+
+// UnsafeInferenceServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to InferenceServiceServer will
+// result in compilation errors.
+type UnsafeInferenceServiceServer interface {
+	mustEmbedUnimplementedInferenceServiceServer()
+}
+
+func RegisterInferenceServiceServer(s grpc.ServiceRegistrar, srv InferenceServiceServer) {
+	// If the following call pancis, it indicates UnimplementedInferenceServiceServer was
+	// embedded by pointer and is nil.  This will cause panics if an
+	// unimplemented method is ever invoked, so we test this at initialization
+	// time to prevent it from happening at runtime later due to I/O.
+	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
+		t.testEmbeddedByValue()
+	}
+	s.RegisterService(&InferenceService_ServiceDesc, srv)
+}
+
+func _InferenceService_GetInferenceRoute_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetInferenceRouteRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(InferenceServiceServer).GetInferenceRoute(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: InferenceService_GetInferenceRoute_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(InferenceServiceServer).GetInferenceRoute(ctx, req.(*GetInferenceRouteRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _InferenceService_UpdateInferenceRoute_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateInferenceRouteRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(InferenceServiceServer).UpdateInferenceRoute(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: InferenceService_UpdateInferenceRoute_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(InferenceServiceServer).UpdateInferenceRoute(ctx, req.(*UpdateInferenceRouteRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _InferenceService_ClearInferenceRoute_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ClearInferenceRouteRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(InferenceServiceServer).ClearInferenceRoute(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: InferenceService_ClearInferenceRoute_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(InferenceServiceServer).ClearInferenceRoute(ctx, req.(*ClearInferenceRouteRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// InferenceService_ServiceDesc is the grpc.ServiceDesc for InferenceService service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var InferenceService_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "cauteum.control.v1.InferenceService",
+	HandlerType: (*InferenceServiceServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "GetInferenceRoute",
+			Handler:    _InferenceService_GetInferenceRoute_Handler,
+		},
+		{
+			MethodName: "UpdateInferenceRoute",
+			Handler:    _InferenceService_UpdateInferenceRoute_Handler,
+		},
+		{
+			MethodName: "ClearInferenceRoute",
+			Handler:    _InferenceService_ClearInferenceRoute_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

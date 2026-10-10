@@ -172,18 +172,23 @@ type Sandbox struct {
 
 // PolicyRevision is one loaded base-policy generation (OpenShell policy list).
 type PolicyRevision struct {
-	Rev         int               `json:"rev"`
-	UpdatedAt   time.Time         `json:"updated_at"`
-	LoadedAt    time.Time         `json:"loaded_at,omitempty"`
-	Bytes       int               `json:"bytes"`
-	Status      string            `json:"status"`
-	LoadError   string            `json:"load_error,omitempty"`
-	YAML        string            `json:"yaml,omitempty"`
-	Annotations map[string]string `json:"annotations,omitempty"`
+	Rev               int               `json:"rev"`
+	GlobalRevision    uint64            `json:"global_revision,omitempty"`
+	Cleared           bool              `json:"cleared,omitempty"`
+	UpdatedAt         time.Time         `json:"updated_at"`
+	LoadedAt          time.Time         `json:"loaded_at,omitempty"`
+	Bytes             int               `json:"bytes"`
+	Status            string            `json:"status"`
+	LoadError         string            `json:"load_error,omitempty"`
+	YAML              string            `json:"yaml,omitempty"`
+	Annotations       map[string]string `json:"annotations,omitempty"`
+	ExpectedSandboxes []string          `json:"expected_sandboxes,omitempty"`
+	AppliedSandboxes  []string          `json:"applied_sandboxes,omitempty"`
 }
 
 // ErrResourceVersionConflict indicates that a config mutation used a stale resource version.
 var ErrResourceVersionConflict = fmt.Errorf("sandbox resource version conflict")
+var ErrSandboxPolicyManagedGlobally = fmt.Errorf("sandbox policy is managed by the global policy")
 
 // ErrSandboxProviderLimit indicates a sandbox exceeds OpenShell's provider cap.
 var ErrSandboxProviderLimit = fmt.Errorf("sandbox provider limit reached")
@@ -202,6 +207,9 @@ func (s *Store) ApplySandboxConfig(name string, expectedResourceVersion uint64, 
 	}
 	if expectedResourceVersion != 0 && expectedResourceVersion != sb.ResourceVersion {
 		return Sandbox{}, false, ErrResourceVersionConflict
+	}
+	if policyYAML != nil && strings.TrimSpace(s.state.GlobalPolicyYAML) != "" {
+		return Sandbox{}, false, ErrSandboxPolicyManagedGlobally
 	}
 	previous := cloneSandbox(sb)
 	sb = cloneSandbox(sb)
@@ -400,11 +408,13 @@ func (s *Store) ReportPolicyStatus(sandboxID string, revision int, status, loadE
 		return fmt.Errorf("sandbox %q not found", sandboxID)
 	}
 	found := false
+	globalRevision := uint64(0)
 	for i := range sb.PolicyRevisions {
 		if sb.PolicyRevisions[i].Rev == revision {
 			sb.PolicyRevisions[i].Status = status
 			sb.PolicyRevisions[i].LoadError = loadError
 			sb.PolicyRevisions[i].LoadedAt = loadedAt
+			globalRevision = sb.PolicyRevisions[i].GlobalRevision
 			found = true
 		} else if status == PolicyStatusLoaded && sb.PolicyRevisions[i].Rev < revision && sb.PolicyRevisions[i].Status != PolicyStatusSuperseded {
 			sb.PolicyRevisions[i].Status = PolicyStatusSuperseded
@@ -413,8 +423,30 @@ func (s *Store) ReportPolicyStatus(sandboxID string, revision int, status, loadE
 	if !found {
 		return fmt.Errorf("sandbox %q policy revision %d not found", sandboxID, revision)
 	}
-	if status == PolicyStatusLoaded {
+	if status == PolicyStatusLoaded && uint32(revision) >= sb.ActivePolicyVersion {
 		sb.ActivePolicyVersion = uint32(revision)
+	}
+	if globalRevision != 0 {
+		for i := range s.state.GlobalPolicyRevisions {
+			global := &s.state.GlobalPolicyRevisions[i]
+			if uint64(global.Rev) != globalRevision || (global.Status != PolicyStatusPending && global.Status != PolicyStatusFailed) {
+				continue
+			}
+			if status == PolicyStatusFailed {
+				global.Status = PolicyStatusFailed
+				global.LoadError = loadError
+				continue
+			}
+			if status == PolicyStatusLoaded && !slices.Contains(global.AppliedSandboxes, name) {
+				global.AppliedSandboxes = append(global.AppliedSandboxes, name)
+				slices.Sort(global.AppliedSandboxes)
+			}
+			if status == PolicyStatusLoaded && len(global.AppliedSandboxes) == len(global.ExpectedSandboxes) {
+				global.Status = PolicyStatusLoaded
+				global.LoadError = ""
+				global.LoadedAt = loadedAt
+			}
+		}
 	}
 	if sb.ResourceVersion == ^uint64(0) {
 		return fmt.Errorf("sandbox resource version overflow")
@@ -830,6 +862,35 @@ func (s *Store) BeginSandboxStopCAS(name string, expectedVersion uint64) (Sandbo
 	return cloneSandbox(sb), nil
 }
 
+// RestoreSandboxStatusCAS rolls back a failed stop transition only when the
+// registry still contains that transition. It preserves an earlier error
+// state instead of claiming the runtime is running after a failed stop.
+func (s *Store) RestoreSandboxStatusCAS(name string, transitionVersion uint64, previousStatus string) (Sandbox, error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	sb, ok := s.state.Sandboxes[name]
+	if !ok {
+		return Sandbox{}, fmt.Errorf("sandbox %q not found", name)
+	}
+	if sb.ResourceVersion != transitionVersion || !strings.EqualFold(sb.Status, "stopping") {
+		return Sandbox{}, ErrResourceVersionConflict
+	}
+	if sb.ResourceVersion == ^uint64(0) {
+		return Sandbox{}, fmt.Errorf("sandbox resource version overflow")
+	}
+	if strings.TrimSpace(previousStatus) == "" {
+		previousStatus = "error"
+	}
+	sb.Status = previousStatus
+	sb.ResourceVersion++
+	sb.UpdatedAt = time.Now().UTC()
+	s.state.Sandboxes[name] = sb
+	if err := s.flushLocked(); err != nil {
+		return Sandbox{}, err
+	}
+	return cloneSandbox(sb), nil
+}
+
 // BeginSandboxDeleteCAS reserves a deletion before backend side effects.
 // Zero expectedVersion retains OpenShell's legacy unversioned behavior.
 func (s *Store) BeginSandboxDeleteCAS(name string, expectedVersion uint64) (Sandbox, error) {
@@ -906,6 +967,20 @@ func (s *Store) DeleteSandbox(name string) error {
 	defer s.mu.Unlock()
 	delete(s.state.Sandboxes, name)
 	delete(s.state.SandboxTokens, name)
+	now := time.Now().UTC()
+	for i := range s.state.GlobalPolicyRevisions {
+		revision := &s.state.GlobalPolicyRevisions[i]
+		if revision.Status != PolicyStatusPending && revision.Status != PolicyStatusFailed {
+			continue
+		}
+		revision.ExpectedSandboxes = slices.DeleteFunc(revision.ExpectedSandboxes, func(candidate string) bool { return candidate == name })
+		revision.AppliedSandboxes = slices.DeleteFunc(revision.AppliedSandboxes, func(candidate string) bool { return candidate == name })
+		if len(revision.AppliedSandboxes) == len(revision.ExpectedSandboxes) {
+			revision.Status = PolicyStatusLoaded
+			revision.LoadError = ""
+			revision.LoadedAt = now
+		}
+	}
 	for id, sess := range s.state.SSHSessions {
 		if sess.Sandbox == name {
 			delete(s.state.SSHSessions, id)
@@ -967,6 +1042,10 @@ func (s *Store) SetBasePolicy(sandbox, yaml string) error {
 	if sb.ResourceVersion == ^uint64(0) {
 		return fmt.Errorf("sandbox resource version overflow")
 	}
+	if sb.PolicyRev == int(^uint(0)>>1) {
+		return fmt.Errorf("sandbox policy revision overflow")
+	}
+	previous := cloneSandbox(sb)
 	sb.ResourceVersion++
 	sb.BasePolicyYAML = yaml
 	sb.UpdatedAt = time.Now().UTC()
@@ -983,7 +1062,11 @@ func (s *Store) SetBasePolicy(sandbox, yaml string) error {
 		sb.PolicyRevisions = sb.PolicyRevisions[len(sb.PolicyRevisions)-MaxPolicyRevisions:]
 	}
 	s.state.Sandboxes[sandbox] = sb
-	return s.flushLocked()
+	if err := s.flushLocked(); err != nil {
+		s.state.Sandboxes[sandbox] = previous
+		return err
+	}
+	return nil
 }
 
 // SetBasePolicyIfRevision stores the policy only when the observed revision is current.
@@ -993,6 +1076,9 @@ func (s *Store) SetBasePolicyIfRevision(sandbox, yaml string, expected int) (int
 	sb, ok := s.state.Sandboxes[sandbox]
 	if !ok {
 		return 0, false, fmt.Errorf("sandbox %q not found", sandbox)
+	}
+	if strings.TrimSpace(s.state.GlobalPolicyYAML) != "" {
+		return sb.PolicyRev, false, ErrSandboxPolicyManagedGlobally
 	}
 	if sb.PolicyRev != expected {
 		return sb.PolicyRev, false, nil
@@ -1312,6 +1398,29 @@ func (s *Store) SetInferenceRoute(r InferenceRoute) error {
 	return s.flushLocked()
 }
 
+// SetInferenceRouteExpected atomically updates the route if its current
+// resource version matches expectedVersion (zero means no current route).
+func (s *Store) SetInferenceRouteExpected(r InferenceRoute, expectedVersion uint64) (uint64, error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	var current uint64
+	if s.state.Inference != nil {
+		current = uint64(s.state.Inference.Version)
+	}
+	if current != expectedVersion {
+		return current, ErrInferenceRouteConflict
+	}
+	if current >= uint64(^uint(0)>>1) {
+		return current, fmt.Errorf("inference route version overflow")
+	}
+	r.Version = int(current + 1)
+	if r.TimeoutSec <= 0 {
+		r.TimeoutSec = defaultInferenceTimeoutSeconds
+	}
+	s.state.Inference = &r
+	return uint64(r.Version), s.flushLocked()
+}
+
 // GetInferenceRoute returns the inference route if set.
 func (s *Store) GetInferenceRoute() (InferenceRoute, bool) {
 	s.mu.Lock()
@@ -1328,6 +1437,25 @@ func (s *Store) ClearInferenceRoute() error {
 	defer s.mu.Unlock()
 	s.state.Inference = nil
 	return s.flushLocked()
+}
+
+// ClearInferenceRouteExpected atomically clears the route at the expected
+// version. Clearing an already absent route at version zero is idempotent.
+func (s *Store) ClearInferenceRouteExpected(expectedVersion uint64) (bool, uint64, error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	var current uint64
+	if s.state.Inference != nil {
+		current = uint64(s.state.Inference.Version)
+	}
+	if current != expectedVersion {
+		return false, current, ErrInferenceRouteConflict
+	}
+	if s.state.Inference == nil {
+		return false, current, nil
+	}
+	s.state.Inference = nil
+	return true, current, s.flushLocked()
 }
 
 // SetSetting stores a gateway setting key.

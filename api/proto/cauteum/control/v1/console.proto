@@ -16,6 +16,29 @@ service ConsoleService {
   rpc GetOverview(GetOverviewRequest) returns (GetOverviewResponse);
 }
 
+// GatewayAdminService exposes explicitly authorized gateway diagnostics.
+service GatewayAdminService {
+  rpc GetGatewayInfo(GetGatewayInfoRequest) returns (GetGatewayInfoResponse);
+}
+message GetGatewayInfoRequest {}
+message GetGatewayInfoResponse {
+  string gateway_id = 1;
+  uint64 sandbox_count = 2;
+  string auth_mode = 3;
+  repeated ComputeDriverStatus compute_drivers = 4;
+  repeated string credential_drivers = 5;
+  string default_credential_driver = 6;
+  bool allow_unauthenticated = 7;
+  string oidc_issuer = 8;
+  int64 ssh_session_ttl_seconds = 9;
+  string secrets_kek_source = 10;
+  bool secrets_kek_pinned = 11;
+  string secrets_kek_warning = 12;
+  string secrets_kek_format = 13;
+  bool secrets_kek_migration_needed = 14;
+}
+message ComputeDriverStatus { string name = 1; string state = 2; }
+
 // SandboxService provides user-facing sandbox inventory methods.
 service SandboxService {
   // ListSandboxes returns a bounded page of one workspace's sandbox records.
@@ -30,6 +53,8 @@ service SandboxService {
 
   // GetSandboxLogs returns a bounded tail of one visible sandbox's log buffer.
   rpc GetSandboxLogs(GetSandboxLogsRequest) returns (GetSandboxLogsResponse);
+  // Append bounded observations from an authorized user or matching sandbox token.
+  rpc AppendSandboxLogs(AppendSandboxLogsRequest) returns (AppendSandboxLogsResponse);
 
   // WatchSandboxLogs starts with a tail and then follows new buffered lines.
   rpc WatchSandboxLogs(WatchSandboxLogsRequest) returns (stream WatchSandboxLogsResponse);
@@ -40,6 +65,59 @@ service SandboxService {
   rpc StopSandbox(StopSandboxRequest) returns (StopSandboxResponse);
   rpc DeleteSandbox(DeleteSandboxRequest) returns (DeleteSandboxResponse);
 }
+
+// ManagedSandboxService records sandboxes whose runtime is controlled by the CLI.
+// It never provisions or deletes the underlying compute runtime.
+service ManagedSandboxService {
+  rpc SyncManagedSandbox(SyncManagedSandboxRequest) returns (SyncManagedSandboxResponse);
+  rpc GetManagedSandbox(GetManagedSandboxRequest) returns (GetManagedSandboxResponse);
+  rpc DeleteManagedSandbox(DeleteManagedSandboxRequest) returns (DeleteManagedSandboxResponse);
+  rpc IssueManagedSandboxToken(IssueManagedSandboxTokenRequest) returns (IssueManagedSandboxTokenResponse);
+}
+
+message GetManagedSandboxRequest { string workspace = 1; string name = 2; }
+message GetManagedSandboxResponse {
+  string name = 1;
+  string runtime_id = 2;
+  string image = 3;
+  string workspace = 4;
+  string network = 5;
+  string status = 6;
+  map<string, string> labels = 7;
+  string base_policy_yaml = 8;
+  repeated string attached_providers = 9;
+  uint64 resource_version = 10;
+}
+
+message SyncManagedSandboxRequest {
+  string workspace = 1;
+  string name = 2;
+  string runtime_id = 3;
+  string image = 4;
+  string network = 5;
+  string status = 6;
+  map<string, string> labels = 7;
+  string base_policy_yaml = 8;
+  repeated string attached_providers = 9;
+}
+message SyncManagedSandboxResponse { uint64 resource_version = 1; }
+message DeleteManagedSandboxRequest { string workspace = 1; string name = 2; }
+message DeleteManagedSandboxResponse { bool deleted = 1; }
+message IssueManagedSandboxTokenRequest { string workspace = 1; string name = 2; }
+message IssueManagedSandboxTokenResponse { string token = 1; }
+
+message AppendSandboxLogsRequest {
+  string workspace = 1;
+  string sandbox_name = 2;
+  repeated ClientLogLine lines = 3;
+}
+message ClientLogLine {
+  int64 timestamp_unix_ms = 1;
+  string source = 2;
+  string level = 3;
+  string text = 4;
+}
+message AppendSandboxLogsResponse { uint32 accepted = 1; }
 
 // OperationsService lets a user reconcile a mutation after a lost response.
 service OperationsService {
@@ -54,6 +132,36 @@ service CatalogService {
   rpc ListTemplates(ListTemplatesRequest) returns (ListTemplatesResponse);
   rpc ListWorkspaces(ListWorkspacesRequest) returns (ListWorkspacesResponse);
   rpc GetWorkspace(GetWorkspaceRequest) returns (GetWorkspaceResponse);
+}
+
+// InferenceService manages the gateway-wide inference.local route.
+service InferenceService {
+  rpc GetInferenceRoute(GetInferenceRouteRequest) returns (GetInferenceRouteResponse);
+  rpc UpdateInferenceRoute(UpdateInferenceRouteRequest) returns (UpdateInferenceRouteResponse);
+  rpc ClearInferenceRoute(ClearInferenceRouteRequest) returns (ClearInferenceRouteResponse);
+}
+
+message GetInferenceRouteRequest {}
+message GetInferenceRouteResponse {
+  string provider = 1;
+  string model = 2;
+  int32 timeout_sec = 3;
+  uint64 resource_version = 4;
+}
+message UpdateInferenceRouteRequest {
+  string provider = 1;
+  string model = 2;
+  int32 timeout_sec = 3;
+  uint64 expected_resource_version = 4;
+}
+message UpdateInferenceRouteResponse {
+  uint64 resource_version = 1;
+}
+message ClearInferenceRouteRequest {
+  uint64 expected_resource_version = 1;
+}
+message ClearInferenceRouteResponse {
+  bool cleared = 1;
 }
 
 service PolicyService {

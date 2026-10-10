@@ -1,10 +1,11 @@
 # Gateway API contract
 
-`openapi.yaml` is the machine-readable contract for the gateway's client-facing
-REST API: registry, policy proposals, providers, workspaces,
-services, settings, inference, logs, SSH sessions, identity, and local/OIDC
-configuration. The route inventory was reviewed against `NewHandler` and its
-mounted REST handlers on 2026-10-09.
+`openapi.yaml` documents the remaining HTTP contract: health and browser/local
+auth bootstrap. Sandbox inventory, logs, secret delivery, policy proposals,
+provider/config/catalog/workspace management, identity, command execution, and
+SSH session management use RPC. SSH byte streams and supervisor relay remain
+transport endpoints outside OpenAPI. The route inventory was reviewed against
+`NewHandler` and its mounted handlers on 2026-10-09.
 
 The documented `/healthz` route is the gateway listener's JSON liveness
 response. Operational endpoints are deliberately outside this API contract:
@@ -18,19 +19,12 @@ response. Operational endpoints are deliberately outside this API contract:
 | `/v1/relay/{name}/exec` and related legacy relay aliases | Compatibility transport retained for older SDK callers. |
 | OpenShell RPC and gRPC health methods | The pinned OpenShell Proto contract is authoritative for RPC and runtime lifecycle. |
 
-Remaining REST paths under `/v1` are represented in `openapi.yaml`, including
-local and OIDC auth configuration endpoints. Provider profile, policy, and
-partial provider-credential workflows have moved to `cauteum.control.v1`
-and their REST operations were removed. The integration contract test exercises all 56
-documented REST operations against the live handler, checks the
-observed status and media type, and validates the response against its schema.
-Representative successful requests also validate request schemas; operations
-that require external services are exercised through documented error paths.
-Security-specific integration tests cover auth scoping, secret redaction, and
-SSH relay session ownership.
+Documented remaining `/v1` paths include local and OIDC auth. The integration
+contract test covers the documented HTTP operations. Security-specific RPC
+and relay integration coverage is being migrated from the removed REST
+management routes.
 
-The REST registry endpoints do not create or stop compute runtimes. Sandbox
-runtime lifecycle is defined by the pinned OpenShell Proto contract under
+Sandbox runtime lifecycle is defined by the pinned OpenShell Proto contract under
 `../../tools/upstream/openshell/proto/openshell.proto` in the workspace.
 
 Validate the contract with the same Redocly CLI version used in CI:

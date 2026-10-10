@@ -47,7 +47,7 @@ jobs:
         with:
           repository: cauteum/cauteum-cli
           path: cauteum-cli
-          ref: main
+          ref: ab346b1195b640d0a7ef47440055cbad16ff2e98
       - uses: actions/checkout@v4
         with:
           repository: cauteum/cauteum-display
@@ -113,7 +113,7 @@ jobs:
           echo "Wrote go.work:" && cat "${{ github.workspace }}/go.work"
       - uses: actions/setup-go@v5
         with:
-          go-version: "1.27"
+          go-version: "1.27.2"
           cache: true
           cache-dependency-path: |
             cauteum-*/go.sum

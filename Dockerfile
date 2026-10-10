@@ -4,7 +4,7 @@
 # Build from a workspace that has sibling checkouts (CI does this):
 #   docker build -f cauteum-gateway/Dockerfile -t cauteum-gateway:local .
 
-FROM golang:1.27-bookworm AS build
+FROM golang:1.27-bookworm@sha256:5cf287a799e6b94384bad13d16b14904c531f51ba65792237e122ce42b392f61 AS build
 WORKDIR /src
 COPY go.work go.work.sum ./
 COPY cauteum-core ./cauteum-core
@@ -26,7 +26,7 @@ RUN set -eu; arch="${TARGETARCH:-$(go env GOARCH)}"; mkdir -p /out/helpers/linux
 	GOOS=linux GOARCH=$arch CGO_ENABLED=0 go build -C /src/cauteum-runtime -o /out/helpers/linux-$arch/cauteum-sshd ./cmd/cauteum-sshd; \
 	GOOS=linux GOARCH=$arch CGO_ENABLED=0 go build -C /src/cauteum-runtime -o /out/helpers/linux-$arch/cauteum-supervisor ./cmd/cauteum-supervisor
 
-FROM debian:bookworm-slim
+FROM debian:bookworm-slim@sha256:7c7b2c966bc9ee8cedfeef67e0e279108992c77681fa595db4a9d65c06ccc587
 RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates curl \
     && rm -rf /var/lib/apt/lists/*
 COPY --from=build /out/cauteum-gateway /usr/local/bin/cauteum-gateway

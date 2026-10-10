@@ -39,13 +39,14 @@ jobs:
         run: npx --yes @redocly/cli@2.60.0 lint api/openapi.yaml --config api/redocly.yaml
       - uses: actions/setup-go@v5
         with:
-          go-version: "1.27"
+          go-version: "1.27.2"
           cache-dependency-path: cauteum-gateway/go.sum
       - name: Install pinned Buf CLI
         run: go install github.com/bufbuild/buf/cmd/buf@v1.66.0
       - name: Lint and regenerate Control API
         run: |
           buf lint
+          buf breaking --against api/schema/control-5e20fa2f6943.binpb
           buf generate
           if [[ -n "$(git status --porcelain -- api/gen)" ]]; then
             echo "generated Control API code is stale"
@@ -61,6 +62,10 @@ jobs:
             git status --short -- api/typescript/src/gen
             exit 1
           fi
+      - name: Build management UI
+        run: |
+          npm ci --prefix ui
+          npm run build --prefix ui
       - name: Check Control API compatibility
         if: github.event_name == 'pull_request'
         run: |
@@ -87,42 +92,42 @@ jobs:
         with:
           repository: cauteum/cauteum-cli
           path: cauteum-cli
-          ref: main
+          ref: ab346b1195b640d0a7ef47440055cbad16ff2e98
 
       - name: Checkout cauteum-core
         uses: actions/checkout@v4
         with:
           repository: cauteum/cauteum-core
           path: cauteum-core
-          ref: main
+          ref: 9b32ff965beffcaadaa6361630b9d821370a564c
 
       - name: Checkout cauteum-providers
         uses: actions/checkout@v4
         with:
           repository: cauteum/cauteum-providers
           path: cauteum-providers
-          ref: main
+          ref: 86c18a214cafd1c9782df3f7ac27699b7f4224c9
 
       - name: Checkout cauteum-runtime
         uses: actions/checkout@v4
         with:
           repository: cauteum/cauteum-runtime
           path: cauteum-runtime
-          ref: main
+          ref: b7aa36e97c8b8748388b6e400beb480f4ed91c7a
 
       - name: Checkout cauteum-driver
         uses: actions/checkout@v4
         with:
           repository: cauteum/cauteum-driver
           path: cauteum-driver
-          ref: main
+          ref: e614c8f432d34db52c5f4a989a274442e83e289c
 
       - name: Checkout cauteum-proxy
         uses: actions/checkout@v4
         with:
           repository: cauteum/cauteum-proxy
           path: cauteum-proxy
-          ref: main
+          ref: e0620208414a87b38d8f4420a9ceed73e6a02466
 
       - name: Checkout slogx
         uses: actions/checkout@v4
@@ -166,7 +171,7 @@ jobs:
 
       - uses: actions/setup-go@v5
         with:
-          go-version: "1.27"
+          go-version: "1.27.2"
           cache: true
           cache-dependency-path: |
             cauteum-*/go.sum
@@ -200,42 +205,42 @@ jobs:
         with:
           repository: cauteum/cauteum-cli
           path: cauteum-cli
-          ref: main
+          ref: ab346b1195b640d0a7ef47440055cbad16ff2e98
 
       - name: Checkout cauteum-core
         uses: actions/checkout@v4
         with:
           repository: cauteum/cauteum-core
           path: cauteum-core
-          ref: main
+          ref: 9b32ff965beffcaadaa6361630b9d821370a564c
 
       - name: Checkout cauteum-providers
         uses: actions/checkout@v4
         with:
           repository: cauteum/cauteum-providers
           path: cauteum-providers
-          ref: main
+          ref: 86c18a214cafd1c9782df3f7ac27699b7f4224c9
 
       - name: Checkout cauteum-runtime
         uses: actions/checkout@v4
         with:
           repository: cauteum/cauteum-runtime
           path: cauteum-runtime
-          ref: main
+          ref: b7aa36e97c8b8748388b6e400beb480f4ed91c7a
 
       - name: Checkout cauteum-driver
         uses: actions/checkout@v4
         with:
           repository: cauteum/cauteum-driver
           path: cauteum-driver
-          ref: main
+          ref: e614c8f432d34db52c5f4a989a274442e83e289c
 
       - name: Checkout cauteum-proxy
         uses: actions/checkout@v4
         with:
           repository: cauteum/cauteum-proxy
           path: cauteum-proxy
-          ref: main
+          ref: e0620208414a87b38d8f4420a9ceed73e6a02466
 
       - name: Checkout slogx
         uses: actions/checkout@v4
@@ -279,7 +284,7 @@ jobs:
 
       - uses: actions/setup-go@v5
         with:
-          go-version: "1.27"
+          go-version: "1.27.2"
           cache: true
           cache-dependency-path: |
             cauteum-*/go.sum
@@ -313,42 +318,42 @@ jobs:
         with:
           repository: cauteum/cauteum-cli
           path: cauteum-cli
-          ref: main
+          ref: ab346b1195b640d0a7ef47440055cbad16ff2e98
 
       - name: Checkout cauteum-core
         uses: actions/checkout@v4
         with:
           repository: cauteum/cauteum-core
           path: cauteum-core
-          ref: main
+          ref: 9b32ff965beffcaadaa6361630b9d821370a564c
 
       - name: Checkout cauteum-providers
         uses: actions/checkout@v4
         with:
           repository: cauteum/cauteum-providers
           path: cauteum-providers
-          ref: main
+          ref: 86c18a214cafd1c9782df3f7ac27699b7f4224c9
 
       - name: Checkout cauteum-runtime
         uses: actions/checkout@v4
         with:
           repository: cauteum/cauteum-runtime
           path: cauteum-runtime
-          ref: main
+          ref: b7aa36e97c8b8748388b6e400beb480f4ed91c7a
 
       - name: Checkout cauteum-driver
         uses: actions/checkout@v4
         with:
           repository: cauteum/cauteum-driver
           path: cauteum-driver
-          ref: main
+          ref: e614c8f432d34db52c5f4a989a274442e83e289c
 
       - name: Checkout cauteum-proxy
         uses: actions/checkout@v4
         with:
           repository: cauteum/cauteum-proxy
           path: cauteum-proxy
-          ref: main
+          ref: e0620208414a87b38d8f4420a9ceed73e6a02466
 
       - name: Checkout slogx
         uses: actions/checkout@v4
@@ -392,7 +397,7 @@ jobs:
 
       - uses: actions/setup-go@v5
         with:
-          go-version: "1.27"
+          go-version: "1.27.2"
           cache: true
           cache-dependency-path: |
             cauteum-*/go.sum
@@ -424,42 +429,42 @@ jobs:
         with:
           repository: cauteum/cauteum-cli
           path: cauteum-cli
-          ref: main
+          ref: ab346b1195b640d0a7ef47440055cbad16ff2e98
 
       - name: Checkout cauteum-core
         uses: actions/checkout@v4
         with:
           repository: cauteum/cauteum-core
           path: cauteum-core
-          ref: main
+          ref: 9b32ff965beffcaadaa6361630b9d821370a564c
 
       - name: Checkout cauteum-providers
         uses: actions/checkout@v4
         with:
           repository: cauteum/cauteum-providers
           path: cauteum-providers
-          ref: main
+          ref: 86c18a214cafd1c9782df3f7ac27699b7f4224c9
 
       - name: Checkout cauteum-runtime
         uses: actions/checkout@v4
         with:
           repository: cauteum/cauteum-runtime
           path: cauteum-runtime
-          ref: main
+          ref: b7aa36e97c8b8748388b6e400beb480f4ed91c7a
 
       - name: Checkout cauteum-driver
         uses: actions/checkout@v4
         with:
           repository: cauteum/cauteum-driver
           path: cauteum-driver
-          ref: main
+          ref: e614c8f432d34db52c5f4a989a274442e83e289c
 
       - name: Checkout cauteum-proxy
         uses: actions/checkout@v4
         with:
           repository: cauteum/cauteum-proxy
           path: cauteum-proxy
-          ref: main
+          ref: e0620208414a87b38d8f4420a9ceed73e6a02466
 
       - name: Checkout slogx
         uses: actions/checkout@v4
@@ -503,7 +508,7 @@ jobs:
 
       - uses: actions/setup-go@v5
         with:
-          go-version: "1.27"
+          go-version: "1.27.2"
           cache: true
           cache-dependency-path: |
             cauteum-*/go.sum

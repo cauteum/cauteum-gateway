@@ -9,12 +9,14 @@ import (
 	"testing"
 
 	"connectrpc.com/connect"
+	datamodelv1 "github.com/NVIDIA/OpenShell/sdk/go/proto/datamodelv1"
+	openshellv1 "github.com/NVIDIA/OpenShell/sdk/go/proto/openshellv1"
 	controlv1 "github.com/cauteum/cauteum-gateway/api/gen/cauteum/control/v1"
 	"github.com/cauteum/cauteum-gateway/api/gen/cauteum/control/v1/controlv1connect"
 	"github.com/cauteum/cauteum-gateway/internal/httpapi"
 )
 
-func TestProviderCredentialLifecycleThroughHTTP(t *testing.T) {
+func TestProviderCredentialLifecycleThroughOpenShellRPC(t *testing.T) {
 	var rotations atomic.Int32
 	tokenEndpoint := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if err := r.ParseForm(); err != nil {
@@ -39,46 +41,48 @@ func TestProviderCredentialLifecycleThroughHTTP(t *testing.T) {
 		t.Fatalf("create OpenAI profile through RPC: %v", err)
 	}
 
-	body := map[string]any{
-		"type":        "openai",
-		"env_vars":    []string{"API_KEY", "REFRESH_TOKEN"},
-		"credentials": map[string]string{"API_KEY": "initial-access", "REFRESH_TOKEN": "initial-refresh"},
-		"refresh": map[string]any{
-			"API_KEY": map[string]any{
-				"strategy": "oauth2-refresh-token",
-				"material": map[string]string{"token_url": tokenEndpoint.URL, "refresh_token": "initial-refresh"},
-				"outputs":  map[string]string{"access_token": "API_KEY", "refresh_token": "REFRESH_TOKEN"},
-			},
-		},
+	client, _ := g.openShellClient()
+	ctx := g.rpcContext(t.Context(), g.token)
+	_, err := client.CreateProvider(ctx, &openshellv1.CreateProviderRequest{Provider: &datamodelv1.Provider{
+		Metadata: &datamodelv1.ObjectMeta{Name: "acme", Workspace: "default"},
+		Type:     "openai", Credentials: map[string]string{"API_KEY": "initial-access", "REFRESH_TOKEN": "initial-refresh"},
+	}})
+	if err != nil {
+		t.Fatalf("create provider over RPC: %v", err)
 	}
-	if code, out := g.do(http.MethodPut, "/v1/providers/acme", g.token, body); code != http.StatusNoContent {
-		t.Fatalf("configure provider=%d body=%s", code, out)
+	configured, err := client.ConfigureProviderRefresh(ctx, &openshellv1.ConfigureProviderRefreshRequest{
+		Provider: "acme", CredentialKey: "API_KEY",
+		Strategy: openshellv1.ProviderCredentialRefreshStrategy_PROVIDER_CREDENTIAL_REFRESH_STRATEGY_OAUTH2_REFRESH_TOKEN,
+		Material: map[string]string{"token_url": tokenEndpoint.URL, "refresh_token": "initial-refresh"},
+	})
+	if err != nil || configured.GetStatus().GetStatus() != "configured" {
+		t.Fatalf("configure provider refresh over RPC: response=%v err=%v", configured, err)
 	}
-
-	if code, out := g.do(http.MethodPost, "/v1/providers/acme/refresh/API_KEY/rotate", g.token, nil); code != http.StatusNoContent {
-		t.Fatalf("rotate provider=%d body=%s", code, out)
+	rotated, err := client.RotateProviderCredential(ctx, &openshellv1.RotateProviderCredentialRequest{Provider: "acme", CredentialKey: "API_KEY"})
+	if err != nil || rotated.GetStatus().GetStatus() != "configured" {
+		t.Fatalf("rotate provider credential over RPC: response=%v err=%v", rotated, err)
 	}
 	if rotations.Load() != 1 {
 		t.Fatalf("token endpoint rotations=%d, want 1", rotations.Load())
 	}
-	code, out := g.do(http.MethodGet, "/v1/providers/acme", g.token, nil)
-	if code != http.StatusOK {
-		t.Fatalf("read provider=%d body=%s", code, out)
+	got, err := client.GetProvider(ctx, &openshellv1.GetProviderRequest{Name: "acme"})
+	if err != nil {
+		t.Fatalf("read provider over RPC: %v", err)
 	}
-	text := string(out)
+	text := got.GetProvider().String()
 	for _, secret := range []string{"initial-access", "initial-refresh", "rotated-access", "rotated-refresh", tokenEndpoint.URL} {
 		if strings.Contains(text, secret) {
 			t.Fatalf("provider response leaked %q: %s", secret, text)
 		}
 	}
-	if !strings.Contains(text, "[configured]") {
-		t.Fatalf("provider response did not expose redacted refresh metadata: %s", text)
+	if got.GetProvider().GetCredentials()["API_KEY"] != "REDACTED" {
+		t.Fatalf("provider response did not redact API_KEY: %s", text)
 	}
 
-	if code, out := g.do(http.MethodDelete, "/v1/providers/acme", g.token, nil); code != http.StatusNoContent {
-		t.Fatalf("delete provider=%d body=%s", code, out)
+	if _, err := client.DeleteProvider(ctx, &openshellv1.DeleteProviderRequest{Name: "acme"}); err != nil {
+		t.Fatalf("delete provider over RPC: %v", err)
 	}
-	if code, _ := g.do(http.MethodGet, "/v1/providers/acme", g.token, nil); code != http.StatusNotFound {
-		t.Fatalf("deleted provider status=%d, want 404", code)
+	if _, err := client.GetProvider(ctx, &openshellv1.GetProviderRequest{Name: "acme"}); err == nil {
+		t.Fatal("deleted provider remained available through OpenShell RPC")
 	}
 }

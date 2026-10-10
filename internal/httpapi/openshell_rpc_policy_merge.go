@@ -90,6 +90,9 @@ func (s *openShellRPC) updateConfigPolicyMerge(ctx context.Context, req *openshe
 		if errors.Is(err, store.ErrResourceVersionConflict) {
 			return nil, status.Error(codes.Aborted, "sandbox resource version changed")
 		}
+		if errors.Is(err, store.ErrSandboxPolicyManagedGlobally) {
+			return nil, status.Error(codes.FailedPrecondition, "sandbox policy is managed by the global policy")
+		}
 		return nil, status.Error(codes.Internal, "could not store sandbox policy revision")
 	}
 	if err := s.syncSandboxRuntimePolicy(name, updated.PolicyRev); err != nil {

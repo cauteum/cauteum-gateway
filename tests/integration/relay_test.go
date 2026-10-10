@@ -14,11 +14,14 @@ import (
 	"testing"
 	"time"
 
+	openshellv1 "github.com/NVIDIA/OpenShell/sdk/go/proto/openshellv1"
 	"github.com/cauteum/cauteum-core/relayproto"
 	"github.com/cauteum/cauteum-gateway/internal/httpapi"
 	"github.com/cauteum/cauteum-runtime/relayclient"
 	"github.com/cauteum/cauteum-runtime/sshserver"
 	"golang.org/x/crypto/ssh"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 // startSupervisor runs a real sshserver on a Unix socket and a relayclient
@@ -72,15 +75,6 @@ func (g *testGateway) startSupervisor(name, token string) {
 	case <-time.After(5 * time.Second):
 		g.t.Fatal("supervisor did not connect")
 	}
-	// The hub registers the session right after the handshake; wait for it.
-	deadline := time.Now().Add(2 * time.Second)
-	for time.Now().Before(deadline) {
-		if code, _ := g.do(http.MethodPost, "/v1/sandboxes/"+name+"/ssh-session", g.token, nil); code == http.StatusOK {
-			return
-		}
-		time.Sleep(10 * time.Millisecond)
-	}
-	g.t.Fatal("relay not ready")
 }
 
 type sshSessionResp struct {
@@ -95,9 +89,22 @@ type sshSessionResp struct {
 
 func (g *testGateway) sshSession(name string) sshSessionResp {
 	g.t.Helper()
-	var s sshSessionResp
-	g.mustJSON(http.MethodPost, "/v1/sandboxes/"+name+"/ssh-session", g.token, nil, http.StatusOK, &s)
-	return s
+	client, _ := g.openShellClient()
+	ctx := g.rpcContext(context.Background(), g.token)
+	deadline := time.Now().Add(2 * time.Second)
+	var session *openshellv1.CreateSshSessionResponse
+	var err error
+	for {
+		session, err = client.CreateSshSession(ctx, &openshellv1.CreateSshSessionRequest{SandboxId: name})
+		if err == nil {
+			break
+		}
+		if status.Code(err) != codes.FailedPrecondition || time.Now().After(deadline) {
+			g.t.Fatalf("create SSH session over OpenShell RPC: %v", err)
+		}
+		time.Sleep(10 * time.Millisecond)
+	}
+	return sshSessionResp{SandboxID: session.GetSandboxId(), Token: session.GetToken(), Scheme: session.GetGatewayScheme(), Host: session.GetGatewayHost(), Port: int(session.GetGatewayPort()), ExpiresAt: session.GetExpiresAtMs()}
 }
 
 func (g *testGateway) dialSSH(sandbox, sessionToken string) (*ssh.Client, error) {
@@ -154,25 +161,11 @@ func TestRelaySSHSessionEndToEnd(t *testing.T) {
 	}
 	_ = client.Close()
 
-	var list struct {
-		Sessions []struct {
-			ID      string `json:"id"`
-			Sandbox string `json:"sandbox"`
-			Subject string `json:"subject"`
-		} `json:"sessions"`
+	rpcClient, _ := g.openShellClient()
+	revoked, err := rpcClient.RevokeSshSession(g.rpcContext(context.Background(), g.token), &openshellv1.RevokeSshSessionRequest{Token: s.Token})
+	if err != nil || !revoked.GetRevoked() {
+		t.Fatalf("revoke SSH session over OpenShell RPC: response=%v err=%v", revoked, err)
 	}
-	g.mustJSON(http.MethodGet, "/v1/ssh-sessions?sandbox=demo", g.token, nil, http.StatusOK, &list)
-	found := false
-	for _, row := range list.Sessions {
-		if row.ID == s.SessionID {
-			found = row.Sandbox == "demo" && row.Subject == "local-dev"
-		}
-	}
-	if !found {
-		t.Fatalf("session %s missing from list: %+v", s.SessionID, list)
-	}
-
-	g.mustJSON(http.MethodDelete, "/v1/ssh-sessions/"+s.SessionID, g.token, nil, http.StatusNoContent, nil)
 	if _, err := g.dialSSH("demo", s.Token); statusOf(err) != http.StatusUnauthorized {
 		t.Fatalf("revoked session dial = %v, want 401", err)
 	}
@@ -213,14 +206,20 @@ func TestRelaySessionExpires(t *testing.T) {
 func TestRelayNotReady(t *testing.T) {
 	g := newTestGateway(t, httpapi.Options{})
 	g.createSandbox("cold")
-	if code, body := g.do(http.MethodPost, "/v1/sandboxes/cold/ssh-session", g.token, nil); code != http.StatusPreconditionFailed {
-		t.Fatalf("ssh-session without supervisor = %d %s, want 412", code, body)
+	client, _ := g.openShellClient()
+	ctx := g.rpcContext(context.Background(), g.token)
+	if _, err := client.CreateSshSession(ctx, &openshellv1.CreateSshSessionRequest{SandboxId: "cold"}); status.Code(err) != codes.FailedPrecondition {
+		t.Fatalf("CreateSshSession without supervisor code=%s err=%v", status.Code(err), err)
 	}
-	if code, _ := g.do(http.MethodPost, "/v1/sandboxes/cold/exec", g.token, map[string]any{"argv": []string{"true"}}); code != http.StatusPreconditionFailed {
-		t.Fatalf("exec without supervisor = %d, want 412", code)
+	if _, err := client.CreateSshSession(ctx, &openshellv1.CreateSshSessionRequest{SandboxId: "ghost"}); status.Code(err) != codes.NotFound {
+		t.Fatalf("CreateSshSession for missing sandbox code=%s err=%v", status.Code(err), err)
 	}
-	if code, _ := g.do(http.MethodPost, "/v1/sandboxes/ghost/ssh-session", g.token, nil); code != http.StatusNotFound {
-		t.Fatalf("ssh-session unknown sandbox = %d, want 404", code)
+	exec, err := client.ExecSandbox(ctx, &openshellv1.ExecSandboxRequest{SandboxId: "cold", Command: []string{"true"}})
+	if err == nil {
+		_, err = exec.Recv()
+	}
+	if status.Code(err) != codes.FailedPrecondition {
+		t.Fatalf("ExecSandbox without supervisor code=%s err=%v", status.Code(err), err)
 	}
 }
 
@@ -229,23 +228,35 @@ func TestRelayExec(t *testing.T) {
 	g.createSandbox("demo")
 	g.startSupervisor("demo", g.sandboxToken("demo"))
 
-	var res struct {
-		ExitCode int    `json:"exit_code"`
-		Output   string `json:"output"`
+	client, _ := g.openShellClient()
+	ctx := g.rpcContext(context.Background(), g.token)
+	stream, err := client.ExecSandbox(ctx, &openshellv1.ExecSandboxRequest{SandboxId: "demo", Command: []string{"sh", "-c", `echo "it's fine"; exit 4`}})
+	if err != nil {
+		t.Fatalf("ExecSandbox: %v", err)
 	}
-	g.mustJSON(http.MethodPost, "/v1/sandboxes/demo/exec", g.token,
-		map[string]any{"argv": []string{"sh", "-c", `echo "it's fine"; exit 4`}}, http.StatusOK, &res)
-	if res.ExitCode != 4 || strings.TrimSpace(res.Output) != "it's fine" {
-		t.Fatalf("exec = %+v", res)
+	var stdout strings.Builder
+	var exitCode int32
+	for {
+		event, recvErr := stream.Recv()
+		if recvErr == io.EOF {
+			break
+		}
+		if recvErr != nil {
+			t.Fatalf("ExecSandbox stream: %v", recvErr)
+		}
+		if data := event.GetStdout(); data != nil {
+			stdout.Write(data.GetData())
+		}
+		if result := event.GetExit(); result != nil {
+			exitCode = result.GetExitCode()
+		}
 	}
-	g.mustJSON(http.MethodPost, "/v1/relay/demo/exec", g.token,
-		map[string]any{"argv": []string{"echo", "legacy"}}, http.StatusOK, &res)
-	if res.ExitCode != 0 || strings.TrimSpace(res.Output) != "legacy" {
-		t.Fatalf("legacy exec = %+v", res)
+	if exitCode != 4 || strings.TrimSpace(stdout.String()) != "it's fine" {
+		t.Fatalf("ExecSandbox exit=%d output=%q", exitCode, stdout.String())
 	}
-	for _, p := range []string{"/v1/relay/demo/poll", "/v1/relay/demo/result"} {
-		if code, _ := g.do(http.MethodGet, p, g.token, nil); code != http.StatusGone {
-			t.Errorf("%s = %d, want 410", p, code)
+	for _, path := range []string{"/v1/sandboxes/demo/exec", "/v1/relay/demo/exec", "/v1/relay/demo/poll", "/v1/relay/demo/result"} {
+		if code, _ := g.do(http.MethodPost, path, g.token, map[string]any{"argv": []string{"echo", "legacy"}}); code != http.StatusNotFound {
+			t.Errorf("removed REST exec route %s = %d, want 404", path, code)
 		}
 	}
 }
@@ -272,7 +283,7 @@ func TestSandboxDeleteRevokesRelay(t *testing.T) {
 	sbTok := g.sandboxToken("demo")
 	g.startSupervisor("demo", sbTok)
 	s := g.sshSession("demo")
-	g.mustJSON(http.MethodDelete, "/v1/sandboxes/demo", g.token, nil, http.StatusNoContent, nil)
+	g.deleteSandbox("demo")
 	if _, err := g.dialSSH("demo", s.Token); statusOf(err) != http.StatusUnauthorized {
 		t.Fatalf("session after delete = %v, want 401", err)
 	}

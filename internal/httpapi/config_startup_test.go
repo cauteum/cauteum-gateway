@@ -349,7 +349,6 @@ func TestOpenShellOIDCRolesAuthorizeReadsAndWrites(t *testing.T) {
 		method, path              string
 		userAllowed, adminAllowed bool
 	}{
-		{http.MethodGet, "/v1/info", true, true},
 		{http.MethodPost, "/v1/sandboxes", false, true},
 		{http.MethodGet, "/v1/sandboxes", true, true},
 	} {

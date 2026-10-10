@@ -15,6 +15,7 @@ import (
 var ErrWorkspaceNotEmpty = errors.New("workspace still contains resources")
 var ErrWorkspaceConflict = errors.New("workspace changed during deletion")
 var ErrWorkspaceNotFound = errors.New("workspace not found")
+var ErrInferenceRouteConflict = errors.New("inference route resource version conflict")
 
 func randomRecordID() string {
 	var id [16]byte

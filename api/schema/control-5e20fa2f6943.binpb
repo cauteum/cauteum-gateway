@@ -1,0 +1,3240 @@
+
+Ü±
+ cauteum/control/v1/console.protocauteum.control.v1"
+GetGlobalPolicyRequest"e
+GetGlobalPolicyResponse
+policy_yaml (	R
+policyYaml)
+resource_version (RresourceVersion"é
+UpdateGlobalPolicyRequest
+policy_yaml (	R
+policyYaml:
+expected_resource_version (RexpectedResourceVersion
+clear (Rclear"G
+UpdateGlobalPolicyResponse)
+resource_version (RresourceVersion"n
+GetSandboxPolicyRequest
+	workspace (	R	workspace!
+sandbox_name (	RsandboxName
+view (	Rview"è
+GetSandboxPolicyResponse
+policy_yaml (	R
+policyYaml)
+resource_version (RresourceVersion'
+policy_revision (RpolicyRevision"¡
+UpdateSandboxPolicyRequest
+	workspace (	R	workspace!
+sandbox_name (	RsandboxName(
+base_policy_yaml (	RbasePolicyYaml8
+expected_policy_revision (RexpectedPolicyRevision"≤
+UpdateSandboxPolicyResponse2
+effective_policy_yaml (	ReffectivePolicyYaml6
+stripped_provider_rules (RstrippedProviderRules'
+policy_revision (RpolicyRevision"d
+!ListSandboxPolicyRevisionsRequest
+	workspace (	R	workspace!
+sandbox_name (	RsandboxName"m
+"ListSandboxPolicyRevisionsResponseG
+	revisions (2).cauteum.control.v1.PolicyRevisionSummaryR	revisions"~
+GetSandboxPolicyRevisionRequest
+	workspace (	R	workspace!
+sandbox_name (	RsandboxName
+revision (Rrevision"ä
+ GetSandboxPolicyRevisionResponse
+policy_yaml (	R
+policyYamlE
+revision (2).cauteum.control.v1.PolicyRevisionSummaryRrevision"é
+PolicyRevisionSummary
+revision (Rrevision+
+updated_at_unix_ms (RupdatedAtUnixMs
+bytes (Rbytes
+status (	Rstatus"é
+ UpdateProviderCredentialsRequest
+	workspace (	R	workspace#
+provider_name (	RproviderNameg
+credentials (2E.cauteum.control.v1.UpdateProviderCredentialsRequest.CredentialsEntryRcredentials>
+CredentialsEntry
+key (	Rkey
+value (	Rvalue:8"F
+!UpdateProviderCredentialsResponse!
+updated_keys (	RupdatedKeys";
+ListProviderProfilesRequest
+	workspace (	R	workspace"ù
+ProviderProfileSummary
+id (	Rid
+category (	Rcategory
+source (	Rsource
+scope (	Rscope)
+resource_version (RresourceVersion"f
+ListProviderProfilesResponseF
+profiles (2*.cauteum.control.v1.ProviderProfileSummaryRprofiles"I
+GetProviderProfileRequest
+	workspace (	R	workspace
+id (	Rid"Ç
+GetProviderProfileResponse!
+profile_yaml (	RprofileYaml
+source (	Rsource)
+resource_version (RresourceVersion"o
+ImportProviderProfileRequest
+	workspace (	R	workspace!
+profile_yaml (	RprofileYaml
+id (	Rid"@
+ImportProviderProfileResponse
+imported_id (	R
+importedId"´
+UpdateProviderProfileRequest
+	workspace (	R	workspace
+id (	Rid:
+expected_resource_version (RexpectedResourceVersion!
+profile_yaml (	RprofileYaml"J
+UpdateProviderProfileResponse)
+resource_version (RresourceVersion"L
+DeleteProviderProfileRequest
+	workspace (	R	workspace
+id (	Rid"9
+DeleteProviderProfileResponse
+deleted (Rdeleted"
+GetViewerRequest"à
+GetViewerResponse
+subject (	Rsubject
+roles (	Rroles
+scopes (	Rscopes+
+identity_provider (	RidentityProvider"
+GetConsoleCapabilitiesRequest"¡
+GetConsoleCapabilitiesResponse>
+sandbox_lifecycle_available (RsandboxLifecycleAvailable6
+sandbox_watch_available (RsandboxWatchAvailable'
+compute_drivers (	RcomputeDrivers"2
+GetOverviewRequest
+	workspace (	R	workspace"ñ
+GetOverviewResponse
+
+gateway_id (	R	gatewayId
+	workspace (	R	workspace#
+sandbox_count (RsandboxCount4
+registry_running_count (RregistryRunningCount-
+snapshot_at_unix_ms (RsnapshotAtUnixMs8
+runtime_status_available (RruntimeStatusAvailable"Í
+ListSandboxesRequest
+	workspace (	R	workspace
+	page_size (RpageSize
+
+page_token (	R	pageToken
+name_prefix (	R
+namePrefix'
+registry_status (	RregistryStatus%
+compute_driver (	RcomputeDriverL
+labels (24.cauteum.control.v1.ListSandboxesRequest.LabelsEntryRlabels9
+LabelsEntry
+key (	Rkey
+value (	Rvalue:8"Å
+ListSandboxesResponse@
+	sandboxes (2".cauteum.control.v1.SandboxSummaryR	sandboxes&
+next_page_token (	RnextPageToken"E
+GetSandboxRequest
+	workspace (	R	workspace
+name (	Rname"R
+GetSandboxResponse<
+sandbox (2".cauteum.control.v1.SandboxSummaryRsandbox"5
+WatchSandboxesRequest
+	workspace (	R	workspace"ê
+WatchSandboxesResponse=
+kind (2).cauteum.control.v1.SandboxWatchEventKindRkind'
+stream_sequence (RstreamSequence<
+sandbox (2".cauteum.control.v1.SandboxSummaryRsandbox!
+deleted_name (	RdeletedName-
+observed_at_unix_ms (RobservedAtUnixMs"±
+GetSandboxLogsRequest
+	workspace (	R	workspace
+name (	Rname
+limit (Rlimit"
+since_unix_ms (RsinceUnixMs
+source (	Rsource
+level (	Rlevel"j
+GetSandboxLogsResponse8
+lines (2".cauteum.control.v1.SandboxLogLineRlines
+cursor (Rcursor"Â
+WatchSandboxLogsRequest
+	workspace (	R	workspace
+name (	Rname#
+initial_limit (RinitialLimit!
+after_cursor (RafterCursor"
+since_unix_ms (RsinceUnixMs
+source (	Rsource
+level (	Rlevel"÷
+WatchSandboxLogsResponse;
+kind (2'.cauteum.control.v1.SandboxLogWatchKindRkind6
+line (2".cauteum.control.v1.SandboxLogLineRline
+cursor (Rcursor-
+observed_at_unix_ms (RobservedAtUnixMs"¥
+SandboxLogLine
+cursor (Rcursor*
+timestamp_unix_ms (RtimestampUnixMs
+source (	Rsource
+level (	Rlevel
+target (	Rtarget
+message (	Rmessage"÷
+CreateSandboxRequest
+	workspace (	R	workspace
+name (	Rname
+image (	Rimage4
+workload_template_name (	RworkloadTemplateName
+command (	Rcommand
+
+request_id (	R	requestIdL
+labels (24.cauteum.control.v1.CreateSandboxRequest.LabelsEntryRlabels9
+LabelsEntry
+key (	Rkey
+value (	Rvalue:8"ñ
+CreateSandboxResponse<
+sandbox (2".cauteum.control.v1.SandboxSummaryRsandbox
+	completed (R	completed!
+operation_id (	RoperationId"¢
+StartSandboxRequest
+	workspace (	R	workspace
+name (	Rname:
+expected_resource_version (RexpectedResourceVersion
+
+request_id (	R	requestId"ï
+StartSandboxResponse<
+sandbox (2".cauteum.control.v1.SandboxSummaryRsandbox
+	completed (R	completed!
+operation_id (	RoperationId"°
+StopSandboxRequest
+	workspace (	R	workspace
+name (	Rname:
+expected_resource_version (RexpectedResourceVersion
+
+request_id (	R	requestId"î
+StopSandboxResponse<
+sandbox (2".cauteum.control.v1.SandboxSummaryRsandbox
+	completed (R	completed!
+operation_id (	RoperationId"£
+DeleteSandboxRequest
+	workspace (	R	workspace
+name (	Rname:
+expected_resource_version (RexpectedResourceVersion
+
+request_id (	R	requestId"T
+DeleteSandboxResponse
+deleted (Rdeleted!
+operation_id (	RoperationId"R
+GetOperationRequest
+	workspace (	R	workspace
+
+request_id (	R	requestId"Z
+GetOperationResponseB
+	operation (2$.cauteum.control.v1.OperationSummaryR	operation"n
+ListOperationsRequest
+	workspace (	R	workspace!
+after_number (RafterNumber
+limit (Rlimit"ä
+ListOperationsResponseD
+
+operations (2$.cauteum.control.v1.OperationSummaryR
+operations*
+next_after_number (RnextAfterNumber"g
+ListAuditEventsRequest
+	workspace (	R	workspace
+after_id (RafterId
+limit (Rlimit"|
+ListAuditEventsResponse=
+events (2%.cauteum.control.v1.AuditEventSummaryRevents"
+next_after_id (RnextAfterId"º
+OperationSummary
+id (	Rid
+number (Rnumber
+
+request_id (	R	requestId
+actor (	Ractor
+	workspace (	R	workspace
+sandbox (	Rsandbox
+action (	Raction
+state (	Rstate
+
+error_code	 (	R	errorCode4
+result_registry_status
+ (	RresultRegistryStatus6
+result_resource_version (RresultResourceVersion+
+created_at_unix_ms (RcreatedAtUnixMs+
+updated_at_unix_ms (RupdatedAtUnixMs"„
+AuditEventSummary
+id (Rid*
+timestamp_unix_ms (RtimestampUnixMs
+actor (	Ractor
+action (	Raction
+	workspace (	R	workspace
+sandbox (	Rsandbox
+outcome (	Routcome
+code (	Rcode"Õ
+SandboxSummary
+name (	Rname
+	workspace (	R	workspace'
+registry_status (	RregistryStatus%
+compute_driver (	RcomputeDriver)
+resource_version (RresourceVersion+
+updated_at_unix_ms (RupdatedAtUnixMs8
+runtime_status_available (RruntimeStatusAvailable
+id (	Rid
+image	 (	RimageF
+labels
+ (2..cauteum.control.v1.SandboxSummary.LabelsEntryRlabels9
+LabelsEntry
+key (	Rkey
+value (	Rvalue:8"3
+ListServicesRequest
+	workspace (	R	workspace"V
+ListServicesResponse>
+services (2".cauteum.control.v1.ServiceSummaryRservices"à
+ServiceSummary
+name (	Rname!
+sandbox_name (	RsandboxName
+port (Rport+
+updated_at_unix_ms (RupdatedAtUnixMs"4
+ListTemplatesRequest
+	workspace (	R	workspace"Z
+ListTemplatesResponseA
+	templates (2#.cauteum.control.v1.TemplateSummaryR	templates"œ
+TemplateSummary
+name (	Rname
+	workspace (	R	workspace
+image (	Rimage
+	providers (	R	providers)
+resource_version (RresourceVersion+
+created_at_unix_ms (RcreatedAtUnixMs"
+ListWorkspacesRequest"^
+ListWorkspacesResponseD
+
+workspaces (2$.cauteum.control.v1.WorkspaceSummaryR
+workspaces")
+GetWorkspaceRequest
+name (	Rname"Z
+GetWorkspaceResponseB
+	workspace (2$.cauteum.control.v1.WorkspaceSummaryR	workspace"¬
+WorkspaceSummary
+name (	Rname
+caller_role (	R
+callerRole!
+member_count (RmemberCount)
+resource_version (RresourceVersion+
+updated_at_unix_ms (RupdatedAtUnixMs"≠
+ListPolicyProposalsRequest
+	workspace (	R	workspace!
+sandbox_name (	RsandboxName
+status (	Rstatus
+	page_size (RpageSize
+after_id (	RafterId"ä
+ListPolicyProposalsResponseG
+	proposals (2).cauteum.control.v1.PolicyProposalSummaryR	proposals"
+next_after_id (	RnextAfterId"H
+GetPolicyProposalRequest
+	workspace (	R	workspace
+id (	Rid"b
+GetPolicyProposalResponseE
+proposal (2).cauteum.control.v1.PolicyProposalSummaryRproposal"f
+ApprovePolicyProposalResponseE
+proposal (2).cauteum.control.v1.PolicyProposalSummaryRproposal"e
+RejectPolicyProposalResponseE
+proposal (2).cauteum.control.v1.PolicyProposalSummaryRproposal"L
+ApprovePolicyProposalRequest
+	workspace (	R	workspace
+id (	Rid"c
+RejectPolicyProposalRequest
+	workspace (	R	workspace
+id (	Rid
+reason (	Rreason"õ
+PolicyProposalSummary
+id (	Rid!
+sandbox_name (	RsandboxName
+status (	Rstatus%
+intent_summary (	RintentSummary
+	rule_name (	RruleName
+	rule_yaml (	RruleYaml
+	rationale (	R	rationale%
+security_notes (	RsecurityNotes
+
+confidence	 (R
+confidence
+hosts
+ (	Rhosts)
+rejection_reason (	RrejectionReason+
+validation_result (	RvalidationResult)
+security_flagged (RsecurityFlagged+
+created_at_unix_ms (RcreatedAtUnixMs+
+decided_at_unix_ms (RdecidedAtUnixMs*¸
+SandboxWatchEventKind(
+$SANDBOX_WATCH_EVENT_KIND_UNSPECIFIED "
+SANDBOX_WATCH_EVENT_KIND_RESET#
+SANDBOX_WATCH_EVENT_KIND_UPSERT#
+SANDBOX_WATCH_EVENT_KIND_DELETE#
+SANDBOX_WATCH_EVENT_KIND_SYNCED&
+"SANDBOX_WATCH_EVENT_KIND_HEARTBEAT*¶
+SandboxLogWatchKind&
+"SANDBOX_LOG_WATCH_KIND_UNSPECIFIED  
+SANDBOX_LOG_WATCH_KIND_RESET
+SANDBOX_LOG_WATCH_KIND_LINE$
+ SANDBOX_LOG_WATCH_KIND_HEARTBEAT2À
+ConsoleServiceX
+	GetViewer$.cauteum.control.v1.GetViewerRequest%.cauteum.control.v1.GetViewerResponse
+GetConsoleCapabilities1.cauteum.control.v1.GetConsoleCapabilitiesRequest2.cauteum.control.v1.GetConsoleCapabilitiesResponse^
+GetOverview&.cauteum.control.v1.GetOverviewRequest'.cauteum.control.v1.GetOverviewResponse2ß
+SandboxServiced
+ListSandboxes(.cauteum.control.v1.ListSandboxesRequest).cauteum.control.v1.ListSandboxesResponse[
+
+GetSandbox%.cauteum.control.v1.GetSandboxRequest&.cauteum.control.v1.GetSandboxResponsei
+WatchSandboxes).cauteum.control.v1.WatchSandboxesRequest*.cauteum.control.v1.WatchSandboxesResponse0g
+GetSandboxLogs).cauteum.control.v1.GetSandboxLogsRequest*.cauteum.control.v1.GetSandboxLogsResponseo
+WatchSandboxLogs+.cauteum.control.v1.WatchSandboxLogsRequest,.cauteum.control.v1.WatchSandboxLogsResponse0d
+CreateSandbox(.cauteum.control.v1.CreateSandboxRequest).cauteum.control.v1.CreateSandboxResponsea
+StartSandbox'.cauteum.control.v1.StartSandboxRequest(.cauteum.control.v1.StartSandboxResponse^
+StopSandbox&.cauteum.control.v1.StopSandboxRequest'.cauteum.control.v1.StopSandboxResponsed
+DeleteSandbox(.cauteum.control.v1.DeleteSandboxRequest).cauteum.control.v1.DeleteSandboxResponse2À
+OperationsServicea
+GetOperation'.cauteum.control.v1.GetOperationRequest(.cauteum.control.v1.GetOperationResponseg
+ListOperations).cauteum.control.v1.ListOperationsRequest*.cauteum.control.v1.ListOperationsResponsej
+ListAuditEvents*.cauteum.control.v1.ListAuditEventsRequest+.cauteum.control.v1.ListAuditEventsResponse2•
+CatalogServicea
+ListServices'.cauteum.control.v1.ListServicesRequest(.cauteum.control.v1.ListServicesResponsed
+ListTemplates(.cauteum.control.v1.ListTemplatesRequest).cauteum.control.v1.ListTemplatesResponseg
+ListWorkspaces).cauteum.control.v1.ListWorkspacesRequest*.cauteum.control.v1.ListWorkspacesResponsea
+GetWorkspace'.cauteum.control.v1.GetWorkspaceRequest(.cauteum.control.v1.GetWorkspaceResponse2–	
+PolicyServicej
+GetGlobalPolicy*.cauteum.control.v1.GetGlobalPolicyRequest+.cauteum.control.v1.GetGlobalPolicyResponses
+UpdateGlobalPolicy-.cauteum.control.v1.UpdateGlobalPolicyRequest..cauteum.control.v1.UpdateGlobalPolicyResponsem
+GetSandboxPolicy+.cauteum.control.v1.GetSandboxPolicyRequest,.cauteum.control.v1.GetSandboxPolicyResponsev
+UpdateSandboxPolicy..cauteum.control.v1.UpdateSandboxPolicyRequest/.cauteum.control.v1.UpdateSandboxPolicyResponseã
+ListSandboxPolicyRevisions5.cauteum.control.v1.ListSandboxPolicyRevisionsRequest6.cauteum.control.v1.ListSandboxPolicyRevisionsResponseÖ
+GetSandboxPolicyRevision3.cauteum.control.v1.GetSandboxPolicyRevisionRequest4.cauteum.control.v1.GetSandboxPolicyRevisionResponsev
+ListPolicyProposals..cauteum.control.v1.ListPolicyProposalsRequest/.cauteum.control.v1.ListPolicyProposalsResponsep
+GetPolicyProposal,.cauteum.control.v1.GetPolicyProposalRequest-.cauteum.control.v1.GetPolicyProposalResponse|
+ApprovePolicyProposal0.cauteum.control.v1.ApprovePolicyProposalRequest1.cauteum.control.v1.ApprovePolicyProposalResponsey
+RejectPolicyProposal/.cauteum.control.v1.RejectPolicyProposalRequest0.cauteum.control.v1.RejectPolicyProposalResponse2Ç
+ProviderProfileServicey
+ListProviderProfiles/.cauteum.control.v1.ListProviderProfilesRequest0.cauteum.control.v1.ListProviderProfilesResponses
+GetProviderProfile-.cauteum.control.v1.GetProviderProfileRequest..cauteum.control.v1.GetProviderProfileResponse|
+ImportProviderProfile0.cauteum.control.v1.ImportProviderProfileRequest1.cauteum.control.v1.ImportProviderProfileResponse|
+UpdateProviderProfile0.cauteum.control.v1.UpdateProviderProfileRequest1.cauteum.control.v1.UpdateProviderProfileResponse|
+DeleteProviderProfile0.cauteum.control.v1.DeleteProviderProfileRequest1.cauteum.control.v1.DeleteProviderProfileResponse2¶
+ProviderCredentialServiceà
+UpdateProviderCredentials4.cauteum.control.v1.UpdateProviderCredentialsRequest5.cauteum.control.v1.UpdateProviderCredentialsResponseBIZGgithub.com/cauteum/cauteum-gateway/api/gen/cauteum/control/v1;controlv1JÛ≥
+  ﬁ
+
+  
+
+ 
+
+ ^
+	
+ ^
+P
+  D ConsoleService provides safe, user-facing gateway summary methods.
+
+
+
+ 
+V
+  	>I GetViewer returns the authenticated user without credentials or tokens.
+
+
+  	
+
+  	 
+
+  	+<
+Q
+ eD GetConsoleCapabilities reports features available on this gateway.
+
+
+ 
+
+ :
+
+ Ec
+K
+ D> GetOverview returns an authorized summary for one workspace.
+
+
+ 
+
+ $
+
+ /B
+L
+ )@ SandboxService provides user-facing sandbox inventory methods.
+
+
+
+
+W
+ JJ ListSandboxes returns a bounded page of one workspace's sandbox records.
+
+
+ 
+
+ (
+
+ 3H
+K
+A> GetSandbox returns one sandbox record visible to the caller.
+
+
+
+
+"
+
+-?
+°
+Tì WatchSandboxes begins with a full reset/snapshot and then sends changes.
+ Reconnect by opening a new stream and replacing the prior client state.
+
+
+
+
+*
+
+5;
+
+<R
+Y
+ML GetSandboxLogs returns a bounded tail of one visible sandbox's log buffer.
+
+
+
+
+*
+
+5K
+W
+"ZJ WatchSandboxLogs starts with a tail and then follows new buffered lines.
+
+
+"
+
+".
+
+"9?
+
+"@X
+]
+%JP These actions execute against the configured runtime, never the REST registry.
+
+
+%
+
+%(
+
+%3H
+
+&G
+
+&
+
+&&
+
+&1E
+
+'D
+
+'
+
+'$
+
+'/B
+
+(J
+
+(
+
+((
+
+(3H
+W
+, 0K OperationsService lets a user reconcile a mutation after a lost response.
+
+
+
+,
+
+ -G
+
+ -
+
+ -&
+
+ -1E
+
+.M
+
+.
+
+.*
+
+.5K
+
+/P
+
+/
+
+/,
+
+/7N
+U
+3 8I CatalogService exposes workspace-visible service and workload metadata.
+
+
+
+3
+
+ 4G
+
+ 4
+
+ 4&
+
+ 41E
+
+5J
+
+5
+
+5(
+
+53H
+
+6M
+
+6
+
+6*
+
+65K
+
+7G
+
+7
+
+7&
+
+71E
+
+
+: E
+
+
+:
+
+ ;P
+
+ ;
+
+ ;,
+
+ ;7N
+
+<Y
+
+<
+
+<2
+
+<=W
+
+=S
+
+=
+
+=.
+
+=9Q
+
+>\
+
+>
+
+>4
+
+>?Z
+
+?q
+
+? 
+
+?!B
+
+?Mo
+
+@k
+
+@
+
+@>
+
+@Ii
+
+A\
+
+A
+
+A4
+
+A?Z
+
+BV
+
+B
+
+B0
+
+B;T
+
+Cb
+
+C
+
+C8
+
+CC`
+
+	D_
+
+	D
+
+	D6
+
+	DA]
+	
+ G !
+
+
+ G
+
+
+H K
+
+
+H
+
+ I
+
+ I
+
+ I	
+
+ I
+
+J
+
+J
+
+J	
+
+J
+
+
+L P
+
+
+L!
+
+ M
+
+ M
+
+ M	
+
+ M
+
+N'
+
+N
+
+N	"
+
+N%&
+
+O
+
+O
+
+O
+
+O
+
+
+Q S
+
+
+Q"
+
+ R
+
+ R
+
+ R	
+
+ R
+
+
+U Z
+
+
+U
+
+ V
+
+ V
+
+ V	
+
+ V
+
+W
+
+W
+
+W	
+
+W
+U
+YH "base" returns the editable layer; "full" returns the composed policy.
+
+
+Y
+
+Y	
+
+Y
+
+
+[ _
+
+
+[ 
+
+ \
+
+ \
+
+ \	
+
+ \
+
+]
+
+]
+
+]	
+
+]
+
+^
+
+^
+
+^	
+
+^
+
+
+` e
+
+
+`"
+
+ a
+
+ a
+
+ a	
+
+ a
+
+b
+
+b
+
+b	
+
+b
+
+c
+
+c
+
+c	
+
+c
+
+d&
+
+d
+
+d	!
+
+d$%
+
+
+f j
+
+
+f#
+
+ g#
+
+ g
+
+ g	
+
+ g!"
+
+h%
+
+h
+
+h	 
+
+h#$
+
+i
+
+i
+
+i	
+
+i
+
+
+k n
+
+
+k)
+
+ l
+
+ l
+
+ l	
+
+ l
+
+m
+
+m
+
+m	
+
+m
+
+
+	o q
+
+
+	o*
+
+	 p/
+
+	 p
+
+
+	 p 
+
+	 p!*
+
+	 p-.
+
+
+
+r v
+
+
+
+r'
+
+
+ s
+
+
+ s
+
+
+ s	
+
+
+ s
+
+
+t
+
+
+t
+
+
+t	
+
+
+t
+
+
+u
+
+
+u
+
+
+u	
+
+
+u
+
+
+w z
+
+
+w(
+
+ x
+
+ x
+
+ x	
+
+ x
+
+y%
+
+y
+
+y 
+
+y#$
+
+{ Ä
+
+
+{
+
+ |
+
+ |
+
+ |	
+
+ |
+
+}
+
+}
+
+}
+
+}
+
+~
+
+~
+
+~	
+
+~
+
+
+
+
+
+	
+
+
+ö
+Ñ äã ProviderProfileService preserves the full Cauteum profile document while
+ keeping profile management inside the authenticated client API.
+
+
+Ñ
+
+ Ö_
+
+ Ö
+
+ Ö6
+
+ ÖA]
+
+ÜY
+
+Ü
+
+Ü2
+
+Ü=W
+
+áb
+
+á
+
+á8
+
+áC`
+
+àb
+
+à
+
+à8
+
+àC`
+
+âb
+
+â
+
+â8
+
+âC`
+÷
+è ë« ProviderCredentialService handles Cauteum-only secret patch semantics.
+ OpenShell Provider.Update replaces the full credential map, so partial
+ updates stay behind this narrow authenticated method.
+
+
+è!
+
+ ên
+
+ ê
+
+ ê @
+
+ êKl
+
+ì ó
+
+ì(
+
+ î
+
+ î
+
+ î	
+
+ î
+
+ï
+
+ï
+
+ï	
+
+ï
+
+ñ&
+
+ñ
+
+ñ!
+
+ñ$%
+
+ô õ
+
+ô)
+
+ ö#
+
+ ö
+
+
+ ö
+
+ ö
+
+ ö!"
+
+ù †
+
+ù#
+[
+ üM Empty selects built-in and platform profiles; otherwise select a workspace.
+
+
+ ü
+
+ ü	
+
+ ü
+
+¢ ®
+
+¢
+
+ £
+
+ £
+
+ £	
+
+ £
+
+§
+
+§
+
+§	
+
+§
+
+•
+
+•
+
+•	
+
+•
+
+¶
+
+¶
+
+¶	
+
+¶
+
+ß
+
+ß
+
+ß	
+
+ß
+
+™ ¨
+
+™$
+
+ ´/
+
+ ´
+
+
+ ´!
+
+ ´"*
+
+ ´-.
+
+Æ ±
+
+Æ!
+
+ Ø
+
+ Ø
+
+ Ø	
+
+ Ø
+
+∞
+
+∞
+
+∞	
+
+∞
+
+≥ ∑
+
+≥"
+
+ ¥
+
+ ¥
+
+ ¥	
+
+ ¥
+
+µ
+
+µ
+
+µ	
+
+µ
+
+∂
+
+∂
+
+∂	
+
+∂
+
+π Ω
+
+π$
+
+ ∫
+
+ ∫
+
+ ∫	
+
+ ∫
+
+ª
+
+ª
+
+ª	
+
+ª
+
+º
+
+º
+
+º	
+
+º
+
+ø ¡
+
+ø%
+
+ ¿
+
+ ¿
+
+ ¿	
+
+ ¿
+
+√ »
+
+√$
+
+ ƒ
+
+ ƒ
+
+ ƒ	
+
+ ƒ
+
+≈
+
+≈
+
+≈	
+
+≈
+
+∆'
+
+∆
+
+∆	"
+
+∆%&
+
+«
+
+«
+
+«	
+
+«
+
+  Ã
+
+ %
+
+ À
+
+ À
+
+ À	
+
+ À
+
+Œ —
+
+Œ$
+
+ œ
+
+ œ
+
+ œ	
+
+ œ
+
+–
+
+–
+
+–	
+
+–
+
+” ’
+
+”%
+
+ ‘
+
+ ‘
+
+ ‘
+
+ ‘
+
+
+◊ 
+
+◊
+
+Ÿ ﬁ
+
+Ÿ
+
+ ⁄
+
+ ⁄
+
+ ⁄	
+
+ ⁄
+
+€
+
+€
+
+
+€
+
+€
+
+€
+
+‹
+
+‹
+
+
+‹
+
+‹
+
+‹
+
+›
+
+›
+
+›	
+
+›
+
+
+‡ (
+
+‡%
+
+‚ Á
+
+‚&
+P
+ ‰'B These fields describe deployed features, not user authorization.
+
+
+ ‰
+
+ ‰"
+
+ ‰%&
+
+Â#
+
+Â
+
+Â
+
+Â!"
+
+Ê&
+
+Ê
+
+
+Ê
+
+Ê!
+
+Ê$%
+
+È Ï
+
+È
+4
+ Î& Empty selects the default workspace.
+
+
+ Î
+
+ Î	
+
+ Î
+
+Ó ˆ
+
+Ó
+
+ Ô
+
+ Ô
+
+ Ô	
+
+ Ô
+
+
+
+
+
+	
+
+
+
+Ò
+
+Ò
+
+Ò	
+
+Ò
+
+Ú$
+
+Ú
+
+Ú	
+
+Ú"#
+
+Û 
+
+Û
+
+Û
+
+Û
+F
+ı$8 False until runtime state is joined into the overview.
+
+
+ı
+
+ı
+
+ı"#
+
+ ¯ É
+
+ ¯
+X
+  ˙J Empty selects the default workspace. Cross-workspace lists are excluded.
+
+
+  ˙
+
+  ˙	
+
+  ˙
+N
+ ¸@ Zero selects the server default. The server applies a maximum.
+
+
+ ¸
+
+ ¸	
+
+ ¸
+=
+ ˛/ Opaque cursor returned by the preceding page.
+
+
+ ˛
+
+ ˛	
+
+ ˛
+
+ ˇ
+
+ ˇ
+
+ ˇ	
+
+ ˇ
+
+ Ä
+
+ Ä
+
+ Ä	
+
+ Ä
+
+ Å
+
+ Å
+
+ Å	
+
+ Å
+
+ Ç!
+
+ Ç
+
+ Ç
+
+ Ç 
+
+!Ö à
+
+!Ö
+
+! Ü(
+
+! Ü
+
+
+! Ü
+
+! Ü#
+
+! Ü&'
+
+!á
+
+!á
+
+!á	
+
+!á
+
+"ä é
+
+"ä
+4
+" å& Empty selects the default workspace.
+
+
+" å
+
+" å	
+
+" å
+
+"ç
+
+"ç
+
+"ç	
+
+"ç
+
+#ê í
+
+#ê
+
+# ë
+
+# ë
+
+# ë
+
+# ë
+
+$î ó
+
+$î
+4
+$ ñ& Empty selects the default workspace.
+
+
+$ ñ
+
+$ ñ	
+
+$ ñ
+
+ ô †
+
+ ô
+
+  ö+
+
+  ö&
+
+  ö)*
+
+ õ%
+
+ õ 
+
+ õ#$
+
+ ú&
+
+ ú!
+
+ ú$%
+
+ ù&
+
+ ù!
+
+ ù$%
+
+ û&
+
+ û!
+
+ û$%
+
+ ü)
+
+ ü$
+
+ ü'(
+
+%¢ ©
+
+%¢
+
+% £!
+
+% £
+
+% £
+
+% £ 
+Z
+%•L Sequence numbers start at one for each stream and are not durable cursors.
+
+
+%•
+
+%•	
+
+%•
+
+%¶
+
+%¶
+
+%¶
+
+%¶
+
+%ß
+
+%ß
+
+%ß	
+
+%ß
+
+%® 
+
+%®
+
+%®
+
+%®
+
+&´ ∂
+
+&´
+
+& ¨
+
+& ¨
+
+& ¨	
+
+& ¨
+
+&≠
+
+&≠
+
+&≠	
+
+&≠
+I
+&Ø; Zero selects 200 lines; the server caps requests at 1000.
+
+
+&Ø
+
+&Ø	
+
+&Ø
+Y
+&±K Return entries at or after this Unix timestamp. Zero disables the filter.
+
+
+&±
+
+&±
+
+&±
+B
+&≥4 Exact source filter, such as "proxy" or "sandbox".
+
+
+&≥
+
+&≥	
+
+&≥
+Y
+&µK Level filter with the gateway log buffer's existing level matching rules.
+
+
+&µ
+
+&µ	
+
+&µ
+
+'∏ º
+
+'∏
+
+' π$
+
+' π
+
+
+' π
+
+' π
+
+' π"#
+V
+'ªH Latest buffered sequence; cursors are scoped to this in-memory buffer.
+
+
+'ª
+
+'ª	
+
+'ª
+
+(æ À
+
+(æ
+
+( ø
+
+( ø
+
+( ø	
+
+( ø
+
+(¿
+
+(¿
+
+(¿	
+
+(¿
+I
+(¬; Zero selects 200 lines; the server caps requests at 1000.
+
+
+(¬
+
+(¬	
+
+(¬
+X
+(ƒJ Zero starts with a fresh tail. An expired or future cursor causes RESET.
+
+
+(ƒ
+
+(ƒ	
+
+(ƒ
+\
+(∆N Return only lines at or after this Unix timestamp. Zero disables the filter.
+
+
+(∆
+
+(∆
+
+(∆
+-
+(» Optional exact source filter.
+
+
+(»
+
+(»	
+
+(»
+R
+( D Optional level filter using the gateway's existing matching rules.
+
+
+( 
+
+( 	
+
+( 
+
+Õ “
+
+Õ
+
+ Œ)
+
+ Œ$
+
+ Œ'(
+
+œ#
+
+œ
+
+œ!"
+
+–"
+
+–
+
+– !
+
+—'
+
+—"
+
+—%&
+
+)‘ ⁄
+
+)‘ 
+
+) ’
+
+) ’
+
+) ’
+
+) ’
+
+)÷
+
+)÷
+
+)÷
+
+)÷
+U
+)ÿG Resume cursor at a reset or heartbeat. RESET precedes a bounded tail.
+
+
+)ÿ
+
+)ÿ	
+
+)ÿ
+
+)Ÿ 
+
+)Ÿ
+
+)Ÿ
+
+)Ÿ
+±
+*ﬁ Â¢ Log text may contain application output. Only authorized workspace users may read it.
+ Structured fields are omitted because they may carry credential material.
+
+
+*ﬁ
+
+* ﬂ
+
+* ﬂ
+
+* ﬂ	
+
+* ﬂ
+
+*‡
+
+*‡
+
+*‡
+
+*‡
+
+*·
+
+*·
+
+*·	
+
+*·
+
+*‚
+
+*‚
+
+*‚	
+
+*‚
+
+*„
+
+*„
+
+*„	
+
+*„
+
+*‰
+
+*‰
+
+*‰	
+
+*‰
+
++Á Ú
+
++Á
+
++ Ë
+
++ Ë
+
++ Ë	
+
++ Ë
+W
++ÍI Required, DNS label up to 19 bytes. This is a gateway-wide unique name.
+
+
++Í
+
++Í	
+
++Í
+R
++ÏD Choose either an image or an existing workspace workload template.
+
+
++Ï
+
++Ï	
+
++Ï
+
++Ì$
+
++Ì
+
++Ì	
+
++Ì"#
+
++Ó
+
++Ó
+
+
++Ó
+
++Ó
+
++Ó
+J
++< Required client-generated ID, reused verbatim for retries.
+
+
++
+
++	
+
++
+
++Ò!
+
++Ò
+
++Ò
+
++Ò 
+
+,Ù ˘
+
+,Ù
+L
+, ˆ> Returned after the backend and registry transition complete.
+
+
+, ˆ
+
+, ˆ
+
+, ˆ
+
+,˜
+
+,˜
+
+,˜
+
+,˜
+
+,¯
+
+,¯
+
+,¯	
+
+,¯
+
+-˚ Å
+
+-˚
+
+- ¸
+
+- ¸
+
+- ¸	
+
+- ¸
+
+-˝
+
+-˝
+
+-˝	
+
+-˝
+P
+-ˇ'B Required. Rejects a stale UI action before backend side effects.
+
+
+-ˇ
+
+-ˇ	"
+
+-ˇ%&
+
+-Ä
+
+-Ä
+
+-Ä	
+
+-Ä
+
+.É à
+
+.É
+V
+. ÖH Returned only after the backend call and registry transition complete.
+
+
+. Ö
+
+. Ö
+
+. Ö
+
+.Ü
+
+.Ü
+
+.Ü
+
+.Ü
+
+.á
+
+.á
+
+.á	
+
+.á
+
+/ä è
+
+/ä
+
+/ ã
+
+/ ã
+
+/ ã	
+
+/ ã
+
+/å
+
+/å
+
+/å	
+
+/å
+
+/ç'
+
+/ç
+
+/ç	"
+
+/ç%&
+
+/é
+
+/é
+
+/é	
+
+/é
+
+0ë ï
+
+0ë
+
+0 í
+
+0 í
+
+0 í
+
+0 í
+
+0ì
+
+0ì
+
+0ì
+
+0ì
+
+0î
+
+0î
+
+0î	
+
+0î
+
+1ó ú
+
+1ó
+
+1 ò
+
+1 ò
+
+1 ò	
+
+1 ò
+
+1ô
+
+1ô
+
+1ô	
+
+1ô
+
+1ö'
+
+1ö
+
+1ö	"
+
+1ö%&
+
+1õ
+
+1õ
+
+1õ	
+
+1õ
+
+2û ¢
+
+2û
+J
+2 †< True only after the backend and registry removal complete.
+
+
+2 †
+
+2 †
+
+2 †
+
+2°
+
+2°
+
+2°	
+
+2°
+
+3§ ®
+
+3§
+
+3 •
+
+3 •
+
+3 •	
+
+3 •
+Z
+3ßL Query by the client-generated ID even when the mutation response was lost.
+
+
+3ß
+
+3ß	
+
+3ß
+
+4™ ¨
+
+4™
+
+4 ´!
+
+4 ´
+
+4 ´
+
+4 ´ 
+
+5Æ ≤
+
+5Æ
+
+5 Ø
+
+5 Ø
+
+5 Ø	
+
+5 Ø
+
+5∞
+
+5∞
+
+5∞	
+
+5∞
+
+5±
+
+5±
+
+5±	
+
+5±
+
+6¥ ∑
+
+6¥
+
+6 µ+
+
+6 µ
+
+
+6 µ
+
+6 µ&
+
+6 µ)*
+
+6∂
+
+6∂
+
+6∂	
+
+6∂
+
+7π Ω
+
+7π
+
+7 ∫
+
+7 ∫
+
+7 ∫	
+
+7 ∫
+
+7ª
+
+7ª
+
+7ª	
+
+7ª
+
+7º
+
+7º
+
+7º	
+
+7º
+
+8ø ¬
+
+8ø
+
+8 ¿(
+
+8 ¿
+
+
+8 ¿
+
+8 ¿#
+
+8 ¿&'
+
+8¡
+
+8¡
+
+8¡	
+
+8¡
+
+9ƒ ”
+
+9ƒ
+
+9 ≈
+
+9 ≈
+
+9 ≈	
+
+9 ≈
+
+9∆
+
+9∆
+
+9∆	
+
+9∆
+
+9«
+
+9«
+
+9«	
+
+9«
+
+9»
+
+9»
+
+9»	
+
+9»
+
+9…
+
+9…
+
+9…	
+
+9…
+
+9 
+
+9 
+
+9 	
+
+9 
+
+9À
+
+9À
+
+9À	
+
+9À
+9
+9Õ+ running, succeeded, failed, or uncertain.
+
+
+9Õ
+
+9Õ	
+
+9Õ
+
+9Œ
+
+9Œ
+
+9Œ	
+
+9Œ
+
+9	œ%
+
+9	œ
+
+9	œ	
+
+9	œ"$
+
+9
+–&
+
+9
+–
+
+9
+–	 
+
+9
+–#%
+
+9— 
+
+9—
+
+9—
+
+9—
+
+9“ 
+
+9“
+
+9“
+
+9“
+
+:’ ﬁ
+
+:’
+
+: ÷
+
+: ÷
+
+: ÷	
+
+: ÷
+
+:◊
+
+:◊
+
+:◊
+
+:◊
+
+:ÿ
+
+:ÿ
+
+:ÿ	
+
+:ÿ
+
+:Ÿ
+
+:Ÿ
+
+:Ÿ	
+
+:Ÿ
+
+:⁄
+
+:⁄
+
+:⁄	
+
+:⁄
+
+:€
+
+:€
+
+:€	
+
+:€
+
+:‹
+
+:‹
+
+:‹	
+
+:‹
+
+:›
+
+:›
+
+:›	
+
+:›
+_
+;· ÌQ SandboxSummary intentionally excludes spec JSON, settings, secrets, and tokens.
+
+
+;·
+
+; ‚
+
+; ‚
+
+; ‚	
+
+; ‚
+
+;„
+
+;„
+
+;„	
+
+;„
+
+;‰
+
+;‰
+
+;‰	
+
+;‰
+
+;Â
+
+;Â
+
+;Â	
+
+;Â
+
+;Ê
+
+;Ê
+
+;Ê	
+
+;Ê
+
+;Á
+
+;Á
+
+;Á
+
+;Á
+R
+;È$D False until the runtime's observed state is joined into this view.
+
+
+;È
+
+;È
+
+;È"#
+
+;Í
+
+;Í
+
+;Í	
+
+;Í
+
+;Î
+
+;Î
+
+;Î	
+
+;Î
+
+;	Ï"
+
+;	Ï
+
+;	Ï
+
+;	Ï!
+
+<Ô Ò
+
+<Ô
+
+< 
+
+< 
+
+< 	
+
+< 
+
+=Û ı
+
+=Û
+
+= Ù'
+
+= Ù
+
+
+= Ù
+
+= Ù"
+
+= Ù%&
+
+>˜ ¸
+
+>˜
+
+> ¯
+
+> ¯
+
+> ¯	
+
+> ¯
+
+>˘
+
+>˘
+
+>˘	
+
+>˘
+
+>˙
+
+>˙
+
+>˙	
+
+>˙
+
+>˚
+
+>˚
+
+>˚
+
+>˚
+
+?˛ Ä
+
+?˛
+
+? ˇ
+
+? ˇ
+
+? ˇ	
+
+? ˇ
+
+@Ç Ñ
+
+@Ç
+
+@ É)
+
+@ É
+
+
+@ É
+
+@ É$
+
+@ É'(
+
+AÜ ç
+
+AÜ
+
+A á
+
+A á
+
+A á	
+
+A á
+
+Aà
+
+Aà
+
+Aà	
+
+Aà
+
+Aâ
+
+Aâ
+
+Aâ	
+
+Aâ
+
+Aä 
+
+Aä
+
+
+Aä
+
+Aä
+
+Aä
+
+Aã
+
+Aã
+
+Aã	
+
+Aã
+
+Aå
+
+Aå
+
+Aå
+
+Aå
+
+
+Bè  
+
+Bè
+
+Cë ì
+
+Cë
+
+C í+
+
+C í
+
+
+C í
+
+C í&
+
+C í)*
+
+Dï ó
+
+Dï
+
+D ñ
+
+D ñ
+
+D ñ	
+
+D ñ
+
+Eô õ
+
+Eô
+
+E ö!
+
+E ö
+
+E ö
+
+E ö 
+
+Fù £
+
+Fù
+
+F û
+
+F û
+
+F û	
+
+F û
+
+Fü
+
+Fü
+
+Fü	
+
+Fü
+
+F†
+
+F†
+
+F†	
+
+F†
+
+F°
+
+F°
+
+F°	
+
+F°
+
+F¢
+
+F¢
+
+F¢
+
+F¢
+
+G• ´
+
+G•"
+
+G ¶
+
+G ¶
+
+G ¶	
+
+G ¶
+
+Gß
+
+Gß
+
+Gß	
+
+Gß
+
+G®
+
+G®
+
+G®	
+
+G®
+
+G©
+
+G©
+
+G©	
+
+G©
+
+G™
+
+G™
+
+G™	
+
+G™
+
+H≠ ∞
+
+H≠#
+
+H Æ/
+
+H Æ
+
+
+H Æ 
+
+H Æ!*
+
+H Æ-.
+
+HØ
+
+HØ
+
+HØ	
+
+HØ
+
+I≤ µ
+
+I≤ 
+
+I ≥
+
+I ≥
+
+I ≥	
+
+I ≥
+
+I¥
+
+I¥
+
+I¥	
+
+I¥
+
+J∑ π
+
+J∑!
+
+J ∏%
+
+J ∏
+
+J ∏ 
+
+J ∏#$
+
+Kª Ω
+
+Kª%
+
+K º%
+
+K º
+
+K º 
+
+K º#$
+
+Lø ¡
+
+Lø$
+
+L ¿%
+
+L ¿
+
+L ¿ 
+
+L ¿#$
+
+M√ ∆
+
+M√$
+
+M ƒ
+
+M ƒ
+
+M ƒ	
+
+M ƒ
+
+M≈
+
+M≈
+
+M≈	
+
+M≈
+
+N» Ã
+
+N»#
+
+N …
+
+N …
+
+N …	
+
+N …
+
+N 
+
+N 
+
+N 	
+
+N 
+
+NÀ
+
+NÀ
+
+NÀ	
+
+NÀ
+
+OŒ ﬁ
+
+OŒ
+
+O œ
+
+O œ
+
+O œ	
+
+O œ
+
+O–
+
+O–
+
+O–	
+
+O–
+
+O—
+
+O—
+
+O—	
+
+O—
+
+O“
+
+O“
+
+O“	
+
+O“
+
+O”
+
+O”
+
+O”	
+
+O”
+
+O‘
+
+O‘
+
+O‘	
+
+O‘
+
+O’
+
+O’
+
+O’	
+
+O’
+
+O÷
+
+O÷
+
+O÷	
+
+O÷
+
+O◊
+
+O◊
+
+O◊
+
+O◊
+
+O	ÿ
+
+O	ÿ
+
+
+O	ÿ
+
+O	ÿ
+
+O	ÿ
+
+O
+Ÿ
+
+O
+Ÿ
+
+O
+Ÿ	
+
+O
+Ÿ
+
+O⁄ 
+
+O⁄
+
+O⁄	
+
+O⁄
+
+O€
+
+O€
+
+O€
+
+O€
+
+O‹ 
+
+O‹
+
+O‹
+
+O‹
+
+O› 
+
+O›
+
+O›
+
+O›bproto3“ˆ  

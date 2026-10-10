@@ -3,8 +3,16 @@
 package logbuf
 
 import (
+	"sort"
 	"sync"
 	"time"
+)
+
+const (
+	maxResidentBuffers = 64
+	maxRetainedBytes   = 1 << 20
+	maxLineBytes       = 64 << 10
+	maxLineFields      = 128
 )
 
 // Line is one observation log entry.
@@ -26,6 +34,7 @@ type Buffer struct {
 	waiters  []chan struct{}
 	watchers map[chan struct{}]struct{}
 	sequence uint64
+	retained int
 }
 
 // Hub maps sandbox name → Buffer.
@@ -33,6 +42,8 @@ type Hub struct {
 	mu      sync.Mutex
 	max     int
 	buffers map[string]*Buffer
+	clock   uint64
+	used    map[string]uint64
 }
 
 // NewHub creates a hub with per-sandbox capacity max (default 4096).
@@ -40,7 +51,7 @@ func NewHub(max int) *Hub {
 	if max <= 0 {
 		max = 4096
 	}
-	return &Hub{max: max, buffers: map[string]*Buffer{}}
+	return &Hub{max: max, buffers: map[string]*Buffer{}, used: map[string]uint64{}}
 }
 
 func (h *Hub) buf(name string) *Buffer {
@@ -48,9 +59,34 @@ func (h *Hub) buf(name string) *Buffer {
 	defer h.mu.Unlock()
 	b, ok := h.buffers[name]
 	if !ok {
+		if len(h.buffers) >= maxResidentBuffers {
+			var oldest string
+			var oldestAt uint64
+			foundOldest := false
+			for candidate, at := range h.used {
+				if !foundOldest || at < oldestAt {
+					oldest, oldestAt = candidate, at
+					foundOldest = true
+				}
+			}
+			if evicted := h.buffers[oldest]; evicted != nil {
+				evicted.mu.Lock()
+				for ch := range evicted.watchers {
+					select {
+					case ch <- struct{}{}:
+					default:
+					}
+				}
+				evicted.mu.Unlock()
+			}
+			delete(h.buffers, oldest)
+			delete(h.used, oldest)
+		}
 		b = &Buffer{max: h.max, watchers: map[chan struct{}]struct{}{}}
 		h.buffers[name] = b
 	}
+	h.clock++
+	h.used[name] = h.clock
 	return b
 }
 
@@ -59,7 +95,8 @@ func (h *Hub) Append(sandbox string, lines []Line) {
 	if sandbox == "" || len(lines) == 0 {
 		return
 	}
-	h.buf(sandbox).append(lines)
+	b := h.buf(sandbox)
+	b.append(lines)
 }
 
 // Snapshot returns a copy of recent lines (optionally filtered).
@@ -143,21 +180,26 @@ func (h *Hub) Remove(sandbox string) {
 	h.mu.Lock()
 	defer h.mu.Unlock()
 	delete(h.buffers, sandbox)
+	delete(h.used, sandbox)
 }
 
 func (b *Buffer) append(lines []Line) {
 	b.mu.Lock()
 	defer b.mu.Unlock()
 	for _, ln := range lines {
+		ln = boundLine(ln)
 		b.sequence++
 		ln.Sequence = b.sequence
 		if ln.TS.IsZero() {
 			ln.TS = time.Now().UTC()
 		}
 		b.lines = append(b.lines, ln)
+		b.retained += lineSize(ln)
 	}
-	if len(b.lines) > b.max {
-		b.lines = append([]Line{}, b.lines[len(b.lines)-b.max:]...)
+	for len(b.lines) > b.max || b.retained > maxRetainedBytes {
+		b.retained -= lineSize(b.lines[0])
+		b.lines[0] = Line{}
+		b.lines = b.lines[1:]
 	}
 	for _, ch := range b.waiters {
 		select {
@@ -172,6 +214,59 @@ func (b *Buffer) append(lines []Line) {
 		default:
 		}
 	}
+}
+
+func boundLine(line Line) Line {
+	// Keep metadata and field payloads within one fixed budget. Sorting makes
+	// which fields survive deterministic when an entry is oversized.
+	budget := maxLineBytes - 64
+	line.Source = truncate(line.Source, 64)
+	line.Level = truncate(line.Level, 32)
+	line.Target = truncate(line.Target, 256)
+	used := len(line.Source) + len(line.Level) + len(line.Target)
+	if used > budget {
+		line.Target = truncate(line.Target, budget-len(line.Source)-len(line.Level))
+		used = len(line.Source) + len(line.Level) + len(line.Target)
+	}
+	line.Text = truncate(line.Text, budget-used)
+	used += len(line.Text)
+	keys := make([]string, 0, len(line.Fields))
+	for key := range line.Fields {
+		keys = append(keys, key)
+	}
+	sort.Strings(keys)
+	fields := make(map[string]string, len(keys))
+	for _, key := range keys {
+		if len(fields) == maxLineFields {
+			break
+		}
+		value := line.Fields[key]
+		if used+len(key)+len(value) > maxLineBytes {
+			continue
+		}
+		fields[key] = value
+		used += len(key) + len(value)
+	}
+	line.Fields = fields
+	return line
+}
+
+func truncate(value string, limit int) string {
+	if limit < 0 {
+		return ""
+	}
+	if len(value) > limit {
+		return value[:limit]
+	}
+	return value
+}
+
+func lineSize(line Line) int {
+	size := len(line.Source) + len(line.Level) + len(line.Target) + len(line.Text) + 64
+	for key, value := range line.Fields {
+		size += len(key) + len(value)
+	}
+	return size
 }
 
 func (b *Buffer) tail(limit int) ([]Line, uint64) {

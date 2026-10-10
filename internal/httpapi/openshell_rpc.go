@@ -55,6 +55,7 @@ type grpcRuntime struct {
 	compute             *computeRegistry
 	drivers             *driverRegistry
 	sandboxMu           sync.Mutex
+	globalPolicyMu      sync.Mutex
 	waitSupervisorReady func(context.Context, string) error
 	policyApplyTimeout  time.Duration
 	sshSessionTTL       time.Duration
@@ -164,6 +165,11 @@ func (s *openShellRPC) ConnectSupervisor(stream grpc.BidiStreamingServer[openshe
 		_ = stream.Send(&openshellv1.GatewayMessage{Payload: &openshellv1.GatewayMessage_SessionRejected{SessionRejected: &openshellv1.SessionRejected{Reason: "supervisor sandbox identity mismatch"}}})
 		return status.Error(codes.PermissionDenied, "supervisor Hello sandbox does not match token")
 	}
+	if sandbox.PolicyRev > 0 {
+		if err := s.syncSandboxRuntimePolicy(sandbox.Name, sandbox.PolicyRev); err != nil {
+			return status.Error(codes.Unavailable, "current sandbox policy could not be synchronized")
+		}
+	}
 	if _, err := s.runtime.st.SetSupervisorInstance(sandbox.Name, hello.GetInstanceId()); err != nil {
 		return status.Error(codes.Internal, "could not record supervisor instance")
 	}
@@ -221,7 +227,11 @@ func (s *openShellRPC) ConnectSupervisor(stream grpc.BidiStreamingServer[openshe
 			if result.msg.GetHeartbeat() != nil {
 				continue
 			}
-			if result.msg.GetRelayClose() != nil {
+			if relayClose := result.msg.GetRelayClose(); relayClose != nil {
+				if strings.TrimSpace(relayClose.GetChannelId()) == "" {
+					return status.Error(codes.InvalidArgument, "relay_close requires channel_id")
+				}
+				s.runtime.relay.CloseOpenShellRelay(principal.Sandbox, relayClose.GetChannelId(), errors.New("supervisor aborted relay"))
 				continue
 			}
 			if openResult := result.msg.GetRelayOpenResult(); openResult != nil {
@@ -262,6 +272,7 @@ func (s *openShellRPC) RelayStream(stream grpc.BidiStreamingServer[openshellv1.R
 		return status.Error(codes.NotFound, "relay channel is not pending for this sandbox")
 	}
 	defer conn.Close()
+	defer s.runtime.relay.CloseOpenShellRelay(p.Sandbox, first.GetInit().GetChannelId(), nil)
 	readDone := make(chan error, 1)
 	go func() {
 		for {
@@ -288,14 +299,10 @@ func (s *openShellRPC) RelayStream(stream grpc.BidiStreamingServer[openshellv1.R
 				// has no FIN payload; only gRPC request EOF half-closes this side.
 				continue
 			}
-			for len(data) > 0 {
-				n, writeErr := conn.Write(data)
-				if writeErr != nil {
-					_ = conn.Close()
-					readDone <- writeErr
-					return
-				}
-				data = data[n:]
+			if writeErr := writeAll(conn, data); writeErr != nil {
+				_ = conn.Close()
+				readDone <- writeErr
+				return
 			}
 		}
 	}()
@@ -322,6 +329,7 @@ func (s *openShellRPC) RelayStream(stream grpc.BidiStreamingServer[openshellv1.R
 			}
 		}
 	}()
+	requestEOF, responseEOF := false, false
 	for {
 		select {
 		case event := <-readFrames:
@@ -331,10 +339,14 @@ func (s *openShellRPC) RelayStream(stream grpc.BidiStreamingServer[openshellv1.R
 				}
 			}
 			if event.err == io.EOF {
-				// The upstream protocol has no frame-level FIN. End the response
-				// stream when the target side reaches EOF; request-side EOF is
-				// handled independently below so the target can still reply.
-				return nil
+				// The peer may have closed its write direction while still
+				// expecting request bytes. Keep the RPC alive until both halves end.
+				responseEOF = true
+				readFrames = nil
+				if requestEOF {
+					return nil
+				}
+				continue
 			}
 			if event.err != nil {
 				return event.err
@@ -345,6 +357,10 @@ func (s *openShellRPC) RelayStream(stream grpc.BidiStreamingServer[openshellv1.R
 				// to the target. Keep the response stream alive until the target
 				// closes its own write side.
 				readDone = nil
+				requestEOF = true
+				if responseEOF {
+					return nil
+				}
 				continue
 			}
 			if recvErr != nil {
@@ -612,7 +628,7 @@ func (l *sandboxLifecycle) Create(ctx context.Context, req *openshellv1.CreateSa
 			_ = engine.Delete(cleanupCtx, h.ID)
 			_ = s.runtime.st.DeleteSandbox(name)
 			_ = os.RemoveAll(filepath.Join(s.runtime.opt.DataDir, "sandboxes", name))
-			return nil, status.Error(codes.FailedPrecondition, "sandbox supervisor relay did not become ready")
+			return nil, status.Error(codes.FailedPrecondition, "sandbox supervisor relay did not become ready; check that compute driver's grpc_endpoint is reachable from the container and that guest TLS settings are complete (Docker Desktop/WSL2 typically uses host.docker.internal)")
 		}
 	}
 	if persisted, ok := s.runtime.st.GetSandbox(name); ok {
@@ -804,6 +820,11 @@ func (l *sandboxLifecycle) Start(ctx context.Context, req *openshellv1.StartSand
 		}
 		return sandboxLifecycleResponse(rec, openshellv1.SandboxPhase_SANDBOX_PHASE_READY), nil
 	}
+	if rec.PolicyRev > 0 {
+		if err := s.syncSandboxRuntimePolicy(rec.Name, rec.PolicyRev); err != nil {
+			return nil, status.Error(codes.FailedPrecondition, "current sandbox policy could not be synchronized")
+		}
+	}
 	rec, err = s.runtime.st.BeginSandboxStartCAS(rec.Name, expectedVersion)
 	if err != nil {
 		if errors.Is(err, store.ErrResourceVersionConflict) {
@@ -859,6 +880,7 @@ func (l *sandboxLifecycle) Stop(ctx context.Context, req *openshellv1.StopSandbo
 	if rec.RuntimeID == "" {
 		return nil, status.Error(codes.FailedPrecondition, "sandbox has no runtime identity")
 	}
+	previousStatus := rec.Status
 	if rec, err = s.runtime.st.BeginSandboxStopCAS(rec.Name, expectedVersion); err != nil {
 		if errors.Is(err, store.ErrResourceVersionConflict) {
 			return nil, status.Error(codes.Aborted, "sandbox resource version changed")
@@ -866,7 +888,9 @@ func (l *sandboxLifecycle) Stop(ctx context.Context, req *openshellv1.StopSandbo
 		return nil, status.Error(codes.Internal, "sandbox registry update failed")
 	}
 	if err = engine.Stop(ctx, core.ID(rec.RuntimeID)); err != nil {
-		_, _ = s.runtime.st.MarkSandboxRunning(rec.Name)
+		if _, restoreErr := s.runtime.st.RestoreSandboxStatusCAS(rec.Name, rec.ResourceVersion, previousStatus); restoreErr != nil {
+			return nil, status.Error(codes.Internal, "sandbox stop failed and registry state could not be restored")
+		}
 		return nil, status.Errorf(codes.FailedPrecondition, "sandbox stop failed: %v", err)
 	}
 	if s.runtime.relay != nil {

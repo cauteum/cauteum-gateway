@@ -127,7 +127,7 @@ func grpcAuthRoute(fullMethod string) (string, string) {
 	case "GetCurrentUser":
 		return http.MethodGet, "/v1/whoami"
 	case "GetGatewayInfo", "GetGatewayConfig", "GetSandboxConfig":
-		return http.MethodGet, "/v1/info"
+		return http.MethodGet, "/v1/settings"
 	case "GetProvider", "ListProviders", "ListProviderProfiles", "GetProviderProfile", "GetProviderRefreshStatus":
 		return http.MethodGet, "/v1/providers"
 	case "CreateProvider", "UpdateProvider", "ImportProviderProfiles", "UpdateProviderProfiles", "LintProviderProfiles", "ConfigureProviderRefresh", "RotateProviderCredential":
