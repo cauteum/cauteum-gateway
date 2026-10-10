@@ -6751,7 +6751,7 @@ const file_cauteum_control_v1_console_proto_rawDesc = "" +
 	"\x15UpdateProviderProfile\x120.cauteum.control.v1.UpdateProviderProfileRequest\x1a1.cauteum.control.v1.UpdateProviderProfileResponse\x12|\n" +
 	"\x15DeleteProviderProfile\x120.cauteum.control.v1.DeleteProviderProfileRequest\x1a1.cauteum.control.v1.DeleteProviderProfileResponse2\xa6\x01\n" +
 	"\x19ProviderCredentialService\x12\x88\x01\n" +
-	"\x19UpdateProviderCredentials\x124.cauteum.control.v1.UpdateProviderCredentialsRequest\x1a5.cauteum.control.v1.UpdateProviderCredentialsResponseBOZMgithub.com/cautem/cauteum-gateway/api/gen/cauteum/control/v1;controlv1b\x06proto3"
+	"\x19UpdateProviderCredentials\x124.cauteum.control.v1.UpdateProviderCredentialsRequest\x1a5.cauteum.control.v1.UpdateProviderCredentialsResponseBHZFgithub.com/cautem/cauteum-gateway/api/gen/cauteum/control/v1;controlv1b\x06proto3"
 
 var (
 	file_cauteum_control_v1_console_proto_rawDescOnce sync.Once
