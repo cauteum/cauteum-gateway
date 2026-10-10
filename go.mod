@@ -11,10 +11,10 @@ require (
 	github.com/aws/aws-sdk-go-v2/config v1.33.7
 	github.com/aws/aws-sdk-go-v2/credentials v1.20.7
 	github.com/aws/aws-sdk-go-v2/service/sts v1.51.2
-	github.com/cauteum-haven/cauteum-core v0.1.2
-	github.com/cauteum-haven/cauteum-driver v0.1.2
-	github.com/cauteum-haven/cauteum-providers v0.1.2
-	github.com/cauteum-haven/cauteum-runtime v0.1.2
+	github.com/cauteum-haven/cauteum-core v0.1.4
+	github.com/cauteum-haven/cauteum-driver v0.1.4
+	github.com/cauteum-haven/cauteum-providers v0.1.4
+	github.com/cauteum-haven/cauteum-runtime v0.1.4
 	github.com/cauteum-haven/slogx v0.1.2
 	github.com/go-jose/go-jose/v4 v4.1.5
 	github.com/pelletier/go-toml/v2 v2.4.3

@@ -32,7 +32,7 @@ Use the [gateway guide](https://cauteum-haven.github.io/guides/gateway/) for set
 | **Policy** | Base + effective policy over Control RPC; provider attach via OpenShell RPC |
 | **Proposals** | Store / approve / reject (`policy.local` sync) |
 | **Relay** | Stream and exec relay for guests |
-| **Image** | `ghcr.io/cauteum/cauteum/gateway` |
+| **Image** | `ghcr.io/cauteum-haven/cauteum/gateway` |
 
 ---
 
@@ -45,7 +45,7 @@ go build -o cauteum-gateway ./cmd/cauteum-gateway
 
 **Requirements:** Go 1.27+
 
-**Container:** `ghcr.io/cauteum/cauteum/gateway:latest`
+**Container:** `ghcr.io/cauteum-haven/cauteum/gateway:latest`
 
 ---
 

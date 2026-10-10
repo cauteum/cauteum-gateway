@@ -27,7 +27,7 @@ permissions:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE: ghcr.io/cauteum/cauteum/gateway
+  IMAGE: ghcr.io/cauteum-haven/cauteum/gateway
   GOWORK: ${{ github.workspace }}/go.work
 
 jobs:
@@ -99,7 +99,7 @@ jobs:
                 echo "  github.com/cauteum-haven/${d} v0.1.0-alpha.2 => ./$d"
                 echo "  github.com/cauteum-haven/${d} v0.1.0-beta.1 => ./$d"
                 echo "  github.com/cauteum-haven/${d} v0.1.0-beta.2 => ./$d"
-                echo "  github.com/cauteum-haven/${d} v0.1.2 => ./$d"
+                echo "  github.com/cauteum-haven/${d} v0.1.4 => ./$d"
               fi
             done
             if [[ -d cauteum-slogx ]]; then
@@ -107,7 +107,7 @@ jobs:
               echo '  github.com/cauteum-haven/slogx v0.1.0-alpha.2 => ./cauteum-slogx'
               echo '  github.com/cauteum-haven/slogx v0.1.0-beta.1 => ./cauteum-slogx'
               echo '  github.com/cauteum-haven/slogx v0.1.0-beta.2 => ./cauteum-slogx'
-              echo '  github.com/cauteum-haven/slogx v0.1.2 => ./cauteum-slogx'
+              echo '  github.com/cauteum-haven/slogx v0.1.4 => ./cauteum-slogx'
             fi
             echo ')'
           } > "${{ github.workspace }}/go.work"
