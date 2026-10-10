@@ -38,6 +38,8 @@ github.com/cautem/cauteum-driver v0.1.5 h1:McNJ0Zwh5NEnu1BgnY/jjyeCyBFVW8hLanBg7
 github.com/cautem/cauteum-driver v0.1.5/go.mod h1:m4XfTiip7pt38l+BIyj0uESlfJyYffR0ZeuLKXZOeQA=
 github.com/cautem/cauteum-providers v0.1.5 h1:LbXtNX1r/82RkKTUY7MHEEIQ31Ca/iF0mrTXNFtKYS0=
 github.com/cautem/cauteum-providers v0.1.5/go.mod h1:CFbkgDxqlKHB04PQsQcOPvIG44N41F1YgjrXhXyuLFo=
+github.com/cautem/cauteum-runtime v0.1.5 h1:K43I/LjZi72eOca+brlbsqshX16srCbNzCoaydrXYPM=
+github.com/cautem/cauteum-runtime v0.1.5/go.mod h1:8z579sGKonjZySA2nqF44WoIqio/FwJMlUW3EinEM3A=
 github.com/cautem/slogx v0.1.3 h1:pFENbdUiQbvVl8OZWxFeiJ6v2YzW7zg7GGw7OQCaviY=
 github.com/cautem/slogx v0.1.3/go.mod h1:94tkaTMpioXye7YHnWohvVeKH657xXZgsO/CDAGu6sI=
 github.com/cespare/xxhash/v2 v2.3.0 h1:UL815xU9SqsFlibzuggzjXhog7bL6oX9BbNZnL2UFvs=
