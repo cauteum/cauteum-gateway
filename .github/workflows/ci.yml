@@ -98,7 +98,7 @@ jobs:
         with:
           repository: cautem/cautem-cli
           path: cautem-cli
-          ref: 3f79f643568668def6d7ddd2229bf4ade0a6910d
+          ref: 84d45bf10c772b9d80779939b0d22d0baa74febe
 
       - name: Checkout cautem-core
         uses: actions/checkout@v4
@@ -213,7 +213,7 @@ jobs:
         with:
           repository: cautem/cautem-cli
           path: cautem-cli
-          ref: 3f79f643568668def6d7ddd2229bf4ade0a6910d
+          ref: 84d45bf10c772b9d80779939b0d22d0baa74febe
 
       - name: Checkout cautem-core
         uses: actions/checkout@v4
@@ -328,7 +328,7 @@ jobs:
         with:
           repository: cautem/cautem-cli
           path: cautem-cli
-          ref: 3f79f643568668def6d7ddd2229bf4ade0a6910d
+          ref: 84d45bf10c772b9d80779939b0d22d0baa74febe
 
       - name: Checkout cautem-core
         uses: actions/checkout@v4
@@ -441,7 +441,7 @@ jobs:
         with:
           repository: cautem/cautem-cli
           path: cautem-cli
-          ref: 3f79f643568668def6d7ddd2229bf4ade0a6910d
+          ref: 84d45bf10c772b9d80779939b0d22d0baa74febe
 
       - name: Checkout cautem-core
         uses: actions/checkout@v4
