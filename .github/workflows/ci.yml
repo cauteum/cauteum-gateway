@@ -92,7 +92,7 @@ jobs:
         with:
           repository: cautem/cauteum-cli
           path: cauteum-cli
-          ref: 4b696c2b2e0d6f90dc4c7166fc5bb4dc3255a826
+          ref: 62263efb19f99f0ccc182ae6bb9179bdfab4e839
 
       - name: Checkout cauteum-core
         uses: actions/checkout@v4
@@ -207,7 +207,7 @@ jobs:
         with:
           repository: cautem/cauteum-cli
           path: cauteum-cli
-          ref: 4b696c2b2e0d6f90dc4c7166fc5bb4dc3255a826
+          ref: 62263efb19f99f0ccc182ae6bb9179bdfab4e839
 
       - name: Checkout cauteum-core
         uses: actions/checkout@v4
@@ -322,7 +322,7 @@ jobs:
         with:
           repository: cautem/cauteum-cli
           path: cauteum-cli
-          ref: 4b696c2b2e0d6f90dc4c7166fc5bb4dc3255a826
+          ref: 62263efb19f99f0ccc182ae6bb9179bdfab4e839
 
       - name: Checkout cauteum-core
         uses: actions/checkout@v4
@@ -435,7 +435,7 @@ jobs:
         with:
           repository: cautem/cauteum-cli
           path: cauteum-cli
-          ref: 4b696c2b2e0d6f90dc4c7166fc5bb4dc3255a826
+          ref: 62263efb19f99f0ccc182ae6bb9179bdfab4e839
 
       - name: Checkout cauteum-core
         uses: actions/checkout@v4
