@@ -92,42 +92,42 @@ jobs:
         with:
           repository: cauteum-haven/cauteum-cli
           path: cauteum-cli
-          ref: a9e52e3812b4c2d36d09cb298ad9aba8e1b279f1
+          ref: c7dcfd6bbd44e9225598a1c52a507245adc0c34d
 
       - name: Checkout cauteum-core
         uses: actions/checkout@v4
         with:
           repository: cauteum-haven/cauteum-core
           path: cauteum-core
-          ref: 69e1d1339884cf72933ff6dda7c9b54822db7225
+          ref: 63cdb362e7000e6ba7166e95e13c71f2fa75aecb
 
       - name: Checkout cauteum-providers
         uses: actions/checkout@v4
         with:
           repository: cauteum-haven/cauteum-providers
           path: cauteum-providers
-          ref: d058f03c2be5af5f433918a8eed0a977508f6f4e
+          ref: aae743fb71ee94ebcfafb15a624229c2c9c17d58
 
       - name: Checkout cauteum-runtime
         uses: actions/checkout@v4
         with:
           repository: cauteum-haven/cauteum-runtime
           path: cauteum-runtime
-          ref: 44096887a79a8302b3c6cd72293b51811bb2c89f
+          ref: a04547560eb20e7fe2ae0ba09e0562836ede5327
 
       - name: Checkout cauteum-driver
         uses: actions/checkout@v4
         with:
           repository: cauteum-haven/cauteum-driver
           path: cauteum-driver
-          ref: c8eaf63a5a6b5c6d2613323d426a507fdce32265
+          ref: 8ec9fcf134596f38397984cf420b7867a8a4c778
 
       - name: Checkout cauteum-proxy
         uses: actions/checkout@v4
         with:
           repository: cauteum-haven/cauteum-proxy
           path: cauteum-proxy
-          ref: b9b05cd3dc3d3b3aca99fec8591260365f7871ee
+          ref: 8a64b94909c3eeabb131a3fa0f8d04c7d989f70e
 
       - name: Checkout slogx
         uses: actions/checkout@v4
@@ -207,42 +207,42 @@ jobs:
         with:
           repository: cauteum-haven/cauteum-cli
           path: cauteum-cli
-          ref: a9e52e3812b4c2d36d09cb298ad9aba8e1b279f1
+          ref: c7dcfd6bbd44e9225598a1c52a507245adc0c34d
 
       - name: Checkout cauteum-core
         uses: actions/checkout@v4
         with:
           repository: cauteum-haven/cauteum-core
           path: cauteum-core
-          ref: 69e1d1339884cf72933ff6dda7c9b54822db7225
+          ref: 63cdb362e7000e6ba7166e95e13c71f2fa75aecb
 
       - name: Checkout cauteum-providers
         uses: actions/checkout@v4
         with:
           repository: cauteum-haven/cauteum-providers
           path: cauteum-providers
-          ref: d058f03c2be5af5f433918a8eed0a977508f6f4e
+          ref: aae743fb71ee94ebcfafb15a624229c2c9c17d58
 
       - name: Checkout cauteum-runtime
         uses: actions/checkout@v4
         with:
           repository: cauteum-haven/cauteum-runtime
           path: cauteum-runtime
-          ref: 44096887a79a8302b3c6cd72293b51811bb2c89f
+          ref: a04547560eb20e7fe2ae0ba09e0562836ede5327
 
       - name: Checkout cauteum-driver
         uses: actions/checkout@v4
         with:
           repository: cauteum-haven/cauteum-driver
           path: cauteum-driver
-          ref: c8eaf63a5a6b5c6d2613323d426a507fdce32265
+          ref: 8ec9fcf134596f38397984cf420b7867a8a4c778
 
       - name: Checkout cauteum-proxy
         uses: actions/checkout@v4
         with:
           repository: cauteum-haven/cauteum-proxy
           path: cauteum-proxy
-          ref: b9b05cd3dc3d3b3aca99fec8591260365f7871ee
+          ref: 8a64b94909c3eeabb131a3fa0f8d04c7d989f70e
 
       - name: Checkout slogx
         uses: actions/checkout@v4
@@ -322,42 +322,42 @@ jobs:
         with:
           repository: cauteum-haven/cauteum-cli
           path: cauteum-cli
-          ref: a9e52e3812b4c2d36d09cb298ad9aba8e1b279f1
+          ref: c7dcfd6bbd44e9225598a1c52a507245adc0c34d
 
       - name: Checkout cauteum-core
         uses: actions/checkout@v4
         with:
           repository: cauteum-haven/cauteum-core
           path: cauteum-core
-          ref: 69e1d1339884cf72933ff6dda7c9b54822db7225
+          ref: 63cdb362e7000e6ba7166e95e13c71f2fa75aecb
 
       - name: Checkout cauteum-providers
         uses: actions/checkout@v4
         with:
           repository: cauteum-haven/cauteum-providers
           path: cauteum-providers
-          ref: d058f03c2be5af5f433918a8eed0a977508f6f4e
+          ref: aae743fb71ee94ebcfafb15a624229c2c9c17d58
 
       - name: Checkout cauteum-runtime
         uses: actions/checkout@v4
         with:
           repository: cauteum-haven/cauteum-runtime
           path: cauteum-runtime
-          ref: 44096887a79a8302b3c6cd72293b51811bb2c89f
+          ref: a04547560eb20e7fe2ae0ba09e0562836ede5327
 
       - name: Checkout cauteum-driver
         uses: actions/checkout@v4
         with:
           repository: cauteum-haven/cauteum-driver
           path: cauteum-driver
-          ref: c8eaf63a5a6b5c6d2613323d426a507fdce32265
+          ref: 8ec9fcf134596f38397984cf420b7867a8a4c778
 
       - name: Checkout cauteum-proxy
         uses: actions/checkout@v4
         with:
           repository: cauteum-haven/cauteum-proxy
           path: cauteum-proxy
-          ref: b9b05cd3dc3d3b3aca99fec8591260365f7871ee
+          ref: 8a64b94909c3eeabb131a3fa0f8d04c7d989f70e
 
       - name: Checkout slogx
         uses: actions/checkout@v4
@@ -435,42 +435,42 @@ jobs:
         with:
           repository: cauteum-haven/cauteum-cli
           path: cauteum-cli
-          ref: a9e52e3812b4c2d36d09cb298ad9aba8e1b279f1
+          ref: c7dcfd6bbd44e9225598a1c52a507245adc0c34d
 
       - name: Checkout cauteum-core
         uses: actions/checkout@v4
         with:
           repository: cauteum-haven/cauteum-core
           path: cauteum-core
-          ref: 69e1d1339884cf72933ff6dda7c9b54822db7225
+          ref: 63cdb362e7000e6ba7166e95e13c71f2fa75aecb
 
       - name: Checkout cauteum-providers
         uses: actions/checkout@v4
         with:
           repository: cauteum-haven/cauteum-providers
           path: cauteum-providers
-          ref: d058f03c2be5af5f433918a8eed0a977508f6f4e
+          ref: aae743fb71ee94ebcfafb15a624229c2c9c17d58
 
       - name: Checkout cauteum-runtime
         uses: actions/checkout@v4
         with:
           repository: cauteum-haven/cauteum-runtime
           path: cauteum-runtime
-          ref: 44096887a79a8302b3c6cd72293b51811bb2c89f
+          ref: a04547560eb20e7fe2ae0ba09e0562836ede5327
 
       - name: Checkout cauteum-driver
         uses: actions/checkout@v4
         with:
           repository: cauteum-haven/cauteum-driver
           path: cauteum-driver
-          ref: c8eaf63a5a6b5c6d2613323d426a507fdce32265
+          ref: 8ec9fcf134596f38397984cf420b7867a8a4c778
 
       - name: Checkout cauteum-proxy
         uses: actions/checkout@v4
         with:
           repository: cauteum-haven/cauteum-proxy
           path: cauteum-proxy
-          ref: b9b05cd3dc3d3b3aca99fec8591260365f7871ee
+          ref: 8a64b94909c3eeabb131a3fa0f8d04c7d989f70e
 
       - name: Checkout slogx
         uses: actions/checkout@v4
