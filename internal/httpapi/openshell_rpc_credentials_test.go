@@ -15,8 +15,8 @@ import (
 	"time"
 
 	openshellv1 "github.com/NVIDIA/OpenShell/sdk/go/proto/openshellv1"
-	"github.com/cauteum-haven/cauteum-gateway/internal/storage/store"
-	"github.com/cauteum-haven/cauteum-runtime/secrets"
+	"github.com/cautem/cauteum-gateway/internal/storage/store"
+	"github.com/cautem/cauteum-runtime/secrets"
 )
 
 func TestGetSandboxProviderEnvironmentRequiresMatchingSupervisorAndReturnsEncryptedCredential(t *testing.T) {

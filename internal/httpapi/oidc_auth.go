@@ -8,7 +8,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/cauteum-haven/cauteum-runtime/idp"
+	"github.com/cautem/cauteum-runtime/idp"
 )
 
 // OIDCOptions configure issuer-backed JWT auth (optional).

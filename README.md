@@ -5,22 +5,22 @@
   OpenShell and Cauteum RPC APIs with HTTP health, auth bootstrap, and streaming relay transport.
 </p>
 <p align="center">
-  <a href="https://github.com/cauteum-haven/cauteum-gateway/actions/workflows/ci.yml"><img src="https://github.com/cauteum-haven/cauteum-gateway/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
-  <a href="https://pkg.go.dev/github.com/cauteum-haven/cauteum-gateway"><img src="https://pkg.go.dev/badge/github.com/cauteum-haven/cauteum-gateway.svg" alt="Go Reference"></a>
+  <a href="https://github.com/cautem/cauteum-gateway/actions/workflows/ci.yml"><img src="https://github.com/cautem/cauteum-gateway/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <a href="https://pkg.go.dev/github.com/cautem/cauteum-gateway"><img src="https://pkg.go.dev/badge/github.com/cautem/cauteum-gateway.svg" alt="Go Reference"></a>
   <a href="https://www.apache.org/licenses/LICENSE-2.0"><img src="https://img.shields.io/badge/License-Apache--2.0-blue.svg" alt="License"></a>
-  <a href="https://github.com/cauteum-haven/cauteum-gateway"><img src="https://img.shields.io/badge/Go-1.27+-00ADD8?logo=go" alt="Go Version"></a>
+  <a href="https://github.com/cautem/cauteum-gateway"><img src="https://img.shields.io/badge/Go-1.27+-00ADD8?logo=go" alt="Go Version"></a>
 
-  <a href="https://github.com/cauteum-haven/cauteum-gateway/actions/workflows/images-gateway.yml"><img src="https://github.com/cauteum-haven/cauteum-gateway/actions/workflows/images-gateway.yml/badge.svg" alt="images-gateway"></a>
+  <a href="https://github.com/cautem/cauteum-gateway/actions/workflows/images-gateway.yml"><img src="https://github.com/cautem/cauteum-gateway/actions/workflows/images-gateway.yml/badge.svg" alt="images-gateway"></a>
 </p>
 <p align="center">
-  <sub>Part of the <a href="https://github.com/cauteum-haven">cauteum / cauteum</a> ecosystem</sub>
+  <sub>Part of the <a href="https://github.com/cautem">cauteum / cauteum</a> ecosystem</sub>
 </p>
 
 ---
 
 ## Overview
 
-Use the [gateway guide](https://cauteum-haven.github.io/guides/gateway/) for setup and the [OpenShell compatibility page](https://cauteum-haven.github.io/reference/openshell-compatibility/) for the current supported scope.
+Use the [gateway guide](https://cautem.github.io/cauteum-haven.github.io/guides/gateway/) for setup and the [OpenShell compatibility page](https://cautem.github.io/cauteum-haven.github.io/reference/openshell-compatibility/) for the current supported scope.
 
 **cauteum-gateway** is the optional control-plane daemon. Client management workflows use authenticated RPC. HTTP remains for health, browser/auth bootstrap, and relay/stream transport.
 
@@ -32,7 +32,7 @@ Use the [gateway guide](https://cauteum-haven.github.io/guides/gateway/) for set
 | **Policy** | Base + effective policy over Control RPC; provider attach via OpenShell RPC |
 | **Proposals** | Store / approve / reject (`policy.local` sync) |
 | **Relay** | Stream and exec relay for guests |
-| **Image** | `ghcr.io/cauteum-haven/cauteum/gateway` |
+| **Image** | `ghcr.io/cautem/cauteum/gateway` |
 
 ---
 
@@ -45,7 +45,7 @@ go build -o cauteum-gateway ./cmd/cauteum-gateway
 
 **Requirements:** Go 1.27+
 
-**Container:** `ghcr.io/cauteum-haven/cauteum/gateway:latest`
+**Container:** `ghcr.io/cautem/cauteum/gateway:latest`
 
 ---
 
@@ -109,9 +109,9 @@ Durable state: `$XDG_STATE_HOME/cauteum/gateway/state.json`.
 | Resource | Link |
 |----------|------|
 | Roadmap | [ROADMAP.md](./ROADMAP.md) |
-| Organization | [https://github.com/cauteum](https://github.com/cauteum-haven) |
-| Organization overview | [github.com/cauteum](https://github.com/cauteum-haven) |
-| pkg.go.dev | [`github.com/cauteum-haven/cauteum-gateway`](https://pkg.go.dev/github.com/cauteum-haven/cauteum-gateway) |
+| Organization | [https://github.com/cautem](https://github.com/cautem) |
+| Organization overview | [github.com/cautem](https://github.com/cautem) |
+| pkg.go.dev | [`github.com/cautem/cauteum-gateway`](https://pkg.go.dev/github.com/cautem/cauteum-gateway) |
 
 ## License
 

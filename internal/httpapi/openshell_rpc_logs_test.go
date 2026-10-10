@@ -7,8 +7,8 @@ import (
 	"time"
 
 	openshellv1 "github.com/NVIDIA/OpenShell/sdk/go/proto/openshellv1"
-	"github.com/cauteum-haven/cauteum-gateway/internal/logbuf"
-	"github.com/cauteum-haven/cauteum-gateway/internal/storage/store"
+	"github.com/cautem/cauteum-gateway/internal/logbuf"
+	"github.com/cautem/cauteum-gateway/internal/storage/store"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/metadata"
 )

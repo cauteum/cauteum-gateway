@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	openshellv1 "github.com/NVIDIA/OpenShell/sdk/go/proto/openshellv1"
-	"github.com/cauteum-haven/cauteum-gateway/internal/storage/store"
+	"github.com/cautem/cauteum-gateway/internal/storage/store"
 )
 
 func TestOpenShellServiceEndpointLifecycle(t *testing.T) {

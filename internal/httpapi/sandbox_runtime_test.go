@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	sandboxv1 "github.com/NVIDIA/OpenShell/sdk/go/proto/sandboxv1"
-	"github.com/cauteum-haven/cauteum-core/policy"
+	"github.com/cautem/cauteum-core/policy"
 	"google.golang.org/protobuf/types/known/structpb"
 )
 

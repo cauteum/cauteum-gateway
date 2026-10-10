@@ -38,7 +38,7 @@ COPY --from=build /src/cauteum-runtime/LICENSE /src/cauteum-runtime/NOTICE /usr/
 LABEL org.opencontainers.image.title="cauteum-gateway" \
       org.opencontainers.image.description="cauteum control-plane gateway" \
       org.opencontainers.image.licenses="Apache-2.0" \
-      org.opencontainers.image.source="https://github.com/cauteum-haven/cauteum-gateway"
+      org.opencontainers.image.source="https://github.com/cautem/cauteum-gateway"
 ENV CAUTEUM_GATEWAY_DATA=/var/lib/cauteum-gateway
 VOLUME ["/var/lib/cauteum-gateway"]
 EXPOSE 7443

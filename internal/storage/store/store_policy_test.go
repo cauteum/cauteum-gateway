@@ -5,7 +5,7 @@ import (
 	"strconv"
 	"testing"
 
-	"github.com/cauteum-haven/cauteum-gateway/internal/storage/store"
+	"github.com/cautem/cauteum-gateway/internal/storage/store"
 )
 
 func TestSetBasePolicyTracksRevisions(t *testing.T) {

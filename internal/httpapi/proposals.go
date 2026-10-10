@@ -8,8 +8,8 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/cauteum-haven/cauteum-core/policy"
-	"github.com/cauteum-haven/cauteum-gateway/internal/storage/store"
+	"github.com/cautem/cauteum-core/policy"
+	"github.com/cautem/cauteum-gateway/internal/storage/store"
 	"gopkg.in/yaml.v3"
 )
 

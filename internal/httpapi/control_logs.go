@@ -9,8 +9,8 @@ import (
 	"time"
 
 	"connectrpc.com/connect"
-	controlv1 "github.com/cauteum-haven/cauteum-gateway/api/gen/cauteum/control/v1"
-	"github.com/cauteum-haven/cauteum-gateway/internal/logbuf"
+	controlv1 "github.com/cautem/cauteum-gateway/api/gen/cauteum/control/v1"
+	"github.com/cautem/cauteum-gateway/internal/logbuf"
 )
 
 const maxConsoleLogLines = 1000

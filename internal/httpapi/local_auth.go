@@ -6,7 +6,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/cauteum-haven/cauteum-gateway/internal/storage/store"
+	"github.com/cautem/cauteum-gateway/internal/storage/store"
 )
 
 // mountLocalAuthAPI keeps the loopback-only token hand-off used by the CLI.

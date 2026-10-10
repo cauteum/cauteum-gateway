@@ -8,8 +8,8 @@ import (
 
 	datamodelv1 "github.com/NVIDIA/OpenShell/sdk/go/proto/datamodelv1"
 	openshellv1 "github.com/NVIDIA/OpenShell/sdk/go/proto/openshellv1"
-	"github.com/cauteum-haven/cauteum-gateway/internal/storage/store"
-	"github.com/cauteum-haven/cauteum-runtime/secrets"
+	"github.com/cautem/cauteum-gateway/internal/storage/store"
+	"github.com/cautem/cauteum-runtime/secrets"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )

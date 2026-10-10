@@ -20,16 +20,16 @@ import (
 	"time"
 
 	sandboxv1 "github.com/NVIDIA/OpenShell/sdk/go/proto/sandboxv1"
-	"github.com/cauteum-haven/cauteum-gateway/internal/gatewayconfig"
+	"github.com/cautem/cauteum-gateway/internal/gatewayconfig"
 	"google.golang.org/grpc"
 
-	"github.com/cauteum-haven/cauteum-core/defaults"
-	"github.com/cauteum-haven/cauteum-gateway/internal/logbuf"
-	"github.com/cauteum-haven/cauteum-gateway/internal/logger"
-	"github.com/cauteum-haven/cauteum-gateway/internal/sshrelay"
-	"github.com/cauteum-haven/cauteum-gateway/internal/storage/store"
-	"github.com/cauteum-haven/cauteum-runtime/secrets"
-	"github.com/cauteum-haven/slogx"
+	"github.com/cautem/cauteum-core/defaults"
+	"github.com/cautem/cauteum-gateway/internal/logbuf"
+	"github.com/cautem/cauteum-gateway/internal/logger"
+	"github.com/cautem/cauteum-gateway/internal/sshrelay"
+	"github.com/cautem/cauteum-gateway/internal/storage/store"
+	"github.com/cautem/cauteum-runtime/secrets"
+	"github.com/cautem/slogx"
 )
 
 // DriverConfigs maps a driver name to its decoded configuration table.

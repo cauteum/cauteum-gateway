@@ -6,7 +6,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/cauteum-haven/cauteum-gateway/internal/storage/store"
+	"github.com/cautem/cauteum-gateway/internal/storage/store"
 )
 
 func TestSettingsSnapshotRevisionAndIsolation(t *testing.T) {

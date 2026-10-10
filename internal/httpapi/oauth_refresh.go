@@ -14,8 +14,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/cauteum-haven/cauteum-gateway/internal/storage/store"
-	"github.com/cauteum-haven/cauteum-runtime/secrets"
+	"github.com/cautem/cauteum-gateway/internal/storage/store"
+	"github.com/cautem/cauteum-runtime/secrets"
 )
 
 var providerCredentialRefreshMu sync.Mutex

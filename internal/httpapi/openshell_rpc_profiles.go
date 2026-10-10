@@ -8,8 +8,8 @@ import (
 	"strings"
 
 	openshellv1 "github.com/NVIDIA/OpenShell/sdk/go/proto/openshellv1"
-	"github.com/cauteum-haven/cauteum-gateway/internal/storage/store"
-	"github.com/cauteum-haven/cauteum-providers/provider"
+	"github.com/cautem/cauteum-gateway/internal/storage/store"
+	"github.com/cautem/cauteum-providers/provider"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/encoding/protojson"

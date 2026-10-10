@@ -12,8 +12,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/cauteum-haven/cauteum-core/defaults"
-	"github.com/cauteum-haven/cauteum-gateway/internal/gatewayconfig"
+	"github.com/cautem/cauteum-core/defaults"
+	"github.com/cautem/cauteum-gateway/internal/gatewayconfig"
 )
 
 // configStartup resolves file values and environment before command flags.

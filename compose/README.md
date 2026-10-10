@@ -46,7 +46,7 @@ cp cauteum-gateway/compose/.env.example cauteum-gateway/compose/.env
 docker compose -f cauteum-gateway/compose/docker-compose.yml up -d
 ```
 
-Rotation runbook: [Credentials](https://cauteum-haven.github.io/guides/credentials/).
+Rotation runbook: [Credentials](https://cautem.github.io/cauteum-haven.github.io/guides/credentials/).
 
 ## Tasks
 
@@ -55,4 +55,4 @@ task gateway:up
 task gateway:down
 ```
 
-Full agent path: [Docker guide](https://cauteum-haven.github.io/providers/docker/).
+Full agent path: [Docker guide](https://cautem.github.io/cauteum-haven.github.io/providers/docker/).

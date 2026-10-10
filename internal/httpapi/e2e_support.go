@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/cauteum-haven/cauteum-gateway/internal/storage/store"
+	"github.com/cautem/cauteum-gateway/internal/storage/store"
 	"google.golang.org/grpc"
 )
 

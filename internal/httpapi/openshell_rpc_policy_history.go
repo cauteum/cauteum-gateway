@@ -10,8 +10,8 @@ import (
 
 	openshellv1 "github.com/NVIDIA/OpenShell/sdk/go/proto/openshellv1"
 	sandboxv1 "github.com/NVIDIA/OpenShell/sdk/go/proto/sandboxv1"
-	corepolicy "github.com/cauteum-haven/cauteum-core/policy"
-	"github.com/cauteum-haven/cauteum-gateway/internal/storage/store"
+	corepolicy "github.com/cautem/cauteum-core/policy"
+	"github.com/cautem/cauteum-gateway/internal/storage/store"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/proto"

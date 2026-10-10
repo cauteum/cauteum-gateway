@@ -8,7 +8,7 @@ import (
 	connect "connectrpc.com/connect"
 	context "context"
 	errors "errors"
-	v1 "github.com/cauteum-haven/cauteum-gateway/api/gen/cauteum/control/v1"
+	v1 "github.com/cautem/cauteum-gateway/api/gen/cauteum/control/v1"
 	http "net/http"
 	strings "strings"
 )

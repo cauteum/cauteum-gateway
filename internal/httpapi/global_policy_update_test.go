@@ -8,8 +8,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/cauteum-haven/cauteum-gateway/internal/sshrelay"
-	"github.com/cauteum-haven/cauteum-gateway/internal/storage/store"
+	"github.com/cautem/cauteum-gateway/internal/sshrelay"
+	"github.com/cautem/cauteum-gateway/internal/storage/store"
 )
 
 func TestGlobalPolicyPartialAcknowledgementCompensatesEverySandbox(t *testing.T) {
