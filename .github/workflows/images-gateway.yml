@@ -47,7 +47,7 @@ jobs:
         with:
           repository: cautem/cauteum-cli
           path: cauteum-cli
-          ref: 60630f756424cd8c4343b6c5c44d08b3d66a0fa0
+          ref: 39bacdaca47dbf3b5043b7103237b2c116fa0f2d
       - uses: actions/checkout@v4
         with:
           repository: cautem/cauteum-display
