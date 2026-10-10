@@ -2,7 +2,7 @@
   "upstream_commit": "a0814443f19c07102b19ff09d6ead3d3ba59f9c5",
   "generated_from": [
     "tools/upstream/openshell/proto/*.proto",
-    "https://cauteum.github.io/reference/openshell-compatibility/"
+    "https://cauteum-haven.github.io/reference/openshell-compatibility/"
   ],
   "services": [
     {

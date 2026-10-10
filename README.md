@@ -20,7 +20,7 @@
 
 ## Overview
 
-Use the [gateway guide](https://cauteum.github.io/guides/gateway/) for setup and the [OpenShell compatibility page](https://cauteum.github.io/reference/openshell-compatibility/) for the current supported scope.
+Use the [gateway guide](https://cauteum-haven.github.io/guides/gateway/) for setup and the [OpenShell compatibility page](https://cauteum-haven.github.io/reference/openshell-compatibility/) for the current supported scope.
 
 **cauteum-gateway** is the optional control-plane daemon. Client management workflows use authenticated RPC. HTTP remains for health, browser/auth bootstrap, and relay/stream transport.
 

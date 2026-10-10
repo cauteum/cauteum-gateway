@@ -1,6 +1,6 @@
 # Roadmap — cauteum-gateway
 
-Status: **v0.1.0-alpha.2** (alpha) · Depends on cauteum-core / cauteum-providers `v0.1.0-alpha.2` and cauteum-runtime `v0.1.0-alpha.1`
+Status: **v0.1.2** (stable numbered release) · Depends on cauteum-core / cauteum-providers `v0.1.0-alpha.2` and cauteum-runtime `v0.1.0-alpha.1`
 
 ## This module
 
