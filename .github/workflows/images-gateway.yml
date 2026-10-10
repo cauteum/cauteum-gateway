@@ -47,7 +47,7 @@ jobs:
         with:
           repository: cautem/cautem-cli
           path: cautem-cli
-          ref: release/v0.1.6
+          ref: 99088c5765b689dca7e6f98909b70fedc5291315
       - uses: actions/checkout@v4
         with:
           repository: cautem/cautem-display
@@ -72,7 +72,7 @@ jobs:
         with:
           repository: cautem/cautem-sdk
           path: cautem-sdk
-          ref: release/v0.1.6
+          ref: b996938742ce46337c290f0baa6bce8bc42700f0
 
       - name: Checkout slogx
         uses: actions/checkout@v4
