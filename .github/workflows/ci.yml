@@ -1,0 +1,545 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 the cauteum authors
+# SPDX-License-Identifier: Apache-2.0
+#
+# gogpu-style CI: format, lint, cross-platform build + test
+name: CI
+
+env:
+  CGO_ENABLED: "0"
+  GOWORK: ${{ github.workspace }}/go.work
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+  id-token: write  # Codecov OIDC
+
+jobs:
+  api-contract:
+    name: API contracts
+    runs-on: ubuntu-latest
+    env:
+      GOWORK: "off"
+    defaults:
+      run:
+        working-directory: cauteum-gateway
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: cauteum-gateway
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Lint OpenAPI document
+        run: npx --yes @redocly/cli@2.60.0 lint api/openapi.yaml --config api/redocly.yaml
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.27.2"
+          cache-dependency-path: cauteum-gateway/go.sum
+      - name: Install pinned Buf CLI
+        run: go install github.com/bufbuild/buf/cmd/buf@v1.66.0
+      - name: Lint and regenerate Control API
+        run: |
+          buf lint
+          buf breaking --against api/schema/control-5e20fa2f6943.binpb
+          buf generate
+          if [[ -n "$(git status --porcelain -- api/gen)" ]]; then
+            echo "generated Control API code is stale"
+            git status --short -- api/gen
+            exit 1
+          fi
+      - name: Build generated TypeScript client
+        run: |
+          npm ci --prefix api/typescript
+          npm run check --prefix api/typescript
+          if [[ -n "$(git status --porcelain -- api/typescript/src/gen)" ]]; then
+            echo "generated TypeScript client is stale"
+            git status --short -- api/typescript/src/gen
+            exit 1
+          fi
+      - name: Build management UI
+        run: |
+          npm ci --prefix ui
+          npm run build --prefix ui
+      - name: Check Control API compatibility
+        if: github.event_name == 'pull_request'
+        run: |
+          git fetch origin main:refs/heads/main
+          if git cat-file -e main:buf.yaml 2>/dev/null; then
+            buf breaking --against '.git#branch=main'
+          fi
+
+  formatting:
+    name: Formatting
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: cauteum-gateway
+    steps:
+
+      - name: Checkout cauteum-gateway
+        uses: actions/checkout@v4
+        with:
+          path: cauteum-gateway
+
+      - name: Checkout cauteum-cli
+        uses: actions/checkout@v4
+        with:
+          repository: cauteum/cauteum-cli
+          path: cauteum-cli
+          ref: ab346b1195b640d0a7ef47440055cbad16ff2e98
+
+      - name: Checkout cauteum-core
+        uses: actions/checkout@v4
+        with:
+          repository: cauteum/cauteum-core
+          path: cauteum-core
+          ref: 9b32ff965beffcaadaa6361630b9d821370a564c
+
+      - name: Checkout cauteum-providers
+        uses: actions/checkout@v4
+        with:
+          repository: cauteum/cauteum-providers
+          path: cauteum-providers
+          ref: 86c18a214cafd1c9782df3f7ac27699b7f4224c9
+
+      - name: Checkout cauteum-runtime
+        uses: actions/checkout@v4
+        with:
+          repository: cauteum/cauteum-runtime
+          path: cauteum-runtime
+          ref: b7aa36e97c8b8748388b6e400beb480f4ed91c7a
+
+      - name: Checkout cauteum-driver
+        uses: actions/checkout@v4
+        with:
+          repository: cauteum/cauteum-driver
+          path: cauteum-driver
+          ref: e614c8f432d34db52c5f4a989a274442e83e289c
+
+      - name: Checkout cauteum-proxy
+        uses: actions/checkout@v4
+        with:
+          repository: cauteum/cauteum-proxy
+          path: cauteum-proxy
+          ref: e0620208414a87b38d8f4420a9ceed73e6a02466
+
+      - name: Checkout slogx
+        uses: actions/checkout@v4
+        with:
+          repository: cauteum/slogx
+          path: slogx
+      - name: Write go.work
+        working-directory: ${{ github.workspace }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          {
+            echo 'go 1.27.0'
+            echo 'use ('
+            for d in cauteum-* slogx; do
+              [[ "$d" == cauteum-cli || "$d" == cauteum-display ]] && continue
+              if [[ -d "$d" ]]; then
+                echo "  ./$d"
+              fi
+            done
+            echo ')'
+            echo 'replace ('
+            for d in cauteum-*; do
+              [[ "$d" == cauteum-cli || "$d" == cauteum-display ]] && continue
+              if [[ -d "$d" ]]; then
+                echo "  github.com/cauteum/${d} v0.1.0-alpha.1 => ./$d"
+                echo "  github.com/cauteum/${d} v0.1.0-alpha.2 => ./$d"
+                echo "  github.com/cauteum/${d} v0.1.0-beta.1 => ./$d"
+                echo "  github.com/cauteum/${d} v0.1.0-beta.2 => ./$d"
+              fi
+            done
+            if [[ -d slogx ]]; then
+              echo '  github.com/cauteum/slogx v0.1.0-alpha.1 => ./slogx'
+              echo '  github.com/cauteum/slogx v0.1.0-alpha.2 => ./slogx'
+              echo '  github.com/cauteum/slogx v0.1.0-beta.1 => ./slogx'
+              echo '  github.com/cauteum/slogx v0.1.0-beta.2 => ./slogx'
+            fi
+            echo ')'
+          } > "${{ github.workspace }}/go.work"
+          echo "Wrote go.work:" && cat "${{ github.workspace }}/go.work"
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.27.2"
+          cache: true
+          cache-dependency-path: |
+            cauteum-*/go.sum
+            slogx/go.sum
+      - name: Check gofmt
+        run: |
+          set -euo pipefail
+          bad="$(gofmt -l .)"
+          if [[ -n "$bad" ]]; then
+            echo "ERROR: not formatted:"
+            echo "$bad"
+            exit 1
+          fi
+          echo "gofmt: ok"
+
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: cauteum-gateway
+    steps:
+
+      - name: Checkout cauteum-gateway
+        uses: actions/checkout@v4
+        with:
+          path: cauteum-gateway
+
+      - name: Checkout cauteum-cli
+        uses: actions/checkout@v4
+        with:
+          repository: cauteum/cauteum-cli
+          path: cauteum-cli
+          ref: ab346b1195b640d0a7ef47440055cbad16ff2e98
+
+      - name: Checkout cauteum-core
+        uses: actions/checkout@v4
+        with:
+          repository: cauteum/cauteum-core
+          path: cauteum-core
+          ref: 9b32ff965beffcaadaa6361630b9d821370a564c
+
+      - name: Checkout cauteum-providers
+        uses: actions/checkout@v4
+        with:
+          repository: cauteum/cauteum-providers
+          path: cauteum-providers
+          ref: 86c18a214cafd1c9782df3f7ac27699b7f4224c9
+
+      - name: Checkout cauteum-runtime
+        uses: actions/checkout@v4
+        with:
+          repository: cauteum/cauteum-runtime
+          path: cauteum-runtime
+          ref: b7aa36e97c8b8748388b6e400beb480f4ed91c7a
+
+      - name: Checkout cauteum-driver
+        uses: actions/checkout@v4
+        with:
+          repository: cauteum/cauteum-driver
+          path: cauteum-driver
+          ref: e614c8f432d34db52c5f4a989a274442e83e289c
+
+      - name: Checkout cauteum-proxy
+        uses: actions/checkout@v4
+        with:
+          repository: cauteum/cauteum-proxy
+          path: cauteum-proxy
+          ref: e0620208414a87b38d8f4420a9ceed73e6a02466
+
+      - name: Checkout slogx
+        uses: actions/checkout@v4
+        with:
+          repository: cauteum/slogx
+          path: slogx
+      - name: Write go.work
+        working-directory: ${{ github.workspace }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          {
+            echo 'go 1.27.0'
+            echo 'use ('
+            for d in cauteum-* slogx; do
+              [[ "$d" == cauteum-cli || "$d" == cauteum-display ]] && continue
+              if [[ -d "$d" ]]; then
+                echo "  ./$d"
+              fi
+            done
+            echo ')'
+            echo 'replace ('
+            for d in cauteum-*; do
+              [[ "$d" == cauteum-cli || "$d" == cauteum-display ]] && continue
+              if [[ -d "$d" ]]; then
+                echo "  github.com/cauteum/${d} v0.1.0-alpha.1 => ./$d"
+                echo "  github.com/cauteum/${d} v0.1.0-alpha.2 => ./$d"
+                echo "  github.com/cauteum/${d} v0.1.0-beta.1 => ./$d"
+                echo "  github.com/cauteum/${d} v0.1.0-beta.2 => ./$d"
+              fi
+            done
+            if [[ -d slogx ]]; then
+              echo '  github.com/cauteum/slogx v0.1.0-alpha.1 => ./slogx'
+              echo '  github.com/cauteum/slogx v0.1.0-alpha.2 => ./slogx'
+              echo '  github.com/cauteum/slogx v0.1.0-beta.1 => ./slogx'
+              echo '  github.com/cauteum/slogx v0.1.0-beta.2 => ./slogx'
+            fi
+            echo ')'
+          } > "${{ github.workspace }}/go.work"
+          echo "Wrote go.work:" && cat "${{ github.workspace }}/go.work"
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.27.2"
+          cache: true
+          cache-dependency-path: |
+            cauteum-*/go.sum
+            slogx/go.sum
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v8
+        with:
+          version: v2.14.0
+          working-directory: cauteum-gateway
+          args: --timeout=5m
+
+  build:
+    name: Build - ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    defaults:
+      run:
+        working-directory: cauteum-gateway
+    steps:
+
+      - name: Checkout cauteum-gateway
+        uses: actions/checkout@v4
+        with:
+          path: cauteum-gateway
+
+      - name: Checkout cauteum-cli
+        uses: actions/checkout@v4
+        with:
+          repository: cauteum/cauteum-cli
+          path: cauteum-cli
+          ref: ab346b1195b640d0a7ef47440055cbad16ff2e98
+
+      - name: Checkout cauteum-core
+        uses: actions/checkout@v4
+        with:
+          repository: cauteum/cauteum-core
+          path: cauteum-core
+          ref: 9b32ff965beffcaadaa6361630b9d821370a564c
+
+      - name: Checkout cauteum-providers
+        uses: actions/checkout@v4
+        with:
+          repository: cauteum/cauteum-providers
+          path: cauteum-providers
+          ref: 86c18a214cafd1c9782df3f7ac27699b7f4224c9
+
+      - name: Checkout cauteum-runtime
+        uses: actions/checkout@v4
+        with:
+          repository: cauteum/cauteum-runtime
+          path: cauteum-runtime
+          ref: b7aa36e97c8b8748388b6e400beb480f4ed91c7a
+
+      - name: Checkout cauteum-driver
+        uses: actions/checkout@v4
+        with:
+          repository: cauteum/cauteum-driver
+          path: cauteum-driver
+          ref: e614c8f432d34db52c5f4a989a274442e83e289c
+
+      - name: Checkout cauteum-proxy
+        uses: actions/checkout@v4
+        with:
+          repository: cauteum/cauteum-proxy
+          path: cauteum-proxy
+          ref: e0620208414a87b38d8f4420a9ceed73e6a02466
+
+      - name: Checkout slogx
+        uses: actions/checkout@v4
+        with:
+          repository: cauteum/slogx
+          path: slogx
+      - name: Write go.work
+        working-directory: ${{ github.workspace }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          {
+            echo 'go 1.27.0'
+            echo 'use ('
+            for d in cauteum-* slogx; do
+              [[ "$d" == cauteum-cli || "$d" == cauteum-display ]] && continue
+              if [[ -d "$d" ]]; then
+                echo "  ./$d"
+              fi
+            done
+            echo ')'
+            echo 'replace ('
+            for d in cauteum-*; do
+              [[ "$d" == cauteum-cli || "$d" == cauteum-display ]] && continue
+              if [[ -d "$d" ]]; then
+                echo "  github.com/cauteum/${d} v0.1.0-alpha.1 => ./$d"
+                echo "  github.com/cauteum/${d} v0.1.0-alpha.2 => ./$d"
+                echo "  github.com/cauteum/${d} v0.1.0-beta.1 => ./$d"
+                echo "  github.com/cauteum/${d} v0.1.0-beta.2 => ./$d"
+              fi
+            done
+            if [[ -d slogx ]]; then
+              echo '  github.com/cauteum/slogx v0.1.0-alpha.1 => ./slogx'
+              echo '  github.com/cauteum/slogx v0.1.0-alpha.2 => ./slogx'
+              echo '  github.com/cauteum/slogx v0.1.0-beta.1 => ./slogx'
+              echo '  github.com/cauteum/slogx v0.1.0-beta.2 => ./slogx'
+            fi
+            echo ')'
+          } > "${{ github.workspace }}/go.work"
+          echo "Wrote go.work:" && cat "${{ github.workspace }}/go.work"
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.27.2"
+          cache: true
+          cache-dependency-path: |
+            cauteum-*/go.sum
+            slogx/go.sum
+      - name: Download modules
+        run: go mod download
+      - name: Build
+        run: go build ./...
+
+  test:
+    name: Test - ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    defaults:
+      run:
+        working-directory: cauteum-gateway
+    steps:
+
+      - name: Checkout cauteum-gateway
+        uses: actions/checkout@v4
+        with:
+          path: cauteum-gateway
+
+      - name: Checkout cauteum-cli
+        uses: actions/checkout@v4
+        with:
+          repository: cauteum/cauteum-cli
+          path: cauteum-cli
+          ref: ab346b1195b640d0a7ef47440055cbad16ff2e98
+
+      - name: Checkout cauteum-core
+        uses: actions/checkout@v4
+        with:
+          repository: cauteum/cauteum-core
+          path: cauteum-core
+          ref: 9b32ff965beffcaadaa6361630b9d821370a564c
+
+      - name: Checkout cauteum-providers
+        uses: actions/checkout@v4
+        with:
+          repository: cauteum/cauteum-providers
+          path: cauteum-providers
+          ref: 86c18a214cafd1c9782df3f7ac27699b7f4224c9
+
+      - name: Checkout cauteum-runtime
+        uses: actions/checkout@v4
+        with:
+          repository: cauteum/cauteum-runtime
+          path: cauteum-runtime
+          ref: b7aa36e97c8b8748388b6e400beb480f4ed91c7a
+
+      - name: Checkout cauteum-driver
+        uses: actions/checkout@v4
+        with:
+          repository: cauteum/cauteum-driver
+          path: cauteum-driver
+          ref: e614c8f432d34db52c5f4a989a274442e83e289c
+
+      - name: Checkout cauteum-proxy
+        uses: actions/checkout@v4
+        with:
+          repository: cauteum/cauteum-proxy
+          path: cauteum-proxy
+          ref: e0620208414a87b38d8f4420a9ceed73e6a02466
+
+      - name: Checkout slogx
+        uses: actions/checkout@v4
+        with:
+          repository: cauteum/slogx
+          path: slogx
+      - name: Write go.work
+        working-directory: ${{ github.workspace }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          {
+            echo 'go 1.27.0'
+            echo 'use ('
+            for d in cauteum-* slogx; do
+              [[ "$d" == cauteum-cli || "$d" == cauteum-display ]] && continue
+              if [[ -d "$d" ]]; then
+                echo "  ./$d"
+              fi
+            done
+            echo ')'
+            echo 'replace ('
+            for d in cauteum-*; do
+              [[ "$d" == cauteum-cli || "$d" == cauteum-display ]] && continue
+              if [[ -d "$d" ]]; then
+                echo "  github.com/cauteum/${d} v0.1.0-alpha.1 => ./$d"
+                echo "  github.com/cauteum/${d} v0.1.0-alpha.2 => ./$d"
+                echo "  github.com/cauteum/${d} v0.1.0-beta.1 => ./$d"
+                echo "  github.com/cauteum/${d} v0.1.0-beta.2 => ./$d"
+              fi
+            done
+            if [[ -d slogx ]]; then
+              echo '  github.com/cauteum/slogx v0.1.0-alpha.1 => ./slogx'
+              echo '  github.com/cauteum/slogx v0.1.0-alpha.2 => ./slogx'
+              echo '  github.com/cauteum/slogx v0.1.0-beta.1 => ./slogx'
+              echo '  github.com/cauteum/slogx v0.1.0-beta.2 => ./slogx'
+            fi
+            echo ')'
+          } > "${{ github.workspace }}/go.work"
+          echo "Wrote go.work:" && cat "${{ github.workspace }}/go.work"
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.27.2"
+          cache: true
+          cache-dependency-path: |
+            cauteum-*/go.sum
+            slogx/go.sum
+      - name: Download modules
+        run: go mod download
+      - name: Vet
+        if: matrix.os == 'ubuntu-latest'
+        run: go vet ./...
+      - name: Test (race + coverage)
+        if: matrix.os == 'ubuntu-latest'
+        shell: bash
+        env:
+          CGO_ENABLED: "1"
+        run: go test -race -count=1 -coverprofile=coverage.txt -covermode=atomic ./...
+      - name: Test (race)
+        if: matrix.os == 'macos-latest'
+        shell: bash
+        env:
+          CGO_ENABLED: "1"
+        run: go test -race -count=1 ./...
+      - name: Test
+        if: matrix.os == 'windows-latest'
+        shell: bash
+        run: go test -count=1 ./...
+      - name: Upload coverage to Codecov
+        if: matrix.os == 'ubuntu-latest'
+        uses: codecov/codecov-action@v5
+        with:
+          use_oidc: true
+          files: ./cauteum-gateway/coverage.txt
+          flags: unittests
+          name: codecov-cauteum-gateway
+          fail_ci_if_error: false

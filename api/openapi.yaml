@@ -1,0 +1,147 @@
+openapi: 3.1.0
+info:
+  title: Cauteum Gateway REST API
+  version: 0.1.0
+  summary: Health and authentication bootstrap endpoints for the gateway.
+  description: >-
+    Management APIs use generated Control RPC or the pinned OpenShell RPC
+    contract. HTTP remains for health probes and browser/local authentication
+    bootstrap; streaming SSH and supervisor relay transports are not REST APIs.
+  license:
+    name: Apache-2.0
+    identifier: Apache-2.0
+servers:
+  - url: http://127.0.0.1:7443
+    description: Local development gateway. Configure HTTPS for remote use.
+tags:
+  - name: Health
+    description: Liveness checks for the gateway process.
+  - name: Gateway
+    description: Browser and local authentication bootstrap.
+paths:
+  /healthz:
+    get:
+      operationId: healthz
+      tags: [Health]
+      summary: Check gateway liveness
+      security: []
+      responses:
+        '200':
+          description: Gateway is live.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Health'
+  /v1/auth/oidc:
+    get:
+      operationId: getOIDCConfiguration
+      tags: [Gateway]
+      summary: Read public OIDC client configuration
+      security: []
+      responses:
+        '200':
+          description: OIDC configuration. Available only when OIDC is configured.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OIDCConfiguration'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /v1/auth/login:
+    get:
+      operationId: startLocalDevelopmentLogin
+      tags: [Gateway]
+      summary: Obtain a local development gateway token
+      description: >-
+        Available only to loopback clients. If redirect_uri is supplied, the
+        token is placed in its query string; this is intended only for a local
+        loopback callback and should not be copied into logs or browser history.
+      security: []
+      parameters:
+        - name: redirect_uri
+          in: query
+          required: false
+          schema:
+            type: string
+            format: uri
+          description: Optional http://127.0.0.1 callback URL.
+      responses:
+        '200':
+          description: Local development token response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LocalLogin'
+        '302':
+          description: Redirect to the supplied loopback URL with token query parameter.
+          headers:
+            Location:
+              schema:
+                type: string
+                format: uri
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+components:
+  schemas:
+    Health:
+      type: object
+      required: [ok, gateway_id, time]
+      properties:
+        ok:
+          type: boolean
+        gateway_id:
+          type: string
+        time:
+          type: string
+          format: date-time
+    OIDCConfiguration:
+      type: object
+      required: [issuer, audience, client_id, allow_insecure_http, mode]
+      properties:
+        issuer:
+          type: string
+          format: uri
+        audience:
+          type: string
+        client_id:
+          type: string
+        allow_insecure_http:
+          type: boolean
+        mode:
+          type: string
+          const: oidc
+    LocalLogin:
+      type: object
+      required: [token, expires_at, mode]
+      properties:
+        token:
+          type: string
+          format: password
+          description: Local development bearer token. Store securely and never log it.
+        expires_at:
+          type: string
+          format: date-time
+        mode:
+          type: string
+          const: local-dev
+  responses:
+    BadRequest:
+      description: Invalid request. Current response body is text/plain.
+      content:
+        text/plain:
+          schema:
+            type: string
+    Forbidden:
+      description: Caller is not authorized. Current response body is text/plain.
+      content:
+        text/plain:
+          schema:
+            type: string
+    NotFound:
+      description: Resource not found. Current response body is text/plain.
+      content:
+        text/plain:
+          schema:
+            type: string

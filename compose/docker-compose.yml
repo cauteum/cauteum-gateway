@@ -1,0 +1,59 @@
+# Control plane: cauteum-gateway (+ optional Dex OIDC via profile).
+#
+# Local-dev (default):
+#   docker compose -f cauteum-gateway/compose/docker-compose.yml up -d --build
+#   cauteum gateway add http://127.0.0.1:7443 --local --name local
+#
+# With OIDC (Dex on :5556):
+#   docker compose -f cauteum-gateway/compose/docker-compose.yml \
+#     -f cauteum-gateway/compose/docker-compose.oidc.yml --profile oidc up -d --build
+#   cauteum gateway add http://127.0.0.1:7443 --local --name local \
+#     --oidc-issuer http://127.0.0.1:5556/dex \
+#     --oidc-client-id cauteum-cli \
+#     --oidc-allow-insecure-http
+#   cauteum gateway login   # admin@example.com / password
+#
+# Local control plane: durable state + optional OIDC gateway login.
+
+services:
+  cauteum-gateway:
+    build:
+      context: ../..
+      dockerfile: cauteum-gateway/Dockerfile
+    image: cauteum-gateway:local
+    ports:
+      - "127.0.0.1:7443:7443"
+    volumes:
+      - cauteum-gateway-data:/var/lib/cauteum-gateway
+    environment:
+      CAUTEUM_GATEWAY_DATA: /var/lib/cauteum-gateway
+      CAUTEUM_SECRETS_KEK: ${CAUTEUM_SECRETS_KEK:-}
+      CAUTEUM_OIDC_ISSUER: ${CAUTEUM_OIDC_ISSUER:-}
+      CAUTEUM_OIDC_CLIENT_ID: ${CAUTEUM_OIDC_CLIENT_ID:-}
+      CAUTEUM_OIDC_AUDIENCE: ${CAUTEUM_OIDC_AUDIENCE:-}
+      CAUTEUM_OIDC_ALLOW_INSECURE_HTTP: ${CAUTEUM_OIDC_ALLOW_INSECURE_HTTP:-}
+    restart: unless-stopped
+    # OpenShell Linux parity: sandbox/sidecar callback via host-gateway aliases.
+    extra_hosts:
+      - "host.cauteum.internal:host-gateway"
+      - "host.docker.internal:host-gateway"
+    networks: [cauteum]
+    # HEALTHCHECK is optional; image may not ship wget — CLI uses /healthz via doctor.
+  # Optional IdP for local OIDC login (profile: oidc).
+  dex:
+    profiles: ["oidc"]
+    image: ghcr.io/dexidp/dex:v2.41.1
+    command: ["dex", "serve", "/etc/dex/config.yaml"]
+    ports:
+      - "127.0.0.1:5556:5556"
+    volumes:
+      - ./dex/config.yaml:/etc/dex/config.yaml:ro
+    networks: [cauteum]
+    restart: unless-stopped
+
+networks:
+  cauteum:
+    driver: bridge
+
+volumes:
+  cauteum-gateway-data:

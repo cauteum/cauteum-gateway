@@ -1,0 +1,25 @@
+# Minimal Dex for local cauteum OIDC login (compose profile "oidc").
+# Static client cauteum-cli; password grant user admin@example.com / password.
+issuer: http://127.0.0.1:5556/dex
+storage:
+  type: memory
+web:
+  http: 0.0.0.0:5556
+telemetry:
+  http: 0.0.0.0:5558
+oauth2:
+  skipApprovalScreen: true
+staticClients:
+  - id: cauteum-cli
+    name: cauteum CLI
+    public: true
+    redirectURIs:
+      - http://127.0.0.1:18765/callback
+      - http://localhost:18765/callback
+enablePasswordDB: true
+staticPasswords:
+  - email: "admin@example.com"
+    # bcrypt hash of "password"
+    hash: "$2a$10$2b2cU8CPhOTaGrs1HRQuAueS7JTT5ZHsHSzYiFPm1leZck7Mc8T4W"
+    username: "admin"
+    userID: "08a8684b-db88-4b73-90a9-3cd1661f5466"

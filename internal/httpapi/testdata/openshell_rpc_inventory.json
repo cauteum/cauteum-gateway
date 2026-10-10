@@ -1,0 +1,1793 @@
+{
+  "upstream_commit": "a0814443f19c07102b19ff09d6ead3d3ba59f9c5",
+  "generated_from": [
+    "tools/upstream/openshell/proto/*.proto",
+    "https://cauteum.github.io/reference/openshell-compatibility/"
+  ],
+  "services": [
+    {
+      "name": "openshell.v1.OpenShell",
+      "proto": "openshell.proto",
+      "registered": true,
+      "methods": [
+        {
+          "name": "Health",
+          "request": "HealthRequest",
+          "response": "HealthResponse",
+          "client_streaming": false,
+          "server_streaming": false,
+          "auth": "unauthenticated",
+          "scope": "see options.proto",
+          "handler": "explicit",
+          "conformance_fixture": "partial",
+          "tests": [
+            "internal/httpapi/grpc_mux_test.go"
+          ],
+          "evidence": [
+            "internal/httpapi/openshell_rpc.go",
+            "internal/httpapi/grpc_mux_test.go"
+          ]
+        },
+        {
+          "name": "GetCurrentUser",
+          "request": "GetCurrentUserRequest",
+          "response": "GetCurrentUserResponse",
+          "client_streaming": false,
+          "server_streaming": false,
+          "auth": "bearer",
+          "scope": "see options.proto",
+          "handler": "explicit",
+          "conformance_fixture": "partial",
+          "tests": [
+            "internal/httpapi/grpc_mux_test.go"
+          ],
+          "evidence": [
+            "internal/httpapi/openshell_rpc.go",
+            "internal/httpapi/grpc_mux_test.go"
+          ]
+        },
+        {
+          "name": "GetGatewayInfo",
+          "request": "GetGatewayInfoRequest",
+          "response": "GetGatewayInfoResponse",
+          "client_streaming": false,
+          "server_streaming": false,
+          "auth": "bearer",
+          "scope": "config:read / platform_admin",
+          "handler": "explicit",
+          "conformance_fixture": "partial",
+          "tests": [
+            "internal/httpapi/openshell_rpc_inventory_test.go"
+          ],
+          "evidence": [
+            "internal/httpapi/openshell_rpc.go",
+            "internal/httpapi/openshell_rpc_inventory_test.go"
+          ]
+        },
+        {
+          "name": "CreateSandbox",
+          "request": "CreateSandboxRequest",
+          "response": "SandboxResponse",
+          "client_streaming": false,
+          "server_streaming": false,
+          "auth": "bearer",
+          "scope": "sandbox:write / user",
+          "handler": "explicit",
+          "conformance_fixture": "partial",
+          "tests": [
+            "internal/httpapi/openshell_rpc_sandbox_test.go",
+            "TestCreateSandboxResolvesWorkspaceTemplateAndGovernanceOverrides",
+            "TestOpenShellCreateSandboxValidationMatchesPinnedFieldBoundaries"
+          ],
+          "evidence": [
+            "internal/httpapi/openshell_rpc.go",
+            "internal/httpapi/openshell_rpc_sandbox_test.go",
+            "workspace-scoped workload template resolution",
+            "portable CPU/memory mapped into compute request",
+            "governance-only request overrides enforced",
+            "pre-compute field validation for DNS name, labels, annotations, providers, environment, command, policy, GPU, and inline template bounds"
+          ]
+        },
+        {
+          "name": "BeginRootfsTarStaging",
+          "request": "BeginRootfsTarStagingRequest",
+          "response": "BeginRootfsTarStagingResponse",
+          "client_streaming": false,
+          "server_streaming": false,
+          "auth": "bearer",
+          "scope": "sandbox:write / user",
+          "handler": "explicit",
+          "conformance_fixture": "partial",
+          "tests": [
+            "internal/httpapi/openshell_rpc_rootfs_test.go"
+          ],
+          "evidence": [
+            "capability-gated single-use staging allocation with workspace, size, expiry, and upload-path validation"
+          ]
+        },
+        {
+          "name": "GetSandbox",
+          "request": "GetSandboxRequest",
+          "response": "SandboxResponse",
+          "client_streaming": false,
+          "server_streaming": false,
+          "auth": "bearer",
+          "scope": "sandbox:read / user",
+          "handler": "explicit",
+          "conformance_fixture": "partial",
+          "tests": [
+            "TestGetAndListSandboxesReturnStoredSpecAndMetadata",
+            "TestSandboxReadAuthorizationValidationAndPagination",
+            "TestSandboxReadRejectsCorruptStoredSpec"
+          ],
+          "evidence": [
+            "workspace-scoped read authorization",
+            "stored protobuf JSON spec and resource version",
+            "label selection and bounded offset pagination"
+          ]
+        },
+        {
+          "name": "ListSandboxes",
+          "request": "ListSandboxesRequest",
+          "response": "ListSandboxesResponse",
+          "client_streaming": false,
+          "server_streaming": false,
+          "auth": "bearer",
+          "scope": "sandbox:read / user",
+          "handler": "explicit",
+          "conformance_fixture": "partial",
+          "tests": [
+            "TestGetAndListSandboxesReturnStoredSpecAndMetadata",
+            "TestSandboxReadAuthorizationValidationAndPagination",
+            "TestSandboxReadRejectsCorruptStoredSpec"
+          ],
+          "evidence": [
+            "workspace-scoped read authorization",
+            "stored protobuf JSON spec and resource version",
+            "label selection and bounded offset pagination"
+          ]
+        },
+        {
+          "name": "CreateSandboxTemplate",
+          "request": "CreateSandboxTemplateRequest",
+          "response": "SandboxTemplateResponse",
+          "client_streaming": false,
+          "server_streaming": false,
+          "auth": "bearer",
+          "scope": "sandbox:write / admin",
+          "handler": "explicit",
+          "conformance_fixture": "partial",
+          "tests": [
+            "TestSandboxTemplateCRUDIsWorkspaceScoped",
+            "TestSandboxTemplateRequiresWorkspaceAdminAndValidSpec"
+          ],
+          "evidence": [
+            "workspace-scoped atomic template storage",
+            "workspace admin authorization for mutations",
+            "label selector and bounded pagination",
+            "pinned template validation for DNS labels, metadata maps, workload environment/resources, GPU count, driver config and service-level duration"
+          ]
+        },
+        {
+          "name": "GetSandboxTemplate",
+          "request": "GetSandboxTemplateRequest",
+          "response": "SandboxTemplateResponse",
+          "client_streaming": false,
+          "server_streaming": false,
+          "auth": "bearer",
+          "scope": "sandbox:read / user",
+          "handler": "explicit",
+          "conformance_fixture": "partial",
+          "tests": [
+            "TestSandboxTemplateCRUDIsWorkspaceScoped",
+            "TestSandboxTemplateRequiresWorkspaceAdminAndValidSpec"
+          ],
+          "evidence": [
+            "workspace-scoped atomic template storage",
+            "workspace admin authorization for mutations",
+            "label selector and bounded pagination",
+            "pinned template validation for DNS labels, metadata maps, workload environment/resources, GPU count, driver config and service-level duration"
+          ]
+        },
+        {
+          "name": "ListSandboxTemplates",
+          "request": "ListSandboxTemplatesRequest",
+          "response": "ListSandboxTemplatesResponse",
+          "client_streaming": false,
+          "server_streaming": false,
+          "auth": "bearer",
+          "scope": "sandbox:read / user",
+          "handler": "explicit",
+          "conformance_fixture": "partial",
+          "tests": [
+            "TestSandboxTemplateCRUDIsWorkspaceScoped",
+            "TestSandboxTemplateRequiresWorkspaceAdminAndValidSpec"
+          ],
+          "evidence": [
+            "workspace-scoped atomic template storage",
+            "workspace admin authorization for mutations",
+            "label selector and bounded pagination",
+            "pinned template validation for DNS labels, metadata maps, workload environment/resources, GPU count, driver config and service-level duration"
+          ]
+        },
+        {
+          "name": "DeleteSandboxTemplate",
+          "request": "DeleteSandboxTemplateRequest",
+          "response": "DeleteSandboxTemplateResponse",
+          "client_streaming": false,
+          "server_streaming": false,
+          "auth": "bearer",
+          "scope": "sandbox:write / admin",
+          "handler": "explicit",
+          "conformance_fixture": "partial",
+          "tests": [
+            "TestSandboxTemplateCRUDIsWorkspaceScoped",
+            "TestSandboxTemplateRequiresWorkspaceAdminAndValidSpec"
+          ],
+          "evidence": [
+            "workspace-scoped atomic template storage",
+            "workspace admin authorization for mutations",
+            "label selector and bounded pagination",
+            "pinned template validation for DNS labels, metadata maps, workload environment/resources, GPU count, driver config and service-level duration"
+          ]
+        },
+        {
+          "name": "ListSandboxProviders",
+          "request": "ListSandboxProvidersRequest",
+          "response": "ListSandboxProvidersResponse",
+          "client_streaming": false,
+          "server_streaming": false,
+          "auth": "bearer",
+          "scope": "sandbox:read / user",
+          "handler": "explicit",
+          "conformance_fixture": "partial",
+          "tests": [
+            "TestOpenShellSandboxProviderAttachmentLifecycle",
+            "TestOpenShellSandboxProviderAttachmentAuthorizationAndCAS",
+            "TestOpenShellSandboxProviderAttachmentLimit"
+          ],
+          "evidence": [
+            "internal/httpapi/openshell_rpc_provider_attachments.go",
+            "credentials redacted in returned provider model"
+          ]
+        },
+        {
+          "name": "AttachSandboxProvider",
+          "request": "AttachSandboxProviderRequest",
+          "response": "AttachSandboxProviderResponse",
+          "client_streaming": false,
+          "server_streaming": false,
+          "auth": "bearer",
+          "scope": "sandbox:write / user",
+          "handler": "explicit",
+          "conformance_fixture": "partial",
+          "tests": [
+            "TestOpenShellSandboxProviderAttachmentLifecycle",
+            "TestOpenShellSandboxProviderAttachmentAuthorizationAndCAS",
+            "TestOpenShellSandboxProviderAttachmentLimit"
+          ],
+          "evidence": [
+            "internal/httpapi/openshell_rpc_provider_attachments.go",
+            "resource-version guarded provider attachment update"
+          ]
+        },
+        {
+          "name": "DetachSandboxProvider",
+          "request": "DetachSandboxProviderRequest",
+          "response": "DetachSandboxProviderResponse",
+          "client_streaming": false,
+          "server_streaming": false,
+          "auth": "bearer",
+          "scope": "sandbox:write / user",
+          "handler": "explicit",
+          "conformance_fixture": "partial",
+          "tests": [
+            "TestOpenShellSandboxProviderAttachmentLifecycle",
+            "TestOpenShellSandboxProviderAttachmentAuthorizationAndCAS",
+            "TestOpenShellSandboxProviderAttachmentLimit"
+          ],
+          "evidence": [
+            "internal/httpapi/openshell_rpc_provider_attachments.go",
+            "resource-version guarded provider detach"
+          ]
+        },
+        {
+          "name": "DeleteSandbox",
+          "request": "DeleteSandboxRequest",
+          "response": "DeleteSandboxResponse",
+          "client_streaming": false,
+          "server_streaming": false,
+          "auth": "bearer",
+          "scope": "sandbox:write / user",
+          "handler": "explicit",
+          "conformance_fixture": "partial",
+          "tests": [
+            "internal/httpapi/openshell_rpc_sandbox_test.go"
+          ],
+          "evidence": [
+            "internal/httpapi/openshell_rpc.go",
+            "internal/httpapi/openshell_rpc_sandbox_test.go"
+          ]
+        },
+        {
+          "name": "StopSandbox",
+          "request": "StopSandboxRequest",
+          "response": "SandboxResponse",
+          "client_streaming": false,
+          "server_streaming": false,
+          "auth": "bearer",
+          "scope": "sandbox:write / user",
+          "handler": "explicit",
+          "conformance_fixture": "partial",
+          "tests": [
+            "internal/httpapi/openshell_rpc_sandbox_test.go",
+            "tests/e2e/engine_connect_test.go"
+          ],
+          "evidence": [
+            "internal/httpapi/openshell_rpc.go",
+            "internal/httpapi/openshell_rpc_sandbox_test.go",
+            "tests/e2e/engine_connect_test.go"
+          ]
+        },
+        {
+          "name": "StartSandbox",
+          "request": "StartSandboxRequest",
+          "response": "SandboxResponse",
+          "client_streaming": false,
+          "server_streaming": false,
+          "auth": "bearer",
+          "scope": "sandbox:write / user",
+          "handler": "explicit",
+          "conformance_fixture": "partial",
+          "tests": [
+            "internal/httpapi/openshell_rpc_sandbox_test.go",
+            "tests/e2e/engine_connect_test.go"
+          ],
+          "evidence": [
+            "internal/httpapi/openshell_rpc.go",
+            "internal/httpapi/openshell_rpc_sandbox_test.go",
+            "tests/e2e/engine_connect_test.go"
+          ]
+        },
+        {
+          "name": "CreateSshSession",
+          "request": "CreateSshSessionRequest",
+          "response": "CreateSshSessionResponse",
+          "client_streaming": false,
+          "server_streaming": false,
+          "auth": "bearer",
+          "scope": "sandbox:write / user",
+          "handler": "explicit",
+          "conformance_fixture": "partial",
+          "tests": [
+            "TestOpenShellGRPCSSHSessionLifecycle",
+            "TestOpenShellGRPCSSHSessionRequiresRelayAndScopedOwner"
+          ],
+          "evidence": [
+            "internal/httpapi/openshell_rpc_ssh.go",
+            "internal/httpapi/openshell_rpc_ssh_test.go"
+          ]
+        },
+        {
+          "name": "ExposeService",
+          "request": "ExposeServiceRequest",
+          "response": "ServiceEndpointResponse",
+          "client_streaming": false,
+          "server_streaming": false,
+          "auth": "bearer",
+          "scope": "sandbox:write / user",
+          "handler": "explicit",
+          "conformance_fixture": "partial",
+          "tests": ["TestOpenShellServiceEndpointLifecycle"],
+          "evidence": [
+            "internal/httpapi/openshell_rpc_services.go",
+            "internal/httpapi/openshell_rpc_services_test.go"
+          ]
+        },
+        {
+          "name": "GetService",
+          "request": "GetServiceRequest",
+          "response": "ServiceEndpointResponse",
+          "client_streaming": false,
+          "server_streaming": false,
+          "auth": "bearer",
+          "scope": "sandbox:read / user",
+          "handler": "explicit",
+          "conformance_fixture": "partial",
+          "tests": ["TestOpenShellServiceEndpointLifecycle"],
+          "evidence": [
+            "internal/httpapi/openshell_rpc_services.go",
+            "internal/httpapi/openshell_rpc_services_test.go"
+          ]
+        },
+        {
+          "name": "ListServices",
+          "request": "ListServicesRequest",
+          "response": "ListServicesResponse",
+          "client_streaming": false,
+          "server_streaming": false,
+          "auth": "bearer",
+          "scope": "sandbox:read / user",
+          "handler": "explicit",
+          "conformance_fixture": "partial",
+          "tests": ["TestOpenShellServiceEndpointLifecycle"],
+          "evidence": [
+            "internal/httpapi/openshell_rpc_services.go",
+            "internal/httpapi/openshell_rpc_services_test.go"
+          ]
+        },
+        {
+          "name": "DeleteService",
+          "request": "DeleteServiceRequest",
+          "response": "DeleteServiceResponse",
+          "client_streaming": false,
+          "server_streaming": false,
+          "auth": "bearer",
+          "scope": "sandbox:write / user",
+          "handler": "explicit",
+          "conformance_fixture": "partial",
+          "tests": ["TestOpenShellServiceEndpointLifecycle"],
+          "evidence": [
+            "internal/httpapi/openshell_rpc_services.go",
+            "internal/httpapi/openshell_rpc_services_test.go"
+          ]
+        },
+        {
+          "name": "RevokeSshSession",
+          "request": "RevokeSshSessionRequest",
+          "response": "RevokeSshSessionResponse",
+          "client_streaming": false,
+          "server_streaming": false,
+          "auth": "bearer",
+          "scope": "sandbox:write / user",
+          "handler": "explicit",
+          "conformance_fixture": "partial",
+          "tests": [
+            "TestOpenShellGRPCSSHSessionLifecycle",
+            "TestOpenShellGRPCSSHSessionRequiresRelayAndScopedOwner"
+          ],
+          "evidence": [
+            "internal/httpapi/openshell_rpc_ssh.go",
+            "internal/httpapi/openshell_rpc_ssh_test.go"
+          ]
+        },
+        {
+          "name": "ExecSandbox",
+          "request": "ExecSandboxRequest",
+          "response": "ExecSandboxEvent",
+          "client_streaming": false,
+          "server_streaming": true,
+          "auth": "bearer",
+          "scope": "sandbox:write / user",
+          "handler": "explicit",
+          "conformance_fixture": "partial",
+          "tests": [
+            "TestOpenShellExecSandboxRequiresWorkspaceWrite",
+            "TestOpenShellRPCInventoryMatchesPinnedServiceAndHandlers"
+          ],
+          "evidence": [
+            "internal/httpapi/openshell_rpc_exec.go",
+            "internal/httpapi/openshell_rpc_exec_test.go"
+          ]
+        },
+        {
+          "name": "ForwardTcp",
+          "request": "TcpForwardFrame",
+          "response": "TcpForwardFrame",
+          "client_streaming": true,
+          "server_streaming": true,
+          "auth": "bearer",
+          "scope": "sandbox:write / user",
+          "handler": "explicit",
+          "conformance_fixture": "partial",
+          "tests": [
+            "TestValidateForwardTarget",
+            "TestForwardTCPRelaysBytes",
+            "TestForwardTCPClientHalfCloseKeepsTargetResponseOpen",
+            "TestForwardTCPContextCancellationAndDeadline",
+            "TestForwardConnectionLimits",
+            "TestOpenShellGRPCForwardTCPBridgeAndAuthorization",
+            "TestOpenShellGRPCExternalClientAuthentication",
+            "TestHalfPipePreservesResponseAfterWriteClose",
+            "TestHalfPipeDeadlineInterruptsBlockedRead",
+            "TestEngineGatewayConnectE2E"
+          ],
+          "evidence": [
+            "internal/httpapi/openshell_rpc_forward.go",
+            "internal/httpapi/openshell_rpc_forward_test.go",
+            "internal/httpapi/grpc_mux_test.go",
+            "internal/sshrelay/halfpipe.go",
+            "internal/sshrelay/halfpipe_test.go",
+            "internal/httpapi/engine_connect_e2e_test.go"
+          ]
+        },
+        {
+          "name": "ExecSandboxInteractive",
+          "request": "ExecSandboxInput",
+          "response": "ExecSandboxEvent",
+          "client_streaming": true,
+          "server_streaming": true,
+          "auth": "bearer",
+          "scope": "sandbox:write / user",
+          "handler": "explicit",
+          "conformance_fixture": "partial",
+          "tests": [
+            "TestEngineGatewayConnectE2E",
+            "TestOpenShellRPCInventoryMatchesPinnedServiceAndHandlers"
+          ],
+          "evidence": [
+            "internal/httpapi/openshell_rpc_exec.go",
+            "internal/httpapi/engine_connect_e2e_test.go"
+          ]
+        },
+        {
+          "name": "CreateProvider",
+          "request": "CreateProviderRequest",
+          "response": "ProviderResponse",
+          "client_streaming": false,
+          "server_streaming": false,
+          "auth": "bearer",
+          "scope": "provider:write / admin",
+          "handler": "explicit",
+          "conformance_fixture": "partial",
+          "tests": ["TestOpenShellProviderLifecycle"],
+          "evidence": [
+            "internal/httpapi/openshell_rpc_providers.go",
+            "internal/httpapi/openshell_rpc_providers_test.go"
+          ]
+        },
+        {
+          "name": "GetProvider",
+          "request": "GetProviderRequest",
+          "response": "ProviderResponse",
+          "client_streaming": false,
+          "server_streaming": false,
+          "auth": "bearer",
+          "scope": "provider:read / user",
+          "handler": "explicit",
+          "conformance_fixture": "partial",
+          "tests": ["TestOpenShellProviderLifecycle"],
+          "evidence": [
+            "internal/httpapi/openshell_rpc_providers.go",
+            "internal/httpapi/openshell_rpc_providers_test.go"
+          ]
+        },
+        {
+          "name": "ListProviders",
+          "request": "ListProvidersRequest",
+          "response": "ListProvidersResponse",
+          "client_streaming": false,
+          "server_streaming": false,
+          "auth": "bearer",
+          "scope": "provider:read / user",
+          "handler": "explicit",
+          "conformance_fixture": "partial",
+          "tests": ["TestOpenShellProviderLifecycle"],
+          "evidence": [
+            "internal/httpapi/openshell_rpc_providers.go",
+            "internal/httpapi/openshell_rpc_providers_test.go"
+          ]
+        },
+        {
+          "name": "ListProviderProfiles",
+          "request": "ListProviderProfilesRequest",
+          "response": "ListProviderProfilesResponse",
+          "client_streaming": false,
+          "server_streaming": false,
+          "auth": "bearer",
+          "scope": "provider:read / user",
+          "handler": "explicit",
+          "conformance_fixture": "partial",
+          "tests": ["TestOpenShellProviderProfilesLifecycle"],
+          "evidence": [
+            "internal/httpapi/openshell_rpc_profiles.go",
+            "internal/httpapi/openshell_rpc_profiles_test.go"
+          ]
+        },
+        {
+          "name": "GetProviderProfile",
+          "request": "GetProviderProfileRequest",
+          "response": "ProviderProfileResponse",
+          "client_streaming": false,
+          "server_streaming": false,
+          "auth": "bearer",
+          "scope": "provider:read / user",
+          "handler": "explicit",
+          "conformance_fixture": "partial",
+          "tests": ["TestOpenShellProviderProfilesLifecycle"],
+          "evidence": [
+            "internal/httpapi/openshell_rpc_profiles.go",
+            "internal/httpapi/openshell_rpc_profiles_test.go"
+          ]
+        },
+        {
+          "name": "ImportProviderProfiles",
+          "request": "ImportProviderProfilesRequest",
+          "response": "ImportProviderProfilesResponse",
+          "client_streaming": false,
+          "server_streaming": false,
+          "auth": "bearer",
+          "scope": "provider:write / admin",
+          "handler": "explicit",
+          "conformance_fixture": "partial",
+          "tests": ["TestOpenShellProviderProfilesLifecycle"],
+          "evidence": [
+            "internal/httpapi/openshell_rpc_profiles.go",
+            "internal/httpapi/openshell_rpc_profiles_test.go"
+          ]
+        },
+        {
+          "name": "UpdateProviderProfiles",
+          "request": "UpdateProviderProfilesRequest",
+          "response": "UpdateProviderProfilesResponse",
+          "client_streaming": false,
+          "server_streaming": false,
+          "auth": "bearer",
+          "scope": "provider:write / admin",
+          "handler": "explicit",
+          "conformance_fixture": "partial",
+          "tests": ["TestOpenShellProviderProfilesLifecycle"],
+          "evidence": [
+            "internal/httpapi/openshell_rpc_profiles.go",
+            "internal/httpapi/openshell_rpc_profiles_test.go"
+          ]
+        },
+        {
+          "name": "LintProviderProfiles",
+          "request": "LintProviderProfilesRequest",
+          "response": "LintProviderProfilesResponse",
+          "client_streaming": false,
+          "server_streaming": false,
+          "auth": "bearer",
+          "scope": "provider:read / user",
+          "handler": "explicit",
+          "conformance_fixture": "partial",
+          "tests": ["TestOpenShellProviderProfilesLifecycle"],
+          "evidence": [
+            "internal/httpapi/openshell_rpc_profiles.go",
+            "internal/httpapi/openshell_rpc_profiles_test.go"
+          ]
+        },
+        {
+          "name": "UpdateProvider",
+          "request": "UpdateProviderRequest",
+          "response": "ProviderResponse",
+          "client_streaming": false,
+          "server_streaming": false,
+          "auth": "bearer",
+          "scope": "provider:write / admin",
+          "handler": "explicit",
+          "conformance_fixture": "partial",
+          "tests": ["TestOpenShellProviderLifecycle"],
+          "evidence": [
+            "internal/httpapi/openshell_rpc_providers.go",
+            "internal/httpapi/openshell_rpc_providers_test.go"
+          ]
+        },
+        {
+          "name": "GetProviderRefreshStatus",
+          "request": "GetProviderRefreshStatusRequest",
+          "response": "GetProviderRefreshStatusResponse",
+          "client_streaming": false,
+          "server_streaming": false,
+          "auth": "bearer",
+          "scope": "provider:read / user",
+          "handler": "explicit",
+          "conformance_fixture": "partial",
+          "tests": [
+            "internal/httpapi/openshell_rpc_credentials_test.go"
+          ],
+          "evidence": [
+            "internal/httpapi/openshell_rpc.go",
+            "internal/httpapi/openshell_rpc_credentials_test.go"
+          ]
+        },
+        {
+          "name": "ConfigureProviderRefresh",
+          "request": "ConfigureProviderRefreshRequest",
+          "response": "ConfigureProviderRefreshResponse",
+          "client_streaming": false,
+          "server_streaming": false,
+          "auth": "bearer",
+          "scope": "provider:write / admin",
+          "handler": "explicit",
+          "conformance_fixture": "partial",
+          "tests": [
+            "internal/httpapi/openshell_rpc_credentials_test.go"
+          ],
+          "evidence": [
+            "internal/httpapi/openshell_rpc.go",
+            "internal/httpapi/openshell_rpc_credentials_test.go"
+          ]
+        },
+        {
+          "name": "RotateProviderCredential",
+          "request": "RotateProviderCredentialRequest",
+          "response": "RotateProviderCredentialResponse",
+          "client_streaming": false,
+          "server_streaming": false,
+          "auth": "bearer",
+          "scope": "provider:write / admin",
+          "handler": "explicit",
+          "conformance_fixture": "partial",
+          "tests": [
+            "internal/httpapi/openshell_rpc_credentials_test.go"
+          ],
+          "evidence": [
+            "internal/httpapi/openshell_rpc.go",
+            "internal/httpapi/openshell_rpc_credentials_test.go"
+          ]
+        },
+        {
+          "name": "DeleteProviderRefresh",
+          "request": "DeleteProviderRefreshRequest",
+          "response": "DeleteProviderRefreshResponse",
+          "client_streaming": false,
+          "server_streaming": false,
+          "auth": "bearer",
+          "scope": "provider:write / admin",
+          "handler": "explicit",
+          "conformance_fixture": "partial",
+          "tests": [
+            "internal/httpapi/openshell_rpc_credentials_test.go"
+          ],
+          "evidence": [
+            "internal/httpapi/openshell_rpc.go",
+            "internal/httpapi/openshell_rpc_credentials_test.go"
+          ]
+        },
+        {
+          "name": "DeleteProvider",
+          "request": "DeleteProviderRequest",
+          "response": "DeleteProviderResponse",
+          "client_streaming": false,
+          "server_streaming": false,
+          "auth": "bearer",
+          "scope": "provider:write / admin",
+          "handler": "explicit",
+          "conformance_fixture": "partial",
+          "tests": ["TestOpenShellProviderLifecycle"],
+          "evidence": [
+            "internal/httpapi/openshell_rpc_providers.go",
+            "internal/httpapi/openshell_rpc_providers_test.go"
+          ]
+        },
+        {
+          "name": "DeleteProviderProfile",
+          "request": "DeleteProviderProfileRequest",
+          "response": "DeleteProviderProfileResponse",
+          "client_streaming": false,
+          "server_streaming": false,
+          "auth": "bearer",
+          "scope": "provider:write / admin",
+          "handler": "explicit",
+          "conformance_fixture": "partial",
+          "tests": ["TestOpenShellProviderProfilesLifecycle"],
+          "evidence": [
+            "internal/httpapi/openshell_rpc_profiles.go",
+            "internal/httpapi/openshell_rpc_profiles_test.go"
+          ]
+        },
+        {
+          "name": "GetSandboxConfig",
+          "request": "openshell.sandbox.v1.GetSandboxConfigRequest",
+          "response": "openshell.sandbox.v1.GetSandboxConfigResponse",
+          "client_streaming": false,
+          "server_streaming": false,
+          "auth": "dual",
+          "scope": "config:read / user",
+          "handler": "explicit",
+          "conformance_fixture": "partial",
+          "tests": [
+            "TestGetSandboxConfigReturnsStablePolicySettingsAndWorkspace",
+            "TestGetSandboxConfigEnforcesPrincipalScope",
+            "TestGetSandboxConfigDualAuthAllowsSandboxBearerOnlyForItsSandbox"
+          ],
+          "evidence": [
+            "internal/httpapi/openshell_rpc_sandbox_config.go GetSandboxConfig",
+            "stored sandbox policy history, global policy revision, merged sandbox/global registered settings",
+            "sandbox token or config:read workspace member authorization",
+            "attached provider profile composition and encrypted credential fingerprint",
+            "static middleware registrations validated and selected from the effective policy"
+          ]
+        },
+        {
+          "name": "GetGatewayConfig",
+          "request": "openshell.sandbox.v1.GetGatewayConfigRequest",
+          "response": "openshell.sandbox.v1.GetGatewayConfigResponse",
+          "client_streaming": false,
+          "server_streaming": false,
+          "auth": "bearer",
+          "scope": "config:read",
+          "handler": "explicit",
+          "conformance_fixture": "partial",
+          "tests": [
+            "TestGetGatewayConfigReturnsRegisteredTypedSettingsAndRevision",
+            "TestGetGatewayConfigRejectsUnavailableAndMalformedState"
+          ],
+          "evidence": [
+            "internal/httpapi/openshell_rpc.go GetGatewayConfig",
+            "settings allowlist excludes unregistered and reserved policy keys",
+            "typed bool/string settings and monotonic revision are returned"
+          ]
+        },
+        {
+          "name": "UpdateConfig",
+          "request": "UpdateConfigRequest",
+          "response": "UpdateConfigResponse",
+          "client_streaming": false,
+          "server_streaming": false,
+          "auth": "dual",
+          "scope": "config:write / admin",
+          "handler": "explicit",
+          "conformance_fixture": "partial",
+          "tests": [
+            "TestUpdateConfigMutatesGlobalAndSandboxSettings",
+            "TestUpdateConfigRejectsUnsupportedAndUnauthorizedMutations",
+            "TestUpdateConfigAllowsSandboxPolicySyncOnlyForOwnSandbox",
+            "TestUpdateConfigAppliesSandboxPolicyMergeOperationsAtomically",
+            "TestUpdateConfigPolicyMergeEnforcesGlobalPolicyAndCAS",
+            "TestApplyOpenShellPolicyMergeRuleAndRemovalOperations"
+          ],
+          "evidence": [
+            "internal/httpapi/openshell_rpc_update_config.go UpdateConfig",
+            "global/sandbox registered settings with revisions and value validation",
+            "full policy replacement with static-field guard and sandbox token own-sandbox network policy sync",
+            "sandbox annotation projection and atomic resource-version compare-and-swap",
+            "atomic sandbox merge batches implement add/remove rule, endpoint, binary and L7 allow/deny operations; complex rule folding and credential binding validation remain open"
+          ]
+        },
+        {
+          "name": "GetSandboxPolicyStatus",
+          "request": "GetSandboxPolicyStatusRequest",
+          "response": "GetSandboxPolicyStatusResponse",
+          "client_streaming": false,
+          "server_streaming": false,
+          "auth": "bearer",
+          "scope": "sandbox:read / user",
+          "handler": "explicit",
+          "conformance_fixture": "partial",
+          "tests": [
+            "TestSandboxPolicyHistoryStatusAndPagination",
+            "TestSandboxPolicyHistoryRejectsCrossWorkspaceAndInvalidPolicy",
+            "TestGlobalPolicyHistoryIsAdminOnlyAndPaginatedNewestFirst"
+          ],
+          "evidence": [
+            "internal/httpapi/openshell_rpc_policy_history.go GetSandboxPolicyStatus",
+            "sandbox revision detail and active version with user scope/workspace authorization",
+            "global status is admin-only and addresses retained global revisions"
+          ]
+        },
+        {
+          "name": "ListSandboxPolicies",
+          "request": "ListSandboxPoliciesRequest",
+          "response": "ListSandboxPoliciesResponse",
+          "client_streaming": false,
+          "server_streaming": false,
+          "auth": "bearer",
+          "scope": "sandbox:read / user",
+          "handler": "explicit",
+          "conformance_fixture": "partial",
+          "tests": [
+            "TestSandboxPolicyHistoryStatusAndPagination",
+            "TestSandboxPolicyHistoryRejectsCrossWorkspaceAndInvalidPolicy",
+            "TestGlobalPolicyHistoryIsAdminOnlyAndPaginatedNewestFirst"
+          ],
+          "evidence": [
+            "internal/httpapi/openshell_rpc_policy_history.go ListSandboxPolicies",
+            "sandbox history pagination, provenance and invalid historical payload projection",
+            "global history is retained and paginated alongside sandbox history"
+          ]
+        },
+        {
+          "name": "ReportPolicyStatus",
+          "request": "ReportPolicyStatusRequest",
+          "response": "ReportPolicyStatusResponse",
+          "client_streaming": false,
+          "server_streaming": false,
+          "auth": "sandbox",
+          "scope": "see options.proto",
+          "handler": "explicit",
+          "conformance_fixture": "partial",
+          "tests": [
+            "TestReportPolicyStatusUpdatesHistoryAndActiveVersion"
+          ],
+          "evidence": [
+            "internal/httpapi/openshell_rpc_report_policy_status.go ReportPolicyStatus",
+            "sandbox principal is restricted to its own sandbox; LOADED/FAILED updates policy history and active version"
+          ]
+        },
+        {
+          "name": "GetSandboxProviderEnvironment",
+          "request": "GetSandboxProviderEnvironmentRequest",
+          "response": "GetSandboxProviderEnvironmentResponse",
+          "client_streaming": false,
+          "server_streaming": false,
+          "auth": "sandbox",
+          "scope": "see options.proto",
+          "handler": "explicit",
+          "conformance_fixture": "partial",
+          "tests": [
+            "internal/httpapi/openshell_rpc_credentials_test.go"
+          ],
+          "evidence": [
+            "internal/httpapi/openshell_rpc.go",
+            "internal/httpapi/openshell_rpc_credentials_test.go"
+          ]
+        },
+        {
+          "name": "ExchangeProviderSubjectToken",
+          "request": "ExchangeProviderSubjectTokenRequest",
+          "response": "ExchangeProviderSubjectTokenResponse",
+          "client_streaming": false,
+          "server_streaming": false,
+          "auth": "sandbox",
+          "scope": "see options.proto",
+          "handler": "explicit",
+          "conformance_fixture": "partial",
+          "tests": [
+            "internal/httpapi/openshell_rpc_subject_token_test.go"
+          ],
+          "evidence": [
+            "internal/httpapi/openshell_rpc.go"
+            ,"internal/httpapi/openshell_rpc_subject_token_test.go"
+          ]
+        },
+        {
+          "name": "GetSandboxLogs",
+          "request": "GetSandboxLogsRequest",
+          "response": "GetSandboxLogsResponse",
+          "client_streaming": false,
+          "server_streaming": false,
+          "auth": "bearer",
+          "scope": "sandbox:read / user",
+          "handler": "explicit",
+          "conformance_fixture": "partial",
+          "tests": [
+            "TestOpenShellGatewaySandboxLogsRPC"
+          ],
+          "evidence": [
+            "bounded gateway log buffer with sandbox workspace authorization and source/level/time filters"
+          ]
+        },
+        {
+          "name": "PushSandboxLogs",
+          "request": "PushSandboxLogsRequest",
+          "response": "PushSandboxLogsResponse",
+          "client_streaming": true,
+          "server_streaming": false,
+          "auth": "sandbox",
+          "scope": "see options.proto",
+          "handler": "explicit",
+          "conformance_fixture": "partial",
+          "tests": [
+            "TestOpenShellGatewaySandboxLogsRPC"
+          ],
+          "evidence": [
+            "sandbox-token client stream validates sandbox ownership, bounds records and forces sandbox source"
+          ]
+        },
+        {
+          "name": "ConnectSupervisor",
+          "request": "SupervisorMessage",
+          "response": "GatewayMessage",
+          "client_streaming": true,
+          "server_streaming": true,
+          "auth": "sandbox",
+          "scope": "see options.proto",
+          "handler": "explicit",
+          "conformance_fixture": "partial",
+          "tests": [
+            "internal/httpapi/grpc_mux_test.go",
+            "internal/httpapi/grpc_mux_test.go"
+          ],
+          "evidence": [
+            "internal/httpapi/openshell_rpc.go",
+            "internal/httpapi/grpc_mux_test.go",
+            "internal/httpapi/grpc_mux_test.go"
+          ]
+        },
+        {
+          "name": "ReportMainProcessExit",
+          "request": "ReportMainProcessExitRequest",
+          "response": "ReportMainProcessExitResponse",
+          "client_streaming": false,
+          "server_streaming": false,
+          "auth": "sandbox",
+          "scope": "see options.proto",
+          "handler": "explicit",
+          "conformance_fixture": "partial",
+          "tests": [
+            "internal/httpapi/openshell_rpc_main_process_test.go",
+            "internal/httpapi/grpc_mux_test.go"
+          ],
+          "evidence": [
+            "internal/httpapi/openshell_rpc_main_process.go",
+            "internal/storage/store/store.go",
+            "internal/httpapi/openshell_rpc_main_process_test.go",
+            "internal/httpapi/grpc_mux_test.go"
+          ]
+        },
+        {
+          "name": "FinalizeMainProcessExit",
+          "request": "FinalizeMainProcessExitRequest",
+          "response": "FinalizeMainProcessExitResponse",
+          "client_streaming": false,
+          "server_streaming": false,
+          "auth": "sandbox",
+          "scope": "see options.proto",
+          "handler": "explicit",
+          "conformance_fixture": "partial",
+          "tests": [
+            "internal/httpapi/openshell_rpc_main_process_test.go",
+            "internal/httpapi/grpc_mux_test.go"
+          ],
+          "evidence": [
+            "internal/httpapi/openshell_rpc_main_process.go",
+            "internal/storage/store/store.go",
+            "internal/httpapi/openshell_rpc_main_process_test.go",
+            "internal/httpapi/grpc_mux_test.go"
+          ]
+        },
+        {
+          "name": "RelayStream",
+          "request": "RelayFrame",
+          "response": "RelayFrame",
+          "client_streaming": true,
+          "server_streaming": true,
+          "auth": "sandbox",
+          "scope": "see options.proto",
+          "handler": "explicit",
+          "conformance_fixture": "partial",
+          "tests": [
+            "internal/httpapi/grpc_mux_test.go",
+            "internal/httpapi/grpc_mux_test.go"
+          ],
+          "evidence": [
+            "internal/httpapi/openshell_rpc.go",
+            "internal/httpapi/grpc_mux_test.go",
+            "internal/httpapi/grpc_mux_test.go"
+          ]
+        },
+        {
+          "name": "WatchSandbox",
+          "request": "WatchSandboxRequest",
+          "response": "SandboxStreamEvent",
+          "client_streaming": false,
+          "server_streaming": true,
+          "auth": "bearer",
+          "scope": "sandbox:read / user",
+          "handler": "explicit",
+          "conformance_fixture": "partial",
+          "tests": [
+            "TestWatchSandboxReplaysTailAndStreamsLiveLogs",
+            "TestWatchSandboxStopsOnReadyAndStreamsLocalLifecycleEvents"
+          ],
+          "evidence": [
+            "initial sandbox snapshot, optional bounded log replay/live stream, status polling and explicit platform-event limitation"
+          ]
+        },
+        {
+          "name": "SubmitPolicyAnalysis",
+          "request": "SubmitPolicyAnalysisRequest",
+          "response": "SubmitPolicyAnalysisResponse",
+          "client_streaming": false,
+          "server_streaming": false,
+          "auth": "sandbox",
+          "scope": "see options.proto",
+          "handler": "explicit",
+          "conformance_fixture": "partial",
+          "tests": ["TestOpenShellPolicyDraftLifecycle"],
+          "evidence": [
+            "internal/httpapi/openshell_rpc_policy_draft.go",
+            "internal/httpapi/openshell_rpc_policy_draft_test.go"
+          ]
+        },
+        {
+          "name": "GetDraftPolicy",
+          "request": "GetDraftPolicyRequest",
+          "response": "GetDraftPolicyResponse",
+          "client_streaming": false,
+          "server_streaming": false,
+          "auth": "dual",
+          "scope": "config:read / user",
+          "handler": "explicit",
+          "conformance_fixture": "partial",
+          "tests": ["TestOpenShellPolicyDraftLifecycle"],
+          "evidence": [
+            "internal/httpapi/openshell_rpc_policy_draft.go",
+            "internal/httpapi/openshell_rpc_policy_draft_test.go"
+          ]
+        },
+        {
+          "name": "ApproveDraftChunk",
+          "request": "ApproveDraftChunkRequest",
+          "response": "ApproveDraftChunkResponse",
+          "client_streaming": false,
+          "server_streaming": false,
+          "auth": "bearer",
+          "scope": "config:write / admin",
+          "handler": "explicit",
+          "conformance_fixture": "partial",
+          "tests": ["TestOpenShellPolicyDraftLifecycle"],
+          "evidence": [
+            "internal/httpapi/openshell_rpc_policy_draft.go",
+            "internal/httpapi/openshell_rpc_policy_draft_test.go"
+          ]
+        },
+        {
+          "name": "RejectDraftChunk",
+          "request": "RejectDraftChunkRequest",
+          "response": "RejectDraftChunkResponse",
+          "client_streaming": false,
+          "server_streaming": false,
+          "auth": "bearer",
+          "scope": "config:write / admin",
+          "handler": "explicit",
+          "conformance_fixture": "partial",
+          "tests": ["TestOpenShellPolicyDraftLifecycle"],
+          "evidence": [
+            "internal/httpapi/openshell_rpc_policy_draft.go",
+            "internal/httpapi/openshell_rpc_policy_draft_test.go"
+          ]
+        },
+        {
+          "name": "ApproveAllDraftChunks",
+          "request": "ApproveAllDraftChunksRequest",
+          "response": "ApproveAllDraftChunksResponse",
+          "client_streaming": false,
+          "server_streaming": false,
+          "auth": "bearer",
+          "scope": "config:write / admin",
+          "handler": "explicit",
+          "conformance_fixture": "partial",
+          "tests": ["TestOpenShellPolicyDraftLifecycle"],
+          "evidence": [
+            "internal/httpapi/openshell_rpc_policy_draft.go",
+            "internal/httpapi/openshell_rpc_policy_draft_test.go"
+          ]
+        },
+        {
+          "name": "EditDraftChunk",
+          "request": "EditDraftChunkRequest",
+          "response": "EditDraftChunkResponse",
+          "client_streaming": false,
+          "server_streaming": false,
+          "auth": "bearer",
+          "scope": "config:write / admin",
+          "handler": "explicit",
+          "conformance_fixture": "partial",
+          "tests": ["TestOpenShellPolicyDraftLifecycle"],
+          "evidence": [
+            "internal/httpapi/openshell_rpc_policy_draft.go",
+            "internal/httpapi/openshell_rpc_policy_draft_test.go"
+          ]
+        },
+        {
+          "name": "UndoDraftChunk",
+          "request": "UndoDraftChunkRequest",
+          "response": "UndoDraftChunkResponse",
+          "client_streaming": false,
+          "server_streaming": false,
+          "auth": "bearer",
+          "scope": "config:write / admin",
+          "handler": "explicit",
+          "conformance_fixture": "partial",
+          "tests": ["TestOpenShellPolicyDraftLifecycle"],
+          "evidence": [
+            "internal/httpapi/openshell_rpc_policy_draft.go",
+            "internal/httpapi/openshell_rpc_policy_draft_test.go"
+          ]
+        },
+        {
+          "name": "ClearDraftChunks",
+          "request": "ClearDraftChunksRequest",
+          "response": "ClearDraftChunksResponse",
+          "client_streaming": false,
+          "server_streaming": false,
+          "auth": "bearer",
+          "scope": "config:write / admin",
+          "handler": "explicit",
+          "conformance_fixture": "partial",
+          "tests": ["TestOpenShellPolicyDraftLifecycle"],
+          "evidence": [
+            "internal/httpapi/openshell_rpc_policy_draft.go",
+            "internal/httpapi/openshell_rpc_policy_draft_test.go"
+          ]
+        },
+        {
+          "name": "GetDraftHistory",
+          "request": "GetDraftHistoryRequest",
+          "response": "GetDraftHistoryResponse",
+          "client_streaming": false,
+          "server_streaming": false,
+          "auth": "bearer",
+          "scope": "config:read / user",
+          "handler": "explicit",
+          "conformance_fixture": "partial",
+          "tests": ["TestOpenShellPolicyDraftLifecycle"],
+          "evidence": [
+            "internal/httpapi/openshell_rpc_policy_draft.go",
+            "internal/httpapi/openshell_rpc_policy_draft_test.go"
+          ]
+        },
+        {
+          "name": "IssueSandboxToken",
+          "request": "IssueSandboxTokenRequest",
+          "response": "IssueSandboxTokenResponse",
+          "client_streaming": false,
+          "server_streaming": false,
+          "auth": "sandbox",
+          "scope": "see options.proto",
+          "handler": "explicit",
+          "conformance_fixture": "partial",
+          "tests": ["TestOpenShellSandboxTokenRotation"],
+          "evidence": [
+            "internal/httpapi/openshell_rpc_services.go",
+            "internal/httpapi/openshell_rpc_services_test.go"
+          ]
+        },
+        {
+          "name": "RefreshSandboxToken",
+          "request": "RefreshSandboxTokenRequest",
+          "response": "RefreshSandboxTokenResponse",
+          "client_streaming": false,
+          "server_streaming": false,
+          "auth": "sandbox",
+          "scope": "see options.proto",
+          "handler": "explicit",
+          "conformance_fixture": "partial",
+          "tests": ["TestOpenShellSandboxTokenRotation"],
+          "evidence": [
+            "internal/httpapi/openshell_rpc_services.go",
+            "internal/httpapi/openshell_rpc_services_test.go"
+          ]
+        },
+        {
+          "name": "CreateWorkspace",
+          "request": "CreateWorkspaceRequest",
+          "response": "CreateWorkspaceResponse",
+          "client_streaming": false,
+          "server_streaming": false,
+          "auth": "bearer",
+          "scope": "workspace:write / platform_admin",
+          "handler": "explicit",
+          "conformance_fixture": "partial",
+          "tests": [
+            "internal/httpapi/openshell_rpc_workspaces_test.go"
+          ],
+          "evidence": [
+            "workspace CRUD, membership, pagination, scope and role authorization handlers"
+          ]
+        },
+        {
+          "name": "GetWorkspace",
+          "request": "GetWorkspaceRequest",
+          "response": "GetWorkspaceResponse",
+          "client_streaming": false,
+          "server_streaming": false,
+          "auth": "bearer",
+          "scope": "workspace:read / user",
+          "handler": "explicit",
+          "conformance_fixture": "partial",
+          "tests": [
+            "internal/httpapi/openshell_rpc_workspaces_test.go"
+          ],
+          "evidence": [
+            "workspace CRUD, membership, pagination, scope and role authorization handlers"
+          ]
+        },
+        {
+          "name": "ListWorkspaces",
+          "request": "ListWorkspacesRequest",
+          "response": "ListWorkspacesResponse",
+          "client_streaming": false,
+          "server_streaming": false,
+          "auth": "bearer",
+          "scope": "workspace:read / user",
+          "handler": "explicit",
+          "conformance_fixture": "partial",
+          "tests": [
+            "internal/httpapi/openshell_rpc_workspaces_test.go"
+          ],
+          "evidence": [
+            "workspace CRUD, membership, pagination, scope and role authorization handlers"
+          ]
+        },
+        {
+          "name": "DeleteWorkspace",
+          "request": "DeleteWorkspaceRequest",
+          "response": "DeleteWorkspaceResponse",
+          "client_streaming": false,
+          "server_streaming": false,
+          "auth": "bearer",
+          "scope": "workspace:write / platform_admin",
+          "handler": "explicit",
+          "conformance_fixture": "partial",
+          "tests": [
+            "internal/httpapi/openshell_rpc_workspaces_test.go"
+          ],
+          "evidence": [
+            "workspace CRUD, membership, pagination, scope and role authorization handlers"
+          ]
+        },
+        {
+          "name": "AddWorkspaceMember",
+          "request": "AddWorkspaceMemberRequest",
+          "response": "AddWorkspaceMemberResponse",
+          "client_streaming": false,
+          "server_streaming": false,
+          "auth": "bearer",
+          "scope": "workspace:write / admin",
+          "handler": "explicit",
+          "conformance_fixture": "partial",
+          "tests": [
+            "internal/httpapi/openshell_rpc_workspaces_test.go"
+          ],
+          "evidence": [
+            "workspace CRUD, membership, pagination, scope and role authorization handlers"
+          ]
+        },
+        {
+          "name": "RemoveWorkspaceMember",
+          "request": "RemoveWorkspaceMemberRequest",
+          "response": "RemoveWorkspaceMemberResponse",
+          "client_streaming": false,
+          "server_streaming": false,
+          "auth": "bearer",
+          "scope": "workspace:write / admin",
+          "handler": "explicit",
+          "conformance_fixture": "partial",
+          "tests": [
+            "internal/httpapi/openshell_rpc_workspaces_test.go"
+          ],
+          "evidence": [
+            "workspace CRUD, membership, pagination, scope and role authorization handlers"
+          ]
+        },
+        {
+          "name": "ListWorkspaceMembers",
+          "request": "ListWorkspaceMembersRequest",
+          "response": "ListWorkspaceMembersResponse",
+          "client_streaming": false,
+          "server_streaming": false,
+          "auth": "bearer",
+          "scope": "workspace:read / user",
+          "handler": "explicit",
+          "conformance_fixture": "partial",
+          "tests": [
+            "internal/httpapi/openshell_rpc_workspaces_test.go"
+          ],
+          "evidence": [
+            "workspace CRUD, membership, pagination, scope and role authorization handlers"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "openshell.compute.v1.ComputeDriver",
+      "proto": "compute_driver.proto",
+      "registered": false,
+      "methods": [
+        {
+          "name": "GetCapabilities",
+          "request": "GetCapabilitiesRequest",
+          "response": "GetCapabilitiesResponse",
+          "client_streaming": false,
+          "server_streaming": false,
+          "auth": "see_method_options",
+          "scope": "see_method_options",
+          "handler": "embedded_unimplemented",
+          "conformance_fixture": "missing",
+          "tests": [],
+          "evidence": [
+            "generated UnimplementedOpenShellServer embedding"
+          ]
+        },
+        {
+          "name": "AuthenticateSandbox",
+          "request": "AuthenticateSandboxRequest",
+          "response": "AuthenticateSandboxResponse",
+          "client_streaming": false,
+          "server_streaming": false,
+          "auth": "see_method_options",
+          "scope": "see_method_options",
+          "handler": "embedded_unimplemented",
+          "conformance_fixture": "missing",
+          "tests": [],
+          "evidence": [
+            "generated UnimplementedOpenShellServer embedding"
+          ]
+        },
+        {
+          "name": "GetGatewayListenerRequirements",
+          "request": "GetGatewayListenerRequirementsRequest",
+          "response": "GetGatewayListenerRequirementsResponse",
+          "client_streaming": false,
+          "server_streaming": false,
+          "auth": "see_method_options",
+          "scope": "see_method_options",
+          "handler": "embedded_unimplemented",
+          "conformance_fixture": "missing",
+          "tests": [],
+          "evidence": [
+            "generated UnimplementedOpenShellServer embedding"
+          ]
+        },
+        {
+          "name": "ValidateSandboxCreate",
+          "request": "ValidateSandboxCreateRequest",
+          "response": "ValidateSandboxCreateResponse",
+          "client_streaming": false,
+          "server_streaming": false,
+          "auth": "see_method_options",
+          "scope": "see_method_options",
+          "handler": "embedded_unimplemented",
+          "conformance_fixture": "missing",
+          "tests": [],
+          "evidence": [
+            "generated UnimplementedOpenShellServer embedding"
+          ]
+        },
+        {
+          "name": "GetSandbox",
+          "request": "GetSandboxRequest",
+          "response": "GetSandboxResponse",
+          "client_streaming": false,
+          "server_streaming": false,
+          "auth": "bearer",
+          "scope": "sandbox:read / user",
+          "handler": "embedded_unimplemented",
+          "conformance_fixture": "missing",
+          "tests": [],
+          "evidence": [
+            "generated UnimplementedOpenShellServer embedding"
+          ]
+        },
+        {
+          "name": "ListSandboxes",
+          "request": "ListSandboxesRequest",
+          "response": "ListSandboxesResponse",
+          "client_streaming": false,
+          "server_streaming": false,
+          "auth": "bearer",
+          "scope": "sandbox:read / user",
+          "handler": "embedded_unimplemented",
+          "conformance_fixture": "missing",
+          "tests": [],
+          "evidence": [
+            "generated UnimplementedOpenShellServer embedding"
+          ]
+        },
+        {
+          "name": "CreateSandbox",
+          "request": "CreateSandboxRequest",
+          "response": "CreateSandboxResponse",
+          "client_streaming": false,
+          "server_streaming": false,
+          "auth": "bearer",
+          "scope": "sandbox:write / user",
+          "handler": "embedded_unimplemented",
+          "conformance_fixture": "missing",
+          "tests": [],
+          "evidence": [
+            "generated UnimplementedOpenShellServer embedding"
+          ]
+        },
+        {
+          "name": "StopSandbox",
+          "request": "StopSandboxRequest",
+          "response": "StopSandboxResponse",
+          "client_streaming": false,
+          "server_streaming": false,
+          "auth": "bearer",
+          "scope": "sandbox:write / user",
+          "handler": "embedded_unimplemented",
+          "conformance_fixture": "missing",
+          "tests": [],
+          "evidence": [
+            "generated UnimplementedOpenShellServer embedding"
+          ]
+        },
+        {
+          "name": "StartSandbox",
+          "request": "StartSandboxRequest",
+          "response": "StartSandboxResponse",
+          "client_streaming": false,
+          "server_streaming": false,
+          "auth": "bearer",
+          "scope": "sandbox:write / user",
+          "handler": "embedded_unimplemented",
+          "conformance_fixture": "missing",
+          "tests": [],
+          "evidence": [
+            "generated UnimplementedOpenShellServer embedding"
+          ]
+        },
+        {
+          "name": "DeleteSandbox",
+          "request": "DeleteSandboxRequest",
+          "response": "DeleteSandboxResponse",
+          "client_streaming": false,
+          "server_streaming": false,
+          "auth": "bearer",
+          "scope": "sandbox:write / user",
+          "handler": "embedded_unimplemented",
+          "conformance_fixture": "missing",
+          "tests": [],
+          "evidence": [
+            "generated UnimplementedOpenShellServer embedding"
+          ]
+        },
+        {
+          "name": "WatchSandboxes",
+          "request": "WatchSandboxesRequest",
+          "response": "WatchSandboxesEvent",
+          "client_streaming": false,
+          "server_streaming": true,
+          "auth": "see_method_options",
+          "scope": "see_method_options",
+          "handler": "embedded_unimplemented",
+          "conformance_fixture": "missing",
+          "tests": [],
+          "evidence": [
+            "generated UnimplementedOpenShellServer embedding"
+          ]
+        },
+        {
+          "name": "EnsureWorkspace",
+          "request": "EnsureWorkspaceRequest",
+          "response": "EnsureWorkspaceResponse",
+          "client_streaming": false,
+          "server_streaming": false,
+          "auth": "see_method_options",
+          "scope": "see_method_options",
+          "handler": "embedded_unimplemented",
+          "conformance_fixture": "missing",
+          "tests": [],
+          "evidence": [
+            "generated UnimplementedOpenShellServer embedding"
+          ]
+        },
+        {
+          "name": "DeleteWorkspace",
+          "request": "DeleteWorkspaceRequest",
+          "response": "DeleteWorkspaceResponse",
+          "client_streaming": false,
+          "server_streaming": false,
+          "auth": "bearer",
+          "scope": "workspace:write / platform_admin",
+          "handler": "embedded_unimplemented",
+          "conformance_fixture": "missing",
+          "tests": [],
+          "evidence": [
+            "generated UnimplementedOpenShellServer embedding"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "openshell.credentials.v1.CredentialDriver",
+      "proto": "credential_driver.proto",
+      "registered": false,
+      "methods": [
+        {
+          "name": "GetCapabilities",
+          "request": "GetCredentialDriverCapabilitiesRequest",
+          "response": "GetCredentialDriverCapabilitiesResponse",
+          "client_streaming": false,
+          "server_streaming": false,
+          "auth": "see_method_options",
+          "scope": "see_method_options",
+          "handler": "embedded_unimplemented",
+          "conformance_fixture": "missing",
+          "tests": [],
+          "evidence": [
+            "generated UnimplementedOpenShellServer embedding"
+          ]
+        },
+        {
+          "name": "StoreCredential",
+          "request": "StoreCredentialRequest",
+          "response": "StoreCredentialResponse",
+          "client_streaming": false,
+          "server_streaming": false,
+          "auth": "see_method_options",
+          "scope": "see_method_options",
+          "handler": "embedded_unimplemented",
+          "conformance_fixture": "missing",
+          "tests": [],
+          "evidence": [
+            "generated UnimplementedOpenShellServer embedding"
+          ]
+        },
+        {
+          "name": "DeleteCredential",
+          "request": "DeleteCredentialRequest",
+          "response": "DeleteCredentialResponse",
+          "client_streaming": false,
+          "server_streaming": false,
+          "auth": "see_method_options",
+          "scope": "see_method_options",
+          "handler": "embedded_unimplemented",
+          "conformance_fixture": "missing",
+          "tests": [],
+          "evidence": [
+            "generated UnimplementedOpenShellServer embedding"
+          ]
+        },
+        {
+          "name": "ResolveCredentials",
+          "request": "ResolveCredentialsRequest",
+          "response": "ResolveCredentialsResponse",
+          "client_streaming": false,
+          "server_streaming": false,
+          "auth": "see_method_options",
+          "scope": "see_method_options",
+          "handler": "embedded_unimplemented",
+          "conformance_fixture": "missing",
+          "tests": [],
+          "evidence": [
+            "generated UnimplementedOpenShellServer embedding"
+          ]
+        },
+        {
+          "name": "ListCredentials",
+          "request": "ListCredentialsRequest",
+          "response": "ListCredentialsResponse",
+          "client_streaming": false,
+          "server_streaming": false,
+          "auth": "see_method_options",
+          "scope": "see_method_options",
+          "handler": "embedded_unimplemented",
+          "conformance_fixture": "missing",
+          "tests": [],
+          "evidence": [
+            "generated UnimplementedOpenShellServer embedding"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "openshell.middleware.v1.SupervisorMiddleware",
+      "proto": "supervisor_middleware.proto",
+      "registered": false,
+      "methods": [
+        {
+          "name": "Describe",
+          "request": "google.protobuf.Empty",
+          "response": "MiddlewareManifest",
+          "client_streaming": false,
+          "server_streaming": false,
+          "auth": "see_method_options",
+          "scope": "see_method_options",
+          "handler": "embedded_unimplemented",
+          "conformance_fixture": "missing",
+          "tests": [],
+          "evidence": [
+            "generated UnimplementedOpenShellServer embedding"
+          ]
+        },
+        {
+          "name": "ValidateConfig",
+          "request": "ValidateConfigRequest",
+          "response": "ValidateConfigResponse",
+          "client_streaming": false,
+          "server_streaming": false,
+          "auth": "see_method_options",
+          "scope": "see_method_options",
+          "handler": "embedded_unimplemented",
+          "conformance_fixture": "missing",
+          "tests": [],
+          "evidence": [
+            "generated UnimplementedOpenShellServer embedding"
+          ]
+        },
+        {
+          "name": "EvaluateHttpRequest",
+          "request": "HttpRequestEvaluation",
+          "response": "HttpRequestResult",
+          "client_streaming": false,
+          "server_streaming": false,
+          "auth": "see_method_options",
+          "scope": "see_method_options",
+          "handler": "embedded_unimplemented",
+          "conformance_fixture": "missing",
+          "tests": [],
+          "evidence": [
+            "generated UnimplementedOpenShellServer embedding"
+          ]
+        },
+        {
+          "name": "EvaluateWebSocketSession",
+          "request": "WebSocketSessionEvent",
+          "response": "WebSocketSessionEventResult",
+          "client_streaming": true,
+          "server_streaming": true,
+          "auth": "see_method_options",
+          "scope": "see_method_options",
+          "handler": "embedded_unimplemented",
+          "conformance_fixture": "missing",
+          "tests": [],
+          "evidence": [
+            "generated UnimplementedOpenShellServer embedding"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "openshell.middleware.v1.HttpResponsePreReturn",
+      "proto": "supervisor_middleware.proto",
+      "registered": false,
+      "methods": [
+        {
+          "name": "Evaluate",
+          "request": "HttpResponseEvent",
+          "response": "HttpResponseEventResult",
+          "client_streaming": true,
+          "server_streaming": true,
+          "auth": "see_method_options",
+          "scope": "see_method_options",
+          "handler": "embedded_unimplemented",
+          "conformance_fixture": "missing",
+          "tests": [],
+          "evidence": [
+            "generated UnimplementedOpenShellServer embedding"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "openshell.gateway_interceptor.v1.GatewayInterceptor",
+      "proto": "gateway_interceptor.proto",
+      "registered": false,
+      "methods": [
+        {
+          "name": "Describe",
+          "request": "DescribeRequest",
+          "response": "InterceptorManifest",
+          "client_streaming": false,
+          "server_streaming": false,
+          "auth": "see_method_options",
+          "scope": "see_method_options",
+          "handler": "embedded_unimplemented",
+          "conformance_fixture": "missing",
+          "tests": [],
+          "evidence": [
+            "generated UnimplementedOpenShellServer embedding"
+          ]
+        },
+        {
+          "name": "SnapshotProviderProfiles",
+          "request": "ProviderProfileSnapshotRequest",
+          "response": "ProviderProfileSnapshot",
+          "client_streaming": false,
+          "server_streaming": false,
+          "auth": "see_method_options",
+          "scope": "see_method_options",
+          "handler": "embedded_unimplemented",
+          "conformance_fixture": "missing",
+          "tests": [],
+          "evidence": [
+            "generated UnimplementedOpenShellServer embedding"
+          ]
+        },
+        {
+          "name": "Evaluate",
+          "request": "InterceptorEvaluation",
+          "response": "InterceptorResult",
+          "client_streaming": false,
+          "server_streaming": false,
+          "auth": "see_method_options",
+          "scope": "see_method_options",
+          "handler": "embedded_unimplemented",
+          "conformance_fixture": "missing",
+          "tests": [],
+          "evidence": [
+            "generated UnimplementedOpenShellServer embedding"
+          ]
+        }
+      ]
+    }
+  ]
+}
