@@ -108,7 +108,7 @@
       "field_or_method": "UpdateConfig to active proxy decision and acknowledgement across restart",
       "backend": "docker,podman-rootful,podman-rootless",
       "status": "open",
-      "evidence": "The October 2026 security review reports focused policy watcher and acknowledgement tests but leaves an external UpdateConfig-to-proxy-decision E2E and restart/global-policy corpus open.",
+      "evidence": "Docker Gateway E2E now applies global UpdateConfig to a live supervisor, waits for POLICY_STATUS_LOADED, verifies the effective global revision, restarts Gateway, and verifies the same revision remains loaded. Unit/fault tests also cover 0/1/N acknowledgements and compensation. A direct allowed/denied egress decision probe through the active proxy after restart remains open.",
       "owner": "gateway,proxy,runtime"
     },
     {

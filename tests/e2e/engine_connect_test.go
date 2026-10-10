@@ -240,6 +240,23 @@ func TestEngineGatewayConnectE2E(t *testing.T) {
 	if err != nil || policyStatus.GetActiveVersion() != policyUpdate.GetVersion() || policyStatus.GetRevision().GetStatus() != openshellv1.PolicyStatus_POLICY_STATUS_LOADED {
 		t.Fatalf("UpdateConfig policy status=%v err=%v; want loaded active version %d", policyStatus, err, policyUpdate.GetVersion())
 	}
+	globalPolicyUpdate, err := grpcClient.UpdateConfig(userCtx, &openshellv1.UpdateConfigRequest{
+		Global: true,
+		Policy: &sandboxv1.SandboxPolicy{Version: 1, NetworkPolicies: map[string]*sandboxv1.NetworkPolicyRule{
+			"api": {Name: "api", Endpoints: []*sandboxv1.NetworkEndpoint{{Host: "api.example.com", Port: 443}}},
+		}},
+	})
+	if err != nil {
+		t.Fatalf("global UpdateConfig with runtime acknowledgement: %v", err)
+	}
+	globalPolicyStatus, err := grpcClient.GetSandboxPolicyStatus(userCtx, &openshellv1.GetSandboxPolicyStatusRequest{Name: name})
+	if err != nil || globalPolicyStatus.GetRevision().GetStatus() != openshellv1.PolicyStatus_POLICY_STATUS_LOADED {
+		t.Fatalf("global UpdateConfig policy status=%v err=%v; want loaded policy", globalPolicyStatus, err)
+	}
+	effectiveConfig, err := grpcClient.GetSandboxConfig(userCtx, &sandboxv1.GetSandboxConfigRequest{SandboxId: name})
+	if err != nil || effectiveConfig.GetGlobalPolicyVersion() != globalPolicyUpdate.GetVersion() {
+		t.Fatalf("effective sandbox config=%v err=%v; want global policy revision %d", effectiveConfig, err, globalPolicyUpdate.GetVersion())
+	}
 	execCtx, execCancel := context.WithTimeout(userCtx, 30*time.Second)
 	execStream, err := grpcClient.ExecSandbox(execCtx, &openshellv1.ExecSandboxRequest{
 		SandboxId: name, Command: []string{"id", "-un"}, TimeoutSeconds: 20, NoLoginShell: true,
@@ -758,6 +775,14 @@ func TestEngineGatewayConnectE2E(t *testing.T) {
 	}
 	if healthErr != nil || !runtime.Connected(name) {
 		t.Fatalf("gateway restart did not restore client and supervisor relay: health=%v relay_connected=%v", healthErr, runtime.Connected(name))
+	}
+	restartedPolicyStatus, err := grpcClient.GetSandboxPolicyStatus(userCtx, &openshellv1.GetSandboxPolicyStatusRequest{Name: name})
+	if err != nil || restartedPolicyStatus.GetRevision().GetStatus() != openshellv1.PolicyStatus_POLICY_STATUS_LOADED {
+		t.Fatalf("global policy after gateway restart status=%v err=%v; want loaded policy", restartedPolicyStatus, err)
+	}
+	restartedConfig, err := grpcClient.GetSandboxConfig(userCtx, &sandboxv1.GetSandboxConfigRequest{SandboxId: name})
+	if err != nil || restartedConfig.GetGlobalPolicyVersion() != globalPolicyUpdate.GetVersion() {
+		t.Fatalf("effective sandbox config after gateway restart=%v err=%v; want global policy revision %d", restartedConfig, err, globalPolicyUpdate.GetVersion())
 	}
 	refreshCtx := metadata.AppendToOutgoingContext(ctx, "authorization", "Bearer "+supervisorToken)
 	refreshed, err := grpcClient.RefreshSandboxToken(refreshCtx, &openshellv1.RefreshSandboxTokenRequest{})
