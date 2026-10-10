@@ -11,11 +11,11 @@ import (
 	"testing"
 
 	"connectrpc.com/connect"
-	controlv1 "github.com/cauteum/cauteum-gateway/api/gen/cauteum/control/v1"
-	"github.com/cauteum/cauteum-gateway/api/gen/cauteum/control/v1/controlv1connect"
-	"github.com/cauteum/cauteum-gateway/internal/logbuf"
-	"github.com/cauteum/cauteum-gateway/internal/service"
-	"github.com/cauteum/cauteum-gateway/internal/storage/store"
+	controlv1 "github.com/cauteum-haven/cauteum-gateway/api/gen/cauteum/control/v1"
+	"github.com/cauteum-haven/cauteum-gateway/api/gen/cauteum/control/v1/controlv1connect"
+	"github.com/cauteum-haven/cauteum-gateway/internal/logbuf"
+	"github.com/cauteum-haven/cauteum-gateway/internal/service"
+	"github.com/cauteum-haven/cauteum-gateway/internal/storage/store"
 )
 
 func TestControlActionsUseRuntimeAndResourceVersions(t *testing.T) {

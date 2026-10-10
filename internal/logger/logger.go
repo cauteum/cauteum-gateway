@@ -8,7 +8,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/cauteum/slogx"
+	"github.com/cauteum-haven/slogx"
 )
 
 const (

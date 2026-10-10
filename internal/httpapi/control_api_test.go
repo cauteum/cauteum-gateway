@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"connectrpc.com/connect"
-	"github.com/cauteum/cauteum-gateway/internal/storage/store"
+	"github.com/cauteum-haven/cauteum-gateway/internal/storage/store"
 )
 
 func TestControlAPIWorkspaceAuthorization(t *testing.T) {

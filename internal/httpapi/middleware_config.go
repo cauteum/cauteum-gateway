@@ -11,7 +11,7 @@ import (
 	"strings"
 
 	sandboxv1 "github.com/NVIDIA/OpenShell/sdk/go/proto/sandboxv1"
-	"github.com/cauteum/cauteum-gateway/internal/gatewayconfig"
+	"github.com/cauteum-haven/cauteum-gateway/internal/gatewayconfig"
 )
 
 const maxSupervisorMiddlewarePayload = 4 << 20

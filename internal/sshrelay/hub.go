@@ -17,8 +17,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/cauteum/cauteum-core/relayproto"
-	"github.com/cauteum/slogx"
+	"github.com/cauteum-haven/cauteum-core/relayproto"
+	"github.com/cauteum-haven/slogx"
 )
 
 // ErrNotConnected means the sandbox supervisor has no live control stream.

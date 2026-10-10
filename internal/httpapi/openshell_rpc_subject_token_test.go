@@ -18,8 +18,8 @@ import (
 	"time"
 
 	openshellv1 "github.com/NVIDIA/OpenShell/sdk/go/proto/openshellv1"
-	"github.com/cauteum/cauteum-gateway/internal/storage/store"
-	"github.com/cauteum/cauteum-runtime/secrets"
+	"github.com/cauteum-haven/cauteum-gateway/internal/storage/store"
+	"github.com/cauteum-haven/cauteum-runtime/secrets"
 	"github.com/go-jose/go-jose/v4"
 	"github.com/spiffe/go-spiffe/v2/bundle/jwtbundle"
 	"github.com/spiffe/go-spiffe/v2/proto/spiffe/workload"

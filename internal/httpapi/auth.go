@@ -9,9 +9,9 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/cauteum/cauteum-core/relayproto"
-	"github.com/cauteum/cauteum-gateway/internal/storage/store"
-	"github.com/cauteum/cauteum-runtime/idp"
+	"github.com/cauteum-haven/cauteum-core/relayproto"
+	"github.com/cauteum-haven/cauteum-gateway/internal/storage/store"
+	"github.com/cauteum-haven/cauteum-runtime/idp"
 )
 
 // PrincipalKind distinguishes operators from sandbox supervisors.

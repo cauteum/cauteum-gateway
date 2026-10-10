@@ -6,8 +6,8 @@ import (
 	"strings"
 
 	"connectrpc.com/connect"
-	controlv1 "github.com/cauteum/cauteum-gateway/api/gen/cauteum/control/v1"
-	"github.com/cauteum/cauteum-gateway/internal/storage/store"
+	controlv1 "github.com/cauteum-haven/cauteum-gateway/api/gen/cauteum/control/v1"
+	"github.com/cauteum-haven/cauteum-gateway/internal/storage/store"
 )
 
 func controlOperationSummary(operation store.Operation) *controlv1.OperationSummary {

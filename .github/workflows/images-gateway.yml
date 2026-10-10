@@ -41,42 +41,42 @@ jobs:
       - name: Checkout deps
         uses: actions/checkout@v4
         with:
-          repository: cauteum/cauteum-core
+          repository: cauteum-haven/cauteum-core
           path: cauteum-core
       - uses: actions/checkout@v4
         with:
-          repository: cauteum/cauteum-cli
+          repository: cauteum-haven/cauteum-cli
           path: cauteum-cli
           ref: ab346b1195b640d0a7ef47440055cbad16ff2e98
       - uses: actions/checkout@v4
         with:
-          repository: cauteum/cauteum-display
+          repository: cauteum-haven/cauteum-display
           path: cauteum-display
       - uses: actions/checkout@v4
         with:
-          repository: cauteum/cauteum-providers
+          repository: cauteum-haven/cauteum-providers
           path: cauteum-providers
       - uses: actions/checkout@v4
         with:
-          repository: cauteum/cauteum-runtime
+          repository: cauteum-haven/cauteum-runtime
           path: cauteum-runtime
       - uses: actions/checkout@v4
         with:
-          repository: cauteum/cauteum-proxy
+          repository: cauteum-haven/cauteum-proxy
           path: cauteum-proxy
       - uses: actions/checkout@v4
         with:
-          repository: cauteum/cauteum-driver
+          repository: cauteum-haven/cauteum-driver
           path: cauteum-driver
       - uses: actions/checkout@v4
         with:
-          repository: cauteum/cauteum-sdk
+          repository: cauteum-haven/cauteum-sdk
           path: cauteum-sdk
 
       - name: Checkout slogx
         uses: actions/checkout@v4
         with:
-          repository: cauteum/slogx
+          repository: cauteum-haven/slogx
           path: cauteum-slogx
       - name: Write go.work
         working-directory: ${{ github.workspace }}
@@ -95,17 +95,19 @@ jobs:
             echo 'replace ('
             for d in cauteum-*; do
               if [[ -d "$d" ]]; then
-                echo "  github.com/cauteum/${d} v0.1.0-alpha.1 => ./$d"
-                echo "  github.com/cauteum/${d} v0.1.0-alpha.2 => ./$d"
-                echo "  github.com/cauteum/${d} v0.1.0-beta.1 => ./$d"
-                echo "  github.com/cauteum/${d} v0.1.0-beta.2 => ./$d"
+                echo "  github.com/cauteum-haven/${d} v0.1.0-alpha.1 => ./$d"
+                echo "  github.com/cauteum-haven/${d} v0.1.0-alpha.2 => ./$d"
+                echo "  github.com/cauteum-haven/${d} v0.1.0-beta.1 => ./$d"
+                echo "  github.com/cauteum-haven/${d} v0.1.0-beta.2 => ./$d"
+                echo "  github.com/cauteum-haven/${d} v0.1.2 => ./$d"
               fi
             done
             if [[ -d cauteum-slogx ]]; then
-              echo '  github.com/cauteum/slogx v0.1.0-alpha.1 => ./cauteum-slogx'
-              echo '  github.com/cauteum/slogx v0.1.0-alpha.2 => ./cauteum-slogx'
-              echo '  github.com/cauteum/slogx v0.1.0-beta.1 => ./cauteum-slogx'
-              echo '  github.com/cauteum/slogx v0.1.0-beta.2 => ./cauteum-slogx'
+              echo '  github.com/cauteum-haven/slogx v0.1.0-alpha.1 => ./cauteum-slogx'
+              echo '  github.com/cauteum-haven/slogx v0.1.0-alpha.2 => ./cauteum-slogx'
+              echo '  github.com/cauteum-haven/slogx v0.1.0-beta.1 => ./cauteum-slogx'
+              echo '  github.com/cauteum-haven/slogx v0.1.0-beta.2 => ./cauteum-slogx'
+              echo '  github.com/cauteum-haven/slogx v0.1.2 => ./cauteum-slogx'
             fi
             echo ')'
           } > "${{ github.workspace }}/go.work"

@@ -9,8 +9,8 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/cauteum/cauteum-gateway/internal/sshrelay"
-	"github.com/cauteum/cauteum-gateway/internal/storage/store"
+	"github.com/cauteum-haven/cauteum-gateway/internal/sshrelay"
+	"github.com/cauteum-haven/cauteum-gateway/internal/storage/store"
 )
 
 const (

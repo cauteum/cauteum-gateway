@@ -6,9 +6,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/cauteum/cauteum-driver/driver"
-	"github.com/cauteum/cauteum-gateway/internal/storage/store"
-	"github.com/cauteum/slogx"
+	"github.com/cauteum-haven/cauteum-driver/driver"
+	"github.com/cauteum-haven/cauteum-gateway/internal/storage/store"
+	"github.com/cauteum-haven/slogx"
 )
 
 // reconcileRuntimeState repairs the durable gateway view after a gateway or

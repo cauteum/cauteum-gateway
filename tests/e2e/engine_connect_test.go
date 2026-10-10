@@ -19,9 +19,9 @@ import (
 	datamodelv1 "github.com/NVIDIA/OpenShell/sdk/go/proto/datamodelv1"
 	openshellv1 "github.com/NVIDIA/OpenShell/sdk/go/proto/openshellv1"
 	sandboxv1 "github.com/NVIDIA/OpenShell/sdk/go/proto/sandboxv1"
-	"github.com/cauteum/cauteum-core/relayproto"
-	"github.com/cauteum/cauteum-gateway/internal/httpapi"
-	credentialsv1 "github.com/cauteum/cauteum-gateway/internal/upstreamproto/credentialsv1"
+	"github.com/cauteum-haven/cauteum-core/relayproto"
+	"github.com/cauteum-haven/cauteum-gateway/internal/httpapi"
+	credentialsv1 "github.com/cauteum-haven/cauteum-gateway/internal/upstreamproto/credentialsv1"
 	"golang.org/x/crypto/ssh"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
@@ -771,7 +771,7 @@ func TestEngineGatewayConnectE2E(t *testing.T) {
 	}
 	defer supervisorSession.Close()
 	supervisorOutput, err := supervisorSession.Output("tr '\\0' ' ' </proc/1/cmdline")
-	if err != nil || !strings.Contains(string(supervisorOutput), "/cauteum/cauteum-supervisor") {
+	if err != nil || !strings.Contains(string(supervisorOutput), "/cauteum-haven/cauteum-supervisor") {
 		if os.Getenv("CAUTEUM_E2E_ROOTLESS_PODMAN") != "1" {
 			t.Fatalf("PID 1=%q err=%v, want Go sandbox supervisor", supervisorOutput, err)
 		}

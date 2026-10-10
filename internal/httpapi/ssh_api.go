@@ -7,10 +7,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/cauteum/cauteum-core/relayproto"
-	"github.com/cauteum/cauteum-gateway/internal/sshrelay"
-	"github.com/cauteum/cauteum-gateway/internal/storage/store"
-	"github.com/cauteum/slogx"
+	"github.com/cauteum-haven/cauteum-core/relayproto"
+	"github.com/cauteum-haven/cauteum-gateway/internal/sshrelay"
+	"github.com/cauteum-haven/cauteum-gateway/internal/storage/store"
+	"github.com/cauteum-haven/slogx"
 )
 
 // DefaultSSHSessionTTL matches OpenShell ssh_session_ttl_secs (24h).

@@ -9,7 +9,7 @@ import (
 	sdkv1 "github.com/NVIDIA/OpenShell/sdk/go/openshell/v1"
 	datamodelv1 "github.com/NVIDIA/OpenShell/sdk/go/proto/datamodelv1"
 	openshellv1 "github.com/NVIDIA/OpenShell/sdk/go/proto/openshellv1"
-	"github.com/cauteum/cauteum-gateway/internal/storage/store"
+	"github.com/cauteum-haven/cauteum-gateway/internal/storage/store"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"

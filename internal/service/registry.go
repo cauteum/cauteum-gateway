@@ -5,7 +5,7 @@ package service
 import (
 	"context"
 
-	"github.com/cauteum/cauteum-gateway/internal/domain"
+	"github.com/cauteum-haven/cauteum-gateway/internal/domain"
 )
 
 // SandboxRepository persists sandbox registry records.

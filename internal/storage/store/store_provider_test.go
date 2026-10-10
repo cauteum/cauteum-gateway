@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"testing"
 
-	"github.com/cauteum/cauteum-gateway/internal/storage/store"
+	"github.com/cauteum-haven/cauteum-gateway/internal/storage/store"
 )
 
 func TestApplySandboxProviderPreservesLegacySpecAttachments(t *testing.T) {

@@ -11,11 +11,11 @@ import (
 
 	openshellv1 "github.com/NVIDIA/OpenShell/sdk/go/proto/openshellv1"
 	sandboxv1 "github.com/NVIDIA/OpenShell/sdk/go/proto/sandboxv1"
-	"github.com/cauteum/cauteum-core"
-	"github.com/cauteum/cauteum-core/policy"
-	"github.com/cauteum/cauteum-driver/driver"
-	"github.com/cauteum/cauteum-gateway/internal/sshrelay"
-	"github.com/cauteum/cauteum-gateway/internal/storage/store"
+	"github.com/cauteum-haven/cauteum-core"
+	"github.com/cauteum-haven/cauteum-core/policy"
+	"github.com/cauteum-haven/cauteum-driver/driver"
+	"github.com/cauteum-haven/cauteum-gateway/internal/sshrelay"
+	"github.com/cauteum-haven/cauteum-gateway/internal/storage/store"
 	"google.golang.org/protobuf/encoding/protojson"
 )
 

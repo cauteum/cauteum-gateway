@@ -5,9 +5,9 @@ import (
 	"io"
 	"testing"
 
-	"github.com/cauteum/cauteum-core"
-	"github.com/cauteum/cauteum-driver/driver"
-	"github.com/cauteum/cauteum-gateway/internal/storage/store"
+	"github.com/cauteum-haven/cauteum-core"
+	"github.com/cauteum-haven/cauteum-driver/driver"
+	"github.com/cauteum-haven/cauteum-gateway/internal/storage/store"
 	"log/slog"
 )
 

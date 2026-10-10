@@ -2,7 +2,7 @@
 package gateway
 
 import (
-	"github.com/cauteum/cauteum-gateway/internal/httpapi"
+	"github.com/cauteum-haven/cauteum-gateway/internal/httpapi"
 )
 
 // Run is the composition root for cauteum-gateway.

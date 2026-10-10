@@ -6,8 +6,8 @@ import (
 	"testing"
 
 	openshellv1 "github.com/NVIDIA/OpenShell/sdk/go/proto/openshellv1"
-	"github.com/cauteum/cauteum-gateway/internal/sshrelay"
-	"github.com/cauteum/cauteum-gateway/internal/storage/store"
+	"github.com/cauteum-haven/cauteum-gateway/internal/sshrelay"
+	"github.com/cauteum-haven/cauteum-gateway/internal/storage/store"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
