@@ -120,7 +120,7 @@ jobs:
         with:
           repository: cautem/cauteum-driver
           path: cauteum-driver
-          ref: 0dc7a047ffe9a62fd798730aa02161f368811720
+          ref: b37c16cb3f7265d3effd24da93522be695e5e63a
 
       - name: Checkout cauteum-proxy
         uses: actions/checkout@v4
@@ -235,7 +235,7 @@ jobs:
         with:
           repository: cautem/cauteum-driver
           path: cauteum-driver
-          ref: 0dc7a047ffe9a62fd798730aa02161f368811720
+          ref: b37c16cb3f7265d3effd24da93522be695e5e63a
 
       - name: Checkout cauteum-proxy
         uses: actions/checkout@v4
@@ -350,7 +350,7 @@ jobs:
         with:
           repository: cautem/cauteum-driver
           path: cauteum-driver
-          ref: 0dc7a047ffe9a62fd798730aa02161f368811720
+          ref: b37c16cb3f7265d3effd24da93522be695e5e63a
 
       - name: Checkout cauteum-proxy
         uses: actions/checkout@v4
@@ -463,7 +463,7 @@ jobs:
         with:
           repository: cautem/cauteum-driver
           path: cauteum-driver
-          ref: 0dc7a047ffe9a62fd798730aa02161f368811720
+          ref: b37c16cb3f7265d3effd24da93522be695e5e63a
 
       - name: Checkout cauteum-proxy
         uses: actions/checkout@v4
