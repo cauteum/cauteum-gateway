@@ -1,5 +1,19 @@
 # Changelog
 
+## [Unreleased]
+
+## [v0.1.0-beta.2] - 2026-10-10
+
+### Added
+
+- Expose the versioned `cauteum.control.v1` management RPC contract with generated Go, Connect and TypeScript clients.
+- Add bounded management views, lifecycle operations, logs, inference, services and gateway information over Control RPC.
+- Persist operation, audit and policy state with authorization, resource-version checks and idempotency.
+
+### Changed
+
+- Remove legacy REST management routes; retain health and authentication bootstrap endpoints.
+
 ## [v0.1.0-beta.1] - 2026-10-07
 
 ### Added
