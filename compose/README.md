@@ -6,7 +6,7 @@ multi-repo workspace root, not from a standalone gateway checkout.
 Optional **Dex** IdP via Compose profile `oidc` (`cauteum gateway login` PKCE).
 
 ```bash
-# from org hub root — local-dev token auth
+# from workspace root — local-dev token auth
 docker compose -f cauteum-gateway/compose/docker-compose.yml up -d --build
 cauteum gateway add http://127.0.0.1:7443 --local --name local
 cauteum gateway select local
