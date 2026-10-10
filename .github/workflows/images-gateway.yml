@@ -107,7 +107,7 @@ jobs:
               echo '  github.com/cauteum-haven/slogx v0.1.0-alpha.2 => ./cauteum-slogx'
               echo '  github.com/cauteum-haven/slogx v0.1.0-beta.1 => ./cauteum-slogx'
               echo '  github.com/cauteum-haven/slogx v0.1.0-beta.2 => ./cauteum-slogx'
-              echo '  github.com/cauteum-haven/slogx v0.1.4 => ./cauteum-slogx'
+              echo '  github.com/cauteum-haven/slogx v0.1.2 => ./cauteum-slogx'
             fi
             echo ')'
           } > "${{ github.workspace }}/go.work"
