@@ -4,6 +4,13 @@
 
 ## [v0.1.0-beta.2] - 2026-10-10
 
+### Changed
+
+- Resolve driver v0.1.0-beta.2, providers v0.1.0-beta.1 and runtime v0.1.0-beta.2 from published tags.
+
+
+## [v0.1.0-beta.2] - 2026-10-10
+
 ### Added
 
 - Expose the versioned `cauteum.control.v1` management RPC contract with generated Go, Connect and TypeScript clients.
