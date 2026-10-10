@@ -36,7 +36,7 @@
       "field_or_method": "userns private,auto,host,keep-id,no-map runtime matrix",
       "backend": "podman-rootful,podman-rootless",
       "status": "verified",
-    "evidence": "cauteum-driver/internal/podman/libpod_create_test.go and tests/e2e/podman/lifecycle_fixture_test.go; native adapter now rejects unknown userns modes, explicit maps outside private, incomplete/mismatched maps, overflowing ranges and privileged containers instead of silently dropping the setting; current rootful runtime passed private/auto/host and documented keep-id/no-map capability skips, rootless runtime passed auto/host/keep-id/no-map with private explicitly unsupported by Podman; native internal-network allocation retries a candidate when the backend reports a host subnet collision; proxy-backed lanes are version-aware and become required automatically when Podman 6+ blackhole-route support is available; current Podman 5 reports the exact capability limitation",
+      "evidence": "cauteum-driver/internal/podman/libpod_create_test.go and tests/e2e/podman/lifecycle_fixture_test.go; native adapter now rejects unknown userns modes, explicit maps outside private, incomplete/mismatched maps, overflowing ranges and privileged containers instead of silently dropping the setting; current rootful runtime passed private/auto/host and documented keep-id/no-map capability skips, rootless runtime passed auto/host/keep-id/no-map with private explicitly unsupported by Podman; native internal-network allocation retries a candidate when the backend reports a host subnet collision; proxy-backed lanes are version-aware and become required automatically when Podman 6+ blackhole-route support is available; current Podman 5 reports the exact capability limitation",
       "owner": "driver"
     },
     {
@@ -98,8 +98,8 @@
       "area": "release",
       "field_or_method": "Go modules resolved from published tags without local replacements",
       "backend": "all",
-      "status": "open",
-      "evidence": "On 2026-10-07, an isolated copy of cauteum-cli failed GOWORK=off go list -mod=mod ./...: slogx alpha.1 declares github.com/zorneth/slogx, display/driver/runtime alpha.1 declare old osg paths, and core alpha.2 is an unknown revision. scripts/check-standalone.sh inserts local sibling replacements and cannot close this release gap.",
+      "status": "verified",
+      "evidence": "On 2026-10-10, task release:published passed against the complete published beta dependency DAG with GOWORK=off and no local replace directives. Published CLI, SDK, Gateway, Runtime, Driver, Providers, Proxy, Display, Core and slogx modules all resolved and passed go test ./...; scripts/check-published-deps.sh repeats this consumer gate.",
       "owner": "release"
     },
     {
