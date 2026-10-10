@@ -13,6 +13,7 @@
 ### Changed
 
 - Remove legacy REST management routes; retain health and authentication bootstrap endpoints.
+- Resolve `cauteum-core` v0.1.0-beta.2 and `slogx` v0.1.0-beta.1 from published tags.
 
 ## [v0.1.0-beta.1] - 2026-10-07
 
