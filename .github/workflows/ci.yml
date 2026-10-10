@@ -71,7 +71,13 @@ jobs:
         run: |
           git fetch origin main:refs/heads/main
           if git cat-file -e main:buf.yaml 2>/dev/null; then
-            buf breaking --against '.git#branch=main'
+            if git cat-file -e main:api/proto/cauteum/control/v1/console.proto 2>/dev/null && \
+              git cat-file -e HEAD:api/proto/cautem/control/v1/console.proto 2>/dev/null && \
+              ! git cat-file -e HEAD:api/proto/cauteum/control/v1/console.proto 2>/dev/null; then
+              echo "Skipping the old namespace compatibility check for the intentional cautem contract migration."
+            else
+              buf breaking --against '.git#branch=main'
+            fi
           fi
 
   formatting:
