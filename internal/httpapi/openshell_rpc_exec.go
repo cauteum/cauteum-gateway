@@ -10,9 +10,9 @@ import (
 	"time"
 
 	openshellv1 "github.com/NVIDIA/OpenShell/sdk/go/proto/openshellv1"
-	"github.com/cautem/cauteum-core/relayproto"
-	"github.com/cautem/cauteum-gateway/internal/sshrelay"
-	"github.com/cautem/cauteum-gateway/internal/storage/store"
+	"github.com/cautem/cautem-core/relayproto"
+	"github.com/cautem/cautem-gateway/internal/sshrelay"
+	"github.com/cautem/cautem-gateway/internal/storage/store"
 	"golang.org/x/crypto/ssh"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
@@ -23,7 +23,7 @@ const (
 	maxGRPCExecArgv = 256
 	maxGRPCExecEnv  = 128
 	maxGRPCExecTime = 24 * time.Hour
-	noLoginShellEnv = "CAUTEUM_NO_LOGIN_SHELL"
+	noLoginShellEnv = "CAUTEM_NO_LOGIN_SHELL"
 )
 
 func (s *openShellRPC) ExecSandbox(req *openshellv1.ExecSandboxRequest, stream grpc.ServerStreamingServer[openshellv1.ExecSandboxEvent]) error {

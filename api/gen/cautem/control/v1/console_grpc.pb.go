@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.6.0
 // - protoc             (unknown)
-// source: cauteum/control/v1/console.proto
+// source: cautem/control/v1/console.proto
 
 package controlv1
 
@@ -19,9 +19,9 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	ConsoleService_GetViewer_FullMethodName              = "/cauteum.control.v1.ConsoleService/GetViewer"
-	ConsoleService_GetConsoleCapabilities_FullMethodName = "/cauteum.control.v1.ConsoleService/GetConsoleCapabilities"
-	ConsoleService_GetOverview_FullMethodName            = "/cauteum.control.v1.ConsoleService/GetOverview"
+	ConsoleService_GetViewer_FullMethodName              = "/cautem.control.v1.ConsoleService/GetViewer"
+	ConsoleService_GetConsoleCapabilities_FullMethodName = "/cautem.control.v1.ConsoleService/GetConsoleCapabilities"
+	ConsoleService_GetOverview_FullMethodName            = "/cautem.control.v1.ConsoleService/GetOverview"
 )
 
 // ConsoleServiceClient is the client API for ConsoleService service.
@@ -186,7 +186,7 @@ func _ConsoleService_GetOverview_Handler(srv interface{}, ctx context.Context, d
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var ConsoleService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "cauteum.control.v1.ConsoleService",
+	ServiceName: "cautem.control.v1.ConsoleService",
 	HandlerType: (*ConsoleServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
@@ -203,11 +203,11 @@ var ConsoleService_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "cauteum/control/v1/console.proto",
+	Metadata: "cautem/control/v1/console.proto",
 }
 
 const (
-	GatewayAdminService_GetGatewayInfo_FullMethodName = "/cauteum.control.v1.GatewayAdminService/GetGatewayInfo"
+	GatewayAdminService_GetGatewayInfo_FullMethodName = "/cautem.control.v1.GatewayAdminService/GetGatewayInfo"
 )
 
 // GatewayAdminServiceClient is the client API for GatewayAdminService service.
@@ -300,7 +300,7 @@ func _GatewayAdminService_GetGatewayInfo_Handler(srv interface{}, ctx context.Co
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var GatewayAdminService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "cauteum.control.v1.GatewayAdminService",
+	ServiceName: "cautem.control.v1.GatewayAdminService",
 	HandlerType: (*GatewayAdminServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
@@ -309,20 +309,20 @@ var GatewayAdminService_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "cauteum/control/v1/console.proto",
+	Metadata: "cautem/control/v1/console.proto",
 }
 
 const (
-	SandboxService_ListSandboxes_FullMethodName     = "/cauteum.control.v1.SandboxService/ListSandboxes"
-	SandboxService_GetSandbox_FullMethodName        = "/cauteum.control.v1.SandboxService/GetSandbox"
-	SandboxService_WatchSandboxes_FullMethodName    = "/cauteum.control.v1.SandboxService/WatchSandboxes"
-	SandboxService_GetSandboxLogs_FullMethodName    = "/cauteum.control.v1.SandboxService/GetSandboxLogs"
-	SandboxService_AppendSandboxLogs_FullMethodName = "/cauteum.control.v1.SandboxService/AppendSandboxLogs"
-	SandboxService_WatchSandboxLogs_FullMethodName  = "/cauteum.control.v1.SandboxService/WatchSandboxLogs"
-	SandboxService_CreateSandbox_FullMethodName     = "/cauteum.control.v1.SandboxService/CreateSandbox"
-	SandboxService_StartSandbox_FullMethodName      = "/cauteum.control.v1.SandboxService/StartSandbox"
-	SandboxService_StopSandbox_FullMethodName       = "/cauteum.control.v1.SandboxService/StopSandbox"
-	SandboxService_DeleteSandbox_FullMethodName     = "/cauteum.control.v1.SandboxService/DeleteSandbox"
+	SandboxService_ListSandboxes_FullMethodName     = "/cautem.control.v1.SandboxService/ListSandboxes"
+	SandboxService_GetSandbox_FullMethodName        = "/cautem.control.v1.SandboxService/GetSandbox"
+	SandboxService_WatchSandboxes_FullMethodName    = "/cautem.control.v1.SandboxService/WatchSandboxes"
+	SandboxService_GetSandboxLogs_FullMethodName    = "/cautem.control.v1.SandboxService/GetSandboxLogs"
+	SandboxService_AppendSandboxLogs_FullMethodName = "/cautem.control.v1.SandboxService/AppendSandboxLogs"
+	SandboxService_WatchSandboxLogs_FullMethodName  = "/cautem.control.v1.SandboxService/WatchSandboxLogs"
+	SandboxService_CreateSandbox_FullMethodName     = "/cautem.control.v1.SandboxService/CreateSandbox"
+	SandboxService_StartSandbox_FullMethodName      = "/cautem.control.v1.SandboxService/StartSandbox"
+	SandboxService_StopSandbox_FullMethodName       = "/cautem.control.v1.SandboxService/StopSandbox"
+	SandboxService_DeleteSandbox_FullMethodName     = "/cautem.control.v1.SandboxService/DeleteSandbox"
 )
 
 // SandboxServiceClient is the client API for SandboxService service.
@@ -732,7 +732,7 @@ func _SandboxService_DeleteSandbox_Handler(srv interface{}, ctx context.Context,
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var SandboxService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "cauteum.control.v1.SandboxService",
+	ServiceName: "cautem.control.v1.SandboxService",
 	HandlerType: (*SandboxServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
@@ -780,14 +780,14 @@ var SandboxService_ServiceDesc = grpc.ServiceDesc{
 			ServerStreams: true,
 		},
 	},
-	Metadata: "cauteum/control/v1/console.proto",
+	Metadata: "cautem/control/v1/console.proto",
 }
 
 const (
-	ManagedSandboxService_SyncManagedSandbox_FullMethodName       = "/cauteum.control.v1.ManagedSandboxService/SyncManagedSandbox"
-	ManagedSandboxService_GetManagedSandbox_FullMethodName        = "/cauteum.control.v1.ManagedSandboxService/GetManagedSandbox"
-	ManagedSandboxService_DeleteManagedSandbox_FullMethodName     = "/cauteum.control.v1.ManagedSandboxService/DeleteManagedSandbox"
-	ManagedSandboxService_IssueManagedSandboxToken_FullMethodName = "/cauteum.control.v1.ManagedSandboxService/IssueManagedSandboxToken"
+	ManagedSandboxService_SyncManagedSandbox_FullMethodName       = "/cautem.control.v1.ManagedSandboxService/SyncManagedSandbox"
+	ManagedSandboxService_GetManagedSandbox_FullMethodName        = "/cautem.control.v1.ManagedSandboxService/GetManagedSandbox"
+	ManagedSandboxService_DeleteManagedSandbox_FullMethodName     = "/cautem.control.v1.ManagedSandboxService/DeleteManagedSandbox"
+	ManagedSandboxService_IssueManagedSandboxToken_FullMethodName = "/cautem.control.v1.ManagedSandboxService/IssueManagedSandboxToken"
 )
 
 // ManagedSandboxServiceClient is the client API for ManagedSandboxService service.
@@ -981,7 +981,7 @@ func _ManagedSandboxService_IssueManagedSandboxToken_Handler(srv interface{}, ct
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var ManagedSandboxService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "cauteum.control.v1.ManagedSandboxService",
+	ServiceName: "cautem.control.v1.ManagedSandboxService",
 	HandlerType: (*ManagedSandboxServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
@@ -1002,13 +1002,13 @@ var ManagedSandboxService_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "cauteum/control/v1/console.proto",
+	Metadata: "cautem/control/v1/console.proto",
 }
 
 const (
-	OperationsService_GetOperation_FullMethodName    = "/cauteum.control.v1.OperationsService/GetOperation"
-	OperationsService_ListOperations_FullMethodName  = "/cauteum.control.v1.OperationsService/ListOperations"
-	OperationsService_ListAuditEvents_FullMethodName = "/cauteum.control.v1.OperationsService/ListAuditEvents"
+	OperationsService_GetOperation_FullMethodName    = "/cautem.control.v1.OperationsService/GetOperation"
+	OperationsService_ListOperations_FullMethodName  = "/cautem.control.v1.OperationsService/ListOperations"
+	OperationsService_ListAuditEvents_FullMethodName = "/cautem.control.v1.OperationsService/ListAuditEvents"
 )
 
 // OperationsServiceClient is the client API for OperationsService service.
@@ -1167,7 +1167,7 @@ func _OperationsService_ListAuditEvents_Handler(srv interface{}, ctx context.Con
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var OperationsService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "cauteum.control.v1.OperationsService",
+	ServiceName: "cautem.control.v1.OperationsService",
 	HandlerType: (*OperationsServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
@@ -1184,14 +1184,14 @@ var OperationsService_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "cauteum/control/v1/console.proto",
+	Metadata: "cautem/control/v1/console.proto",
 }
 
 const (
-	CatalogService_ListServices_FullMethodName   = "/cauteum.control.v1.CatalogService/ListServices"
-	CatalogService_ListTemplates_FullMethodName  = "/cauteum.control.v1.CatalogService/ListTemplates"
-	CatalogService_ListWorkspaces_FullMethodName = "/cauteum.control.v1.CatalogService/ListWorkspaces"
-	CatalogService_GetWorkspace_FullMethodName   = "/cauteum.control.v1.CatalogService/GetWorkspace"
+	CatalogService_ListServices_FullMethodName   = "/cautem.control.v1.CatalogService/ListServices"
+	CatalogService_ListTemplates_FullMethodName  = "/cautem.control.v1.CatalogService/ListTemplates"
+	CatalogService_ListWorkspaces_FullMethodName = "/cautem.control.v1.CatalogService/ListWorkspaces"
+	CatalogService_GetWorkspace_FullMethodName   = "/cautem.control.v1.CatalogService/GetWorkspace"
 )
 
 // CatalogServiceClient is the client API for CatalogService service.
@@ -1383,7 +1383,7 @@ func _CatalogService_GetWorkspace_Handler(srv interface{}, ctx context.Context, 
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var CatalogService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "cauteum.control.v1.CatalogService",
+	ServiceName: "cautem.control.v1.CatalogService",
 	HandlerType: (*CatalogServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
@@ -1404,13 +1404,13 @@ var CatalogService_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "cauteum/control/v1/console.proto",
+	Metadata: "cautem/control/v1/console.proto",
 }
 
 const (
-	InferenceService_GetInferenceRoute_FullMethodName    = "/cauteum.control.v1.InferenceService/GetInferenceRoute"
-	InferenceService_UpdateInferenceRoute_FullMethodName = "/cauteum.control.v1.InferenceService/UpdateInferenceRoute"
-	InferenceService_ClearInferenceRoute_FullMethodName  = "/cauteum.control.v1.InferenceService/ClearInferenceRoute"
+	InferenceService_GetInferenceRoute_FullMethodName    = "/cautem.control.v1.InferenceService/GetInferenceRoute"
+	InferenceService_UpdateInferenceRoute_FullMethodName = "/cautem.control.v1.InferenceService/UpdateInferenceRoute"
+	InferenceService_ClearInferenceRoute_FullMethodName  = "/cautem.control.v1.InferenceService/ClearInferenceRoute"
 )
 
 // InferenceServiceClient is the client API for InferenceService service.
@@ -1569,7 +1569,7 @@ func _InferenceService_ClearInferenceRoute_Handler(srv interface{}, ctx context.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var InferenceService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "cauteum.control.v1.InferenceService",
+	ServiceName: "cautem.control.v1.InferenceService",
 	HandlerType: (*InferenceServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
@@ -1586,20 +1586,20 @@ var InferenceService_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "cauteum/control/v1/console.proto",
+	Metadata: "cautem/control/v1/console.proto",
 }
 
 const (
-	PolicyService_GetGlobalPolicy_FullMethodName            = "/cauteum.control.v1.PolicyService/GetGlobalPolicy"
-	PolicyService_UpdateGlobalPolicy_FullMethodName         = "/cauteum.control.v1.PolicyService/UpdateGlobalPolicy"
-	PolicyService_GetSandboxPolicy_FullMethodName           = "/cauteum.control.v1.PolicyService/GetSandboxPolicy"
-	PolicyService_UpdateSandboxPolicy_FullMethodName        = "/cauteum.control.v1.PolicyService/UpdateSandboxPolicy"
-	PolicyService_ListSandboxPolicyRevisions_FullMethodName = "/cauteum.control.v1.PolicyService/ListSandboxPolicyRevisions"
-	PolicyService_GetSandboxPolicyRevision_FullMethodName   = "/cauteum.control.v1.PolicyService/GetSandboxPolicyRevision"
-	PolicyService_ListPolicyProposals_FullMethodName        = "/cauteum.control.v1.PolicyService/ListPolicyProposals"
-	PolicyService_GetPolicyProposal_FullMethodName          = "/cauteum.control.v1.PolicyService/GetPolicyProposal"
-	PolicyService_ApprovePolicyProposal_FullMethodName      = "/cauteum.control.v1.PolicyService/ApprovePolicyProposal"
-	PolicyService_RejectPolicyProposal_FullMethodName       = "/cauteum.control.v1.PolicyService/RejectPolicyProposal"
+	PolicyService_GetGlobalPolicy_FullMethodName            = "/cautem.control.v1.PolicyService/GetGlobalPolicy"
+	PolicyService_UpdateGlobalPolicy_FullMethodName         = "/cautem.control.v1.PolicyService/UpdateGlobalPolicy"
+	PolicyService_GetSandboxPolicy_FullMethodName           = "/cautem.control.v1.PolicyService/GetSandboxPolicy"
+	PolicyService_UpdateSandboxPolicy_FullMethodName        = "/cautem.control.v1.PolicyService/UpdateSandboxPolicy"
+	PolicyService_ListSandboxPolicyRevisions_FullMethodName = "/cautem.control.v1.PolicyService/ListSandboxPolicyRevisions"
+	PolicyService_GetSandboxPolicyRevision_FullMethodName   = "/cautem.control.v1.PolicyService/GetSandboxPolicyRevision"
+	PolicyService_ListPolicyProposals_FullMethodName        = "/cautem.control.v1.PolicyService/ListPolicyProposals"
+	PolicyService_GetPolicyProposal_FullMethodName          = "/cautem.control.v1.PolicyService/GetPolicyProposal"
+	PolicyService_ApprovePolicyProposal_FullMethodName      = "/cautem.control.v1.PolicyService/ApprovePolicyProposal"
+	PolicyService_RejectPolicyProposal_FullMethodName       = "/cautem.control.v1.PolicyService/RejectPolicyProposal"
 )
 
 // PolicyServiceClient is the client API for PolicyService service.
@@ -1985,7 +1985,7 @@ func _PolicyService_RejectPolicyProposal_Handler(srv interface{}, ctx context.Co
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var PolicyService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "cauteum.control.v1.PolicyService",
+	ServiceName: "cautem.control.v1.PolicyService",
 	HandlerType: (*PolicyServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
@@ -2030,22 +2030,22 @@ var PolicyService_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "cauteum/control/v1/console.proto",
+	Metadata: "cautem/control/v1/console.proto",
 }
 
 const (
-	ProviderProfileService_ListProviderProfiles_FullMethodName  = "/cauteum.control.v1.ProviderProfileService/ListProviderProfiles"
-	ProviderProfileService_GetProviderProfile_FullMethodName    = "/cauteum.control.v1.ProviderProfileService/GetProviderProfile"
-	ProviderProfileService_ImportProviderProfile_FullMethodName = "/cauteum.control.v1.ProviderProfileService/ImportProviderProfile"
-	ProviderProfileService_UpdateProviderProfile_FullMethodName = "/cauteum.control.v1.ProviderProfileService/UpdateProviderProfile"
-	ProviderProfileService_DeleteProviderProfile_FullMethodName = "/cauteum.control.v1.ProviderProfileService/DeleteProviderProfile"
+	ProviderProfileService_ListProviderProfiles_FullMethodName  = "/cautem.control.v1.ProviderProfileService/ListProviderProfiles"
+	ProviderProfileService_GetProviderProfile_FullMethodName    = "/cautem.control.v1.ProviderProfileService/GetProviderProfile"
+	ProviderProfileService_ImportProviderProfile_FullMethodName = "/cautem.control.v1.ProviderProfileService/ImportProviderProfile"
+	ProviderProfileService_UpdateProviderProfile_FullMethodName = "/cautem.control.v1.ProviderProfileService/UpdateProviderProfile"
+	ProviderProfileService_DeleteProviderProfile_FullMethodName = "/cautem.control.v1.ProviderProfileService/DeleteProviderProfile"
 )
 
 // ProviderProfileServiceClient is the client API for ProviderProfileService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 //
-// ProviderProfileService preserves the full Cauteum profile document while
+// ProviderProfileService preserves the full cautem profile document while
 // keeping profile management inside the authenticated client API.
 type ProviderProfileServiceClient interface {
 	ListProviderProfiles(ctx context.Context, in *ListProviderProfilesRequest, opts ...grpc.CallOption) (*ListProviderProfilesResponse, error)
@@ -2117,7 +2117,7 @@ func (c *providerProfileServiceClient) DeleteProviderProfile(ctx context.Context
 // All implementations must embed UnimplementedProviderProfileServiceServer
 // for forward compatibility.
 //
-// ProviderProfileService preserves the full Cauteum profile document while
+// ProviderProfileService preserves the full cautem profile document while
 // keeping profile management inside the authenticated client API.
 type ProviderProfileServiceServer interface {
 	ListProviderProfiles(context.Context, *ListProviderProfilesRequest) (*ListProviderProfilesResponse, error)
@@ -2266,7 +2266,7 @@ func _ProviderProfileService_DeleteProviderProfile_Handler(srv interface{}, ctx 
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var ProviderProfileService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "cauteum.control.v1.ProviderProfileService",
+	ServiceName: "cautem.control.v1.ProviderProfileService",
 	HandlerType: (*ProviderProfileServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
@@ -2291,18 +2291,18 @@ var ProviderProfileService_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "cauteum/control/v1/console.proto",
+	Metadata: "cautem/control/v1/console.proto",
 }
 
 const (
-	ProviderCredentialService_UpdateProviderCredentials_FullMethodName = "/cauteum.control.v1.ProviderCredentialService/UpdateProviderCredentials"
+	ProviderCredentialService_UpdateProviderCredentials_FullMethodName = "/cautem.control.v1.ProviderCredentialService/UpdateProviderCredentials"
 )
 
 // ProviderCredentialServiceClient is the client API for ProviderCredentialService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 //
-// ProviderCredentialService handles Cauteum-only secret patch semantics.
+// ProviderCredentialService handles cautem-only secret patch semantics.
 // OpenShell Provider.Update replaces the full credential map, so partial
 // updates stay behind this narrow authenticated method.
 type ProviderCredentialServiceClient interface {
@@ -2331,7 +2331,7 @@ func (c *providerCredentialServiceClient) UpdateProviderCredentials(ctx context.
 // All implementations must embed UnimplementedProviderCredentialServiceServer
 // for forward compatibility.
 //
-// ProviderCredentialService handles Cauteum-only secret patch semantics.
+// ProviderCredentialService handles cautem-only secret patch semantics.
 // OpenShell Provider.Update replaces the full credential map, so partial
 // updates stay behind this narrow authenticated method.
 type ProviderCredentialServiceServer interface {
@@ -2393,7 +2393,7 @@ func _ProviderCredentialService_UpdateProviderCredentials_Handler(srv interface{
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var ProviderCredentialService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "cauteum.control.v1.ProviderCredentialService",
+	ServiceName: "cautem.control.v1.ProviderCredentialService",
 	HandlerType: (*ProviderCredentialServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
@@ -2402,5 +2402,5 @@ var ProviderCredentialService_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "cauteum/control/v1/console.proto",
+	Metadata: "cautem/control/v1/console.proto",
 }

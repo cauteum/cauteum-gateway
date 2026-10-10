@@ -1,6 +1,6 @@
 openapi: 3.1.0
 info:
-  title: Cauteum Gateway REST API
+  title: cautem Gateway REST API
   version: 0.1.0
   summary: Health and authentication bootstrap endpoints for the gateway.
   description: >-

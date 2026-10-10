@@ -1,28 +1,28 @@
-<h1 align="center">cauteum-gateway</h1>
+<h1 align="center">cautem-gateway</h1>
 
 <p align="center">
   <strong>RPC control plane and relay</strong><br>
-  OpenShell and Cauteum RPC APIs with HTTP health, auth bootstrap, and streaming relay transport.
+  OpenShell and cautem RPC APIs with HTTP health, auth bootstrap, and streaming relay transport.
 </p>
 <p align="center">
-  <a href="https://github.com/cautem/cauteum-gateway/actions/workflows/ci.yml"><img src="https://github.com/cautem/cauteum-gateway/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
-  <a href="https://pkg.go.dev/github.com/cautem/cauteum-gateway"><img src="https://pkg.go.dev/badge/github.com/cautem/cauteum-gateway.svg" alt="Go Reference"></a>
+  <a href="https://github.com/cautem/cautem-gateway/actions/workflows/ci.yml"><img src="https://github.com/cautem/cautem-gateway/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <a href="https://pkg.go.dev/github.com/cautem/cautem-gateway"><img src="https://pkg.go.dev/badge/github.com/cautem/cautem-gateway.svg" alt="Go Reference"></a>
   <a href="https://www.apache.org/licenses/LICENSE-2.0"><img src="https://img.shields.io/badge/License-Apache--2.0-blue.svg" alt="License"></a>
-  <a href="https://github.com/cautem/cauteum-gateway"><img src="https://img.shields.io/badge/Go-1.27+-00ADD8?logo=go" alt="Go Version"></a>
+  <a href="https://github.com/cautem/cautem-gateway"><img src="https://img.shields.io/badge/Go-1.27+-00ADD8?logo=go" alt="Go Version"></a>
 
-  <a href="https://github.com/cautem/cauteum-gateway/actions/workflows/images-gateway.yml"><img src="https://github.com/cautem/cauteum-gateway/actions/workflows/images-gateway.yml/badge.svg" alt="images-gateway"></a>
+  <a href="https://github.com/cautem/cautem-gateway/actions/workflows/images-gateway.yml"><img src="https://github.com/cautem/cautem-gateway/actions/workflows/images-gateway.yml/badge.svg" alt="images-gateway"></a>
 </p>
 <p align="center">
-  <sub>Part of the <a href="https://github.com/cautem">cauteum / cauteum</a> ecosystem</sub>
+  <sub>Part of the <a href="https://github.com/cautem">cautem / cautem</a> ecosystem</sub>
 </p>
 
 ---
 
 ## Overview
 
-Use the [gateway guide](https://cautem.github.io/cauteum-haven.github.io/guides/gateway/) for setup and the [OpenShell compatibility page](https://cautem.github.io/cauteum-haven.github.io/reference/openshell-compatibility/) for the current supported scope.
+Use the [gateway guide](https://cautem.github.io/sandbox.dev/guides/gateway/) for setup and the [OpenShell compatibility page](https://cautem.github.io/sandbox.dev/reference/openshell-compatibility/) for the current supported scope.
 
-**cauteum-gateway** is the optional control-plane daemon. Client management workflows use authenticated RPC. HTTP remains for health, browser/auth bootstrap, and relay/stream transport.
+**cautem-gateway** is the optional control-plane daemon. Client management workflows use authenticated RPC. HTTP remains for health, browser/auth bootstrap, and relay/stream transport.
 
 ### Key Features
 
@@ -32,29 +32,29 @@ Use the [gateway guide](https://cautem.github.io/cauteum-haven.github.io/guides/
 | **Policy** | Base + effective policy over Control RPC; provider attach via OpenShell RPC |
 | **Proposals** | Store / approve / reject (`policy.local` sync) |
 | **Relay** | Stream and exec relay for guests |
-| **Image** | `ghcr.io/cautem/cauteum/gateway` |
+| **Image** | `ghcr.io/cautem/cautem/gateway` |
 
 ---
 
 ## Installation
 
 ```bash
-go build -o cauteum-gateway ./cmd/cauteum-gateway
-./cauteum-gateway --listen 127.0.0.1:7443
+go build -o cautem-gateway ./cmd/cautem-gateway
+./cautem-gateway --listen 127.0.0.1:7443
 ```
 
 **Requirements:** Go 1.27+
 
-**Container:** `ghcr.io/cautem/cauteum/gateway:latest`
+**Container:** `ghcr.io/cautem/cautem/gateway:latest`
 
 ---
 
 ## Quick Start
 
 ```bash
-./cauteum-gateway --listen 127.0.0.1:7443 &
-cauteum gateway add http://127.0.0.1:7443 --local --name local
-cauteum gateway select local
+./cautem-gateway --listen 127.0.0.1:7443 &
+cautem gateway add http://127.0.0.1:7443 --local --name local
+cautem gateway select local
 curl -s http://127.0.0.1:7443/healthz
 ```
 
@@ -69,7 +69,7 @@ It covers health and bootstrap flows; management operations use the generated
 Control RPC or the pinned OpenShell RPC contract. No REST compatibility layer
 is maintained for beta clients.
 
-The separate `cauteum.control.v1` Connect API serves authenticated UI and
+The separate `cautem.control.v1` Connect API serves authenticated UI and
 SDK clients on the gateway listener. Its generated Proto source and private
 TypeScript client are under [`api/`](./api/). Lifecycle mutations require a
 client-generated `request_id`; reuse the same ID when retrying, then call
@@ -80,8 +80,8 @@ also exposes workspace-filtered service/template summaries and admin operation
 and audit history. These summaries omit backend routing addresses and template
 environment values.
 
-Provider profile reads and writes use `cauteum.control.v1`; the service
-preserves the full Cauteum YAML profile and uses resource-version checks for
+Provider profile reads and writes use `cautem.control.v1`; the service
+preserves the full cautem YAML profile and uses resource-version checks for
 updates. Global profiles require platform admin access, and workspace profiles
 require provider scopes plus workspace membership.
 
@@ -90,7 +90,7 @@ TypeScript Connect client and OIDC authorization-code flow with PKCE. See its
 README for local setup and the current deployment boundary; production static
 hosting is not yet wired into the gateway.
 
-Durable state: `$XDG_STATE_HOME/cauteum/gateway/state.json`.
+Durable state: `$XDG_STATE_HOME/cautem/gateway/state.json`.
 
 ---
 
@@ -98,7 +98,7 @@ Durable state: `$XDG_STATE_HOME/cauteum/gateway/state.json`.
 
 | Path | Purpose |
 |------|---------|
-| `cmd/cauteum-gateway` | Daemon entrypoint |
+| `cmd/cautem-gateway` | Daemon entrypoint |
 | `internal/` | HTTP handlers, state, relay |
 
 
@@ -111,11 +111,11 @@ Durable state: `$XDG_STATE_HOME/cauteum/gateway/state.json`.
 | Roadmap | [ROADMAP.md](./ROADMAP.md) |
 | Organization | [https://github.com/cautem](https://github.com/cautem) |
 | Organization overview | [github.com/cautem](https://github.com/cautem) |
-| pkg.go.dev | [`github.com/cautem/cauteum-gateway`](https://pkg.go.dev/github.com/cautem/cauteum-gateway) |
+| pkg.go.dev | [`github.com/cautem/cautem-gateway`](https://pkg.go.dev/github.com/cautem/cautem-gateway) |
 
 ## License
 
-[Apache-2.0](./LICENSE) © cauteum
+[Apache-2.0](./LICENSE) © cautem
 
 ## OpenShell gateway TOML
 
@@ -134,4 +134,4 @@ driver, storage, identity, middleware, interceptor, telemetry, and auxiliary
 listener consumers. Supplied unsupported settings fail before the daemon
 creates state or opens listeners. The loader also rejects unknown/duplicate
 keys, invalid required fields/enums, and a database URL embedded in TOML.
-Without an OpenShell file, the existing cauteum defaults still apply.
+Without an OpenShell file, the existing cautem defaults still apply.

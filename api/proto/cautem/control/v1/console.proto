@@ -1,8 +1,8 @@
 syntax = "proto3";
 
-package cauteum.control.v1;
+package cautem.control.v1;
 
-option go_package = "github.com/cautem/cauteum-gateway/api/gen/cauteum/control/v1;controlv1";
+option go_package = "github.com/cautem/cautem-gateway/api/gen/cautem/control/v1;controlv1";
 
 // ConsoleService provides safe, user-facing gateway summary methods.
 service ConsoleService {
@@ -236,7 +236,7 @@ message PolicyRevisionSummary {
   string status = 4;
 }
 
-// ProviderProfileService preserves the full Cauteum profile document while
+// ProviderProfileService preserves the full cautem profile document while
 // keeping profile management inside the authenticated client API.
 service ProviderProfileService {
   rpc ListProviderProfiles(ListProviderProfilesRequest) returns (ListProviderProfilesResponse);
@@ -246,7 +246,7 @@ service ProviderProfileService {
   rpc DeleteProviderProfile(DeleteProviderProfileRequest) returns (DeleteProviderProfileResponse);
 }
 
-// ProviderCredentialService handles Cauteum-only secret patch semantics.
+// ProviderCredentialService handles cautem-only secret patch semantics.
 // OpenShell Provider.Update replaces the full credential map, so partial
 // updates stay behind this narrow authenticated method.
 service ProviderCredentialService {

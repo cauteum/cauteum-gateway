@@ -1,18 +1,18 @@
 # Overlay for OIDC lab: host networking so JWT iss http://127.0.0.1:5556/dex
 # matches JWKS fetches from both CLI (host) and gateway.
 #
-#   docker compose -f cauteum-gateway/compose/docker-compose.yml \
-#     -f cauteum-gateway/compose/docker-compose.oidc.yml --profile oidc up -d --build
+#   docker compose -f cautem-gateway/compose/docker-compose.yml \
+#     -f cautem-gateway/compose/docker-compose.oidc.yml --profile oidc up -d --build
 
 services:
-  cauteum-gateway:
+  cautem-gateway:
     network_mode: host
     networks: !reset null
     ports: []
     environment:
-      CAUTEUM_OIDC_ISSUER: ${CAUTEUM_OIDC_ISSUER:-http://127.0.0.1:5556/dex}
-      CAUTEUM_OIDC_CLIENT_ID: ${CAUTEUM_OIDC_CLIENT_ID:-cauteum-cli}
-      CAUTEUM_OIDC_ALLOW_INSECURE_HTTP: ${CAUTEUM_OIDC_ALLOW_INSECURE_HTTP:-true}
+      CAUTEM_OIDC_ISSUER: ${CAUTEM_OIDC_ISSUER:-http://127.0.0.1:5556/dex}
+      CAUTEM_OIDC_CLIENT_ID: ${CAUTEM_OIDC_CLIENT_ID:-cautem-cli}
+      CAUTEM_OIDC_ALLOW_INSECURE_HTTP: ${CAUTEM_OIDC_ALLOW_INSECURE_HTTP:-true}
 
   dex:
     network_mode: host

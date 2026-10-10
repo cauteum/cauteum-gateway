@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: Copyright (c) 2026 the cauteum authors
+# SPDX-FileCopyrightText: Copyright (c) 2026 the cautem authors
 # SPDX-License-Identifier: Apache-2.0
 name: images-gateway
 
@@ -27,7 +27,7 @@ permissions:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE: ghcr.io/cautem/cauteum/gateway
+  IMAGE: ghcr.io/cautem/cautem/gateway
   GOWORK: ${{ github.workspace }}/go.work
 
 jobs:
@@ -37,47 +37,48 @@ jobs:
       - name: Checkout gateway
         uses: actions/checkout@v4
         with:
-          path: cauteum-gateway
+          path: cautem-gateway
       - name: Checkout deps
         uses: actions/checkout@v4
         with:
-          repository: cautem/cauteum-core
-          path: cauteum-core
+          repository: cautem/cautem-core
+          path: cautem-core
       - uses: actions/checkout@v4
         with:
-          repository: cautem/cauteum-cli
-          path: cauteum-cli
-          ref: 62263efb19f99f0ccc182ae6bb9179bdfab4e839
+          repository: cautem/cautem-cli
+          path: cautem-cli
+          ref: release/v0.1.6
       - uses: actions/checkout@v4
         with:
-          repository: cautem/cauteum-display
-          path: cauteum-display
+          repository: cautem/cautem-display
+          path: cautem-display
       - uses: actions/checkout@v4
         with:
-          repository: cautem/cauteum-providers
-          path: cauteum-providers
+          repository: cautem/cautem-providers
+          path: cautem-providers
       - uses: actions/checkout@v4
         with:
-          repository: cautem/cauteum-runtime
-          path: cauteum-runtime
+          repository: cautem/cautem-runtime
+          path: cautem-runtime
       - uses: actions/checkout@v4
         with:
-          repository: cautem/cauteum-proxy
-          path: cauteum-proxy
+          repository: cautem/cautem-proxy
+          path: cautem-proxy
       - uses: actions/checkout@v4
         with:
-          repository: cautem/cauteum-driver
-          path: cauteum-driver
+          repository: cautem/cautem-driver
+          path: cautem-driver
       - uses: actions/checkout@v4
         with:
-          repository: cautem/cauteum-sdk
-          path: cauteum-sdk
+          repository: cautem/cautem-sdk
+          path: cautem-sdk
+          ref: release/v0.1.6
 
       - name: Checkout slogx
         uses: actions/checkout@v4
         with:
           repository: cautem/slogx
-          path: cauteum-slogx
+          path: cautem-slogx
       - name: Write go.work
         working-directory: ${{ github.workspace }}
         shell: bash
@@ -86,28 +87,28 @@ jobs:
           {
             echo 'go 1.27.0'
             echo 'use ('
-            for d in cauteum-* slogx; do
+            for d in cautem-* slogx; do
               if [[ -d "$d" ]]; then
                 echo "  ./$d"
               fi
             done
             echo ')'
             echo 'replace ('
-            for d in cauteum-*; do
+            for d in cautem-*; do
               if [[ -d "$d" ]]; then
                 echo "  github.com/cautem/${d} v0.1.0-alpha.1 => ./$d"
                 echo "  github.com/cautem/${d} v0.1.0-alpha.2 => ./$d"
                 echo "  github.com/cautem/${d} v0.1.0-beta.1 => ./$d"
                 echo "  github.com/cautem/${d} v0.1.0-beta.2 => ./$d"
-                echo "  github.com/cautem/${d} v0.1.5 => ./$d"
+                echo "  github.com/cautem/${d} v0.1.6 => ./$d"
               fi
             done
-            if [[ -d cauteum-slogx ]]; then
-              echo '  github.com/cautem/slogx v0.1.0-alpha.1 => ./cauteum-slogx'
-              echo '  github.com/cautem/slogx v0.1.0-alpha.2 => ./cauteum-slogx'
-              echo '  github.com/cautem/slogx v0.1.0-beta.1 => ./cauteum-slogx'
-              echo '  github.com/cautem/slogx v0.1.0-beta.2 => ./cauteum-slogx'
-              echo '  github.com/cautem/slogx v0.1.3 => ./cauteum-slogx'
+            if [[ -d cautem-slogx ]]; then
+              echo '  github.com/cautem/slogx v0.1.0-alpha.1 => ./cautem-slogx'
+              echo '  github.com/cautem/slogx v0.1.0-alpha.2 => ./cautem-slogx'
+              echo '  github.com/cautem/slogx v0.1.0-beta.1 => ./cautem-slogx'
+              echo '  github.com/cautem/slogx v0.1.0-beta.2 => ./cautem-slogx'
+              echo '  github.com/cautem/slogx v0.1.3 => ./cautem-slogx'
             fi
             echo ')'
           } > "${{ github.workspace }}/go.work"
@@ -118,7 +119,7 @@ jobs:
           go-version: "1.27.2"
           cache: true
           cache-dependency-path: |
-            cauteum-*/go.sum
+            cautem-*/go.sum
             slogx/go.sum
       - uses: docker/setup-buildx-action@v3
       - name: Login GHCR
@@ -142,7 +143,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: .
-          file: cauteum-gateway/Dockerfile
+          file: cautem-gateway/Dockerfile
           platforms: linux/amd64
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}

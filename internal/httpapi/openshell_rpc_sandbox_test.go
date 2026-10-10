@@ -11,11 +11,11 @@ import (
 
 	openshellv1 "github.com/NVIDIA/OpenShell/sdk/go/proto/openshellv1"
 	sandboxv1 "github.com/NVIDIA/OpenShell/sdk/go/proto/sandboxv1"
-	"github.com/cautem/cauteum-core"
-	"github.com/cautem/cauteum-core/policy"
-	"github.com/cautem/cauteum-driver/driver"
-	"github.com/cautem/cauteum-gateway/internal/sshrelay"
-	"github.com/cautem/cauteum-gateway/internal/storage/store"
+	"github.com/cautem/cautem-core"
+	"github.com/cautem/cautem-core/policy"
+	"github.com/cautem/cautem-driver/driver"
+	"github.com/cautem/cautem-gateway/internal/sshrelay"
+	"github.com/cautem/cautem-gateway/internal/storage/store"
 	"google.golang.org/protobuf/encoding/protojson"
 )
 
@@ -61,12 +61,12 @@ func (*rpcTestEngine) ContainerIP(context.Context, string, string) (string, erro
 
 func TestCreateSandboxRPCCreatesAndPersistsRuntime(t *testing.T) {
 	helperDir := t.TempDir()
-	for _, name := range []string{"cauteum", "cauteum-init", "cauteum-sshd", "cauteum-supervisor"} {
+	for _, name := range []string{"cautem", "cautem-init", "cautem-sshd", "cautem-supervisor"} {
 		if err := os.WriteFile(filepath.Join(helperDir, name), []byte("test"), 0o755); err != nil {
 			t.Fatal(err)
 		}
 	}
-	t.Setenv("CAUTEUM_HELPERS_DIR", helperDir)
+	t.Setenv("CAUTEM_HELPERS_DIR", helperDir)
 	st, err := store.Open(t.TempDir(), "gw-test")
 	if err != nil {
 		t.Fatal(err)
@@ -100,7 +100,7 @@ func TestCreateSandboxRPCCreatesAndPersistsRuntime(t *testing.T) {
 			envValues[k] = v
 		}
 	}
-	if engine.created.Workspace == "" || envValues["FROM_SPEC"] != "yes" || envValues["FROM_TEMPLATE"] != "yes" || engine.created.ProxyBin == "" || engine.created.InitBin == "" || engine.created.SSHBin == "" || !engine.created.EnableSSH || engine.created.SupervisorBin != filepath.Join(helperDir, "cauteum-supervisor") {
+	if engine.created.Workspace == "" || envValues["FROM_SPEC"] != "yes" || envValues["FROM_TEMPLATE"] != "yes" || engine.created.ProxyBin == "" || engine.created.InitBin == "" || engine.created.SSHBin == "" || !engine.created.EnableSSH || engine.created.SupervisorBin != filepath.Join(helperDir, "cautem-supervisor") {
 		t.Fatalf("driver spec=%+v", engine.created)
 	}
 	proxyEnv := map[string]string{}
@@ -110,7 +110,7 @@ func TestCreateSandboxRPCCreatesAndPersistsRuntime(t *testing.T) {
 			proxyEnv[k] = v
 		}
 	}
-	if proxyEnv["CAUTEUM_GATEWAY_URL"] != "http://gateway:7443" || proxyEnv["CAUTEUM_SANDBOX"] != "demo" || proxyEnv["CAUTEUM_SANDBOX_TOKEN"] == "" {
+	if proxyEnv["CAUTEM_GATEWAY_URL"] != "http://gateway:7443" || proxyEnv["CAUTEM_SANDBOX"] != "demo" || proxyEnv["CAUTEM_SANDBOX_TOKEN"] == "" {
 		t.Fatalf("supervisor env=%v", proxyEnv)
 	}
 	rec, ok := st.GetSandbox("demo")
@@ -159,12 +159,12 @@ func TestStopSandboxRollsBackLifecycleStateWhenBackendStopFails(t *testing.T) {
 
 func TestStartSandboxRecreatesMissingRuntimeFromDurableSpec(t *testing.T) {
 	helperDir := t.TempDir()
-	for _, name := range []string{"cauteum", "cauteum-init", "cauteum-sshd", "cauteum-supervisor"} {
+	for _, name := range []string{"cautem", "cautem-init", "cautem-sshd", "cautem-supervisor"} {
 		if err := os.WriteFile(filepath.Join(helperDir, name), []byte("test"), 0o755); err != nil {
 			t.Fatal(err)
 		}
 	}
-	t.Setenv("CAUTEUM_HELPERS_DIR", helperDir)
+	t.Setenv("CAUTEM_HELPERS_DIR", helperDir)
 	st, err := store.Open(t.TempDir(), "gw-recovery")
 	if err != nil {
 		t.Fatal(err)
@@ -209,12 +209,12 @@ func TestStartSandboxRecreatesMissingRuntimeFromDurableSpec(t *testing.T) {
 
 func TestStartSandboxRecoveryRollsBackPartialRuntime(t *testing.T) {
 	helperDir := t.TempDir()
-	for _, name := range []string{"cauteum", "cauteum-init", "cauteum-sshd", "cauteum-supervisor"} {
+	for _, name := range []string{"cautem", "cautem-init", "cautem-sshd", "cautem-supervisor"} {
 		if err := os.WriteFile(filepath.Join(helperDir, name), []byte("test"), 0o755); err != nil {
 			t.Fatal(err)
 		}
 	}
-	t.Setenv("CAUTEUM_HELPERS_DIR", helperDir)
+	t.Setenv("CAUTEM_HELPERS_DIR", helperDir)
 	st, err := store.Open(t.TempDir(), "gw-recovery-rollback")
 	if err != nil {
 		t.Fatal(err)
@@ -242,12 +242,12 @@ func TestStartSandboxRecoveryRollsBackPartialRuntime(t *testing.T) {
 
 func TestCreateSandboxRPCUsesRuntimeDefaultWithoutPersistingPolicy(t *testing.T) {
 	helperDir := t.TempDir()
-	for _, name := range []string{"cauteum", "cauteum-init", "cauteum-sshd", "cauteum-supervisor"} {
+	for _, name := range []string{"cautem", "cautem-init", "cautem-sshd", "cautem-supervisor"} {
 		if err := os.WriteFile(filepath.Join(helperDir, name), []byte("test"), 0o755); err != nil {
 			t.Fatal(err)
 		}
 	}
-	t.Setenv("CAUTEUM_HELPERS_DIR", helperDir)
+	t.Setenv("CAUTEM_HELPERS_DIR", helperDir)
 	dataDir := t.TempDir()
 	st, err := store.Open(t.TempDir(), "gw-test")
 	if err != nil {
@@ -291,12 +291,12 @@ func TestCreateSandboxRPCUsesRuntimeDefaultWithoutPersistingPolicy(t *testing.T)
 
 func TestPrepareSandboxRuntimeUsesGlobalPolicyAsCompleteOverride(t *testing.T) {
 	helperDir := t.TempDir()
-	for _, name := range []string{"cauteum", "cauteum-init", "cauteum-sshd", "cauteum-supervisor"} {
+	for _, name := range []string{"cautem", "cautem-init", "cautem-sshd", "cautem-supervisor"} {
 		if err := os.WriteFile(filepath.Join(helperDir, name), []byte("test"), 0o755); err != nil {
 			t.Fatal(err)
 		}
 	}
-	t.Setenv("CAUTEUM_HELPERS_DIR", helperDir)
+	t.Setenv("CAUTEM_HELPERS_DIR", helperDir)
 	dataDir := t.TempDir()
 	st, err := store.Open(t.TempDir(), "gw-test")
 	if err != nil {
@@ -374,12 +374,12 @@ func TestCreateSandboxRPCRejectsWorkspacePathTraversal(t *testing.T) {
 
 func TestCreateSandboxRPCCleansUpWhenSupervisorNeverConnects(t *testing.T) {
 	helperDir := t.TempDir()
-	for _, name := range []string{"cauteum", "cauteum-init", "cauteum-sshd", "cauteum-supervisor"} {
+	for _, name := range []string{"cautem", "cautem-init", "cautem-sshd", "cautem-supervisor"} {
 		if err := os.WriteFile(filepath.Join(helperDir, name), []byte("test"), 0o755); err != nil {
 			t.Fatal(err)
 		}
 	}
-	t.Setenv("CAUTEUM_HELPERS_DIR", helperDir)
+	t.Setenv("CAUTEM_HELPERS_DIR", helperDir)
 	dataDir := t.TempDir()
 	st, err := store.Open(t.TempDir(), "gw-test")
 	if err != nil {

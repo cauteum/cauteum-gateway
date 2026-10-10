@@ -20,15 +20,15 @@ import (
 	"time"
 
 	sandboxv1 "github.com/NVIDIA/OpenShell/sdk/go/proto/sandboxv1"
-	"github.com/cautem/cauteum-gateway/internal/gatewayconfig"
+	"github.com/cautem/cautem-gateway/internal/gatewayconfig"
 	"google.golang.org/grpc"
 
-	"github.com/cautem/cauteum-core/defaults"
-	"github.com/cautem/cauteum-gateway/internal/logbuf"
-	"github.com/cautem/cauteum-gateway/internal/logger"
-	"github.com/cautem/cauteum-gateway/internal/sshrelay"
-	"github.com/cautem/cauteum-gateway/internal/storage/store"
-	"github.com/cautem/cauteum-runtime/secrets"
+	"github.com/cautem/cautem-core/defaults"
+	"github.com/cautem/cautem-gateway/internal/logbuf"
+	"github.com/cautem/cautem-gateway/internal/logger"
+	"github.com/cautem/cautem-gateway/internal/sshrelay"
+	"github.com/cautem/cautem-gateway/internal/storage/store"
+	"github.com/cautem/cautem-runtime/secrets"
 	"github.com/cautem/slogx"
 )
 
@@ -76,10 +76,10 @@ type Options struct {
 }
 
 // EnvAllowUnauthenticated enables Options.AllowUnauthenticated (unsafe, dev only).
-const EnvAllowUnauthenticated = "CAUTEUM_GATEWAY_ALLOW_UNAUTHENTICATED"
+const EnvAllowUnauthenticated = "CAUTEM_GATEWAY_ALLOW_UNAUTHENTICATED"
 
 // EnvSSHSessionTTL overrides the SSH session TTL in seconds (0 = no expiry).
-const EnvSSHSessionTTL = "CAUTEUM_SSH_SESSION_TTL_SECS"
+const EnvSSHSessionTTL = "CAUTEM_SSH_SESSION_TTL_SECS"
 
 // Run starts the gateway until context cancel / signal via ListenAndServe.
 func Run(args []string) error {
@@ -100,7 +100,7 @@ func Run(args []string) error {
 			return fmt.Errorf("gateway log_level filter is not supported")
 		}
 	}
-	log := logger.Setup(ctx, logger.Options{Service: "cauteum-gateway", Level: level, LevelSet: opt.LogLevel != ""})
+	log := logger.Setup(ctx, logger.Options{Service: "cautem-gateway", Level: level, LevelSet: opt.LogLevel != ""})
 	if opt.Name != "" {
 		log = log.With("openshell.gateway.name", opt.Name)
 	}
@@ -244,7 +244,7 @@ func resolveGatewayOptions(args []string) (Options, error) {
 		case "--allow-unauthenticated-users=false":
 			opt.AllowUnauthenticated = false
 		case "-h", "--help":
-			fmt.Fprintf(os.Stderr, "usage: cauteum-gateway [--config TOML] [--name NAME] [--listen ADDR] [--data-dir DIR]\n")
+			fmt.Fprintf(os.Stderr, "usage: cautem-gateway [--config TOML] [--name NAME] [--listen ADDR] [--data-dir DIR]\n")
 			fmt.Fprintf(os.Stderr, "                 [--bind-address IP] [--port N] [--log-level LEVEL] [--disable-tls]\n")
 			fmt.Fprintf(os.Stderr, "                 [--health-port N] [--metrics-port N]\n")
 			fmt.Fprintf(os.Stderr, "                 [--tls-cert FILE] [--tls-key FILE] [--tls-client-ca FILE]\n")
@@ -301,13 +301,13 @@ func parseTTLSecs(s string) (time.Duration, error) {
 
 func defaultDataDir() string {
 	if xdg := os.Getenv("XDG_STATE_HOME"); xdg != "" {
-		return filepath.Join(xdg, "cauteum", "gateway")
+		return filepath.Join(xdg, "cautem", "gateway")
 	}
 	home, err := os.UserHomeDir()
 	if err != nil {
-		return filepath.Join(os.TempDir(), "cauteum-gateway")
+		return filepath.Join(os.TempDir(), "cautem-gateway")
 	}
-	return filepath.Join(home, ".local", "state", "cauteum", "gateway")
+	return filepath.Join(home, ".local", "state", "cautem", "gateway")
 }
 
 func configuredDriverStatus(names []string, configs DriverConfigs) []map[string]string {
@@ -390,7 +390,7 @@ func validateUnauthenticatedListen(listen string, allowed bool) error {
 	if ip := net.ParseIP(host); ip != nil && ip.IsLoopback() {
 		return nil
 	}
-	return fmt.Errorf("refusing allow_unauthenticated on non-loopback %q (use cauteum gateway login)", listen)
+	return fmt.Errorf("refusing allow_unauthenticated on non-loopback %q (use cautem gateway login)", listen)
 }
 
 // NewHandler builds the authenticated gateway HTTP handler and starts the SSH
@@ -563,7 +563,7 @@ func listenAndServe(ctx context.Context, opt Options, handler http.Handler) erro
 	}
 	if opt.AllowUnauthenticated && !ln.Addr().(*net.TCPAddr).IP.IsLoopback() {
 		_ = ln.Close()
-		return fmt.Errorf("refusing allow_unauthenticated on non-loopback %q (use cauteum gateway login)", ln.Addr())
+		return fmt.Errorf("refusing allow_unauthenticated on non-loopback %q (use cautem gateway login)", ln.Addr())
 	}
 	auxiliary := make([]*http.Server, 0, 2)
 	for _, endpoint := range []struct {
@@ -687,7 +687,7 @@ func gatewayMetricsHandler() http.Handler {
 			return
 		}
 		w.Header().Set("Content-Type", "text/plain; version=0.0.4; charset=utf-8")
-		_, _ = io.WriteString(w, "# HELP cauteum_gateway_up Whether the gateway process is serving.\n# TYPE cauteum_gateway_up gauge\ncauteum_gateway_up 1\n")
+		_, _ = io.WriteString(w, "# HELP cautem_gateway_up Whether the gateway process is serving.\n# TYPE cautem_gateway_up gauge\ncautem_gateway_up 1\n")
 	})
 	return mux
 }

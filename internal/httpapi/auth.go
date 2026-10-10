@@ -9,9 +9,9 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/cautem/cauteum-core/relayproto"
-	"github.com/cautem/cauteum-gateway/internal/storage/store"
-	"github.com/cautem/cauteum-runtime/idp"
+	"github.com/cautem/cautem-core/relayproto"
+	"github.com/cautem/cautem-gateway/internal/storage/store"
+	"github.com/cautem/cautem-runtime/idp"
 )
 
 // PrincipalKind distinguishes operators from sandbox supervisors.
@@ -229,7 +229,7 @@ func withAuth(next http.Handler, st *store.Store, opt AuthOptions) http.Handler 
 		if p.Kind == PrincipalNone {
 			if !opt.AllowUnauthenticated {
 				w.Header().Set("WWW-Authenticate", "Bearer")
-				http.Error(w, "authentication required (cauteum gateway login)", http.StatusUnauthorized)
+				http.Error(w, "authentication required (cautem gateway login)", http.StatusUnauthorized)
 				return
 			}
 			p = Principal{Kind: PrincipalUser, Subject: "local-dev", IDP: "local_dev", Roles: []string{"platform_admin", "platform-admin", "user"}}

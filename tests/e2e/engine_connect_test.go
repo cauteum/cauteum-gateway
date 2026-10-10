@@ -19,9 +19,9 @@ import (
 	datamodelv1 "github.com/NVIDIA/OpenShell/sdk/go/proto/datamodelv1"
 	openshellv1 "github.com/NVIDIA/OpenShell/sdk/go/proto/openshellv1"
 	sandboxv1 "github.com/NVIDIA/OpenShell/sdk/go/proto/sandboxv1"
-	"github.com/cautem/cauteum-core/relayproto"
-	"github.com/cautem/cauteum-gateway/internal/httpapi"
-	credentialsv1 "github.com/cautem/cauteum-gateway/internal/upstreamproto/credentialsv1"
+	"github.com/cautem/cautem-core/relayproto"
+	"github.com/cautem/cautem-gateway/internal/httpapi"
+	credentialsv1 "github.com/cautem/cautem-gateway/internal/upstreamproto/credentialsv1"
 	"golang.org/x/crypto/ssh"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
@@ -48,7 +48,7 @@ func startPolicyProbeServer(t *testing.T, parent context.Context, client openshe
 		t.Fatalf("open policy probe server ExecSandbox: %v", err)
 	}
 	if err := stream.Send(&openshellv1.ExecSandboxInput{Payload: &openshellv1.ExecSandboxInput_Start{Start: &openshellv1.ExecSandboxRequest{
-		SandboxId: sandboxID, Command: []string{"/usr/local/bin/cauteum-tcp-echo", "serve-tcp", "0.0.0.0:17777"}, NoLoginShell: true, TimeoutSeconds: 90,
+		SandboxId: sandboxID, Command: []string{"/usr/local/bin/cautem-tcp-echo", "serve-tcp", "0.0.0.0:17777"}, NoLoginShell: true, TimeoutSeconds: 90,
 	}}}); err != nil {
 		cancel()
 		t.Fatalf("start policy probe server: %v", err)
@@ -103,7 +103,7 @@ func runPolicyConnectProbe(t *testing.T, ctx context.Context, client openshellv1
 	streamCtx, cancel := context.WithTimeout(ctx, 15*time.Second)
 	defer cancel()
 	stream, err := client.ExecSandbox(streamCtx, &openshellv1.ExecSandboxRequest{
-		SandboxId: sandboxID, Command: []string{"/usr/local/bin/cauteum-tcp-echo", "probe-connect-status", target, wantStatus}, NoLoginShell: true, TimeoutSeconds: 10,
+		SandboxId: sandboxID, Command: []string{"/usr/local/bin/cautem-tcp-echo", "probe-connect-status", target, wantStatus}, NoLoginShell: true, TimeoutSeconds: 10,
 	})
 	if err != nil {
 		t.Fatalf("run policy CONNECT probe for %s: %v", target, err)
@@ -167,22 +167,22 @@ func (d *e2ECredentialDriver) DeleteCredential(_ context.Context, request *crede
 // then runs the public SSH-session/relay handshake and executes a command. The
 // Docker and Podman harnesses live under tools/e2e/.
 func TestEngineGatewayConnectE2E(t *testing.T) {
-	if os.Getenv("CAUTEUM_ENGINE_E2E") != "1" {
-		t.Skip("set CAUTEUM_ENGINE_E2E=1 to run against a disposable Docker-compatible Engine")
+	if os.Getenv("CAUTEM_ENGINE_E2E") != "1" {
+		t.Skip("set CAUTEM_ENGINE_E2E=1 to run against a disposable Docker-compatible Engine")
 	}
-	driverName := strings.TrimSpace(os.Getenv("CAUTEUM_E2E_DRIVER"))
+	driverName := strings.TrimSpace(os.Getenv("CAUTEM_E2E_DRIVER"))
 	if driverName == "" {
 		driverName = "docker"
 	}
 	if driverName != "docker" && driverName != "podman" {
-		t.Fatalf("unsupported CAUTEUM_E2E_DRIVER %q: want docker or podman", driverName)
+		t.Fatalf("unsupported CAUTEM_E2E_DRIVER %q: want docker or podman", driverName)
 	}
-	endpoint := strings.TrimSpace(os.Getenv("CAUTEUM_E2E_GATEWAY_URL"))
+	endpoint := strings.TrimSpace(os.Getenv("CAUTEM_E2E_GATEWAY_URL"))
 	if endpoint == "" {
-		t.Fatal("CAUTEUM_E2E_GATEWAY_URL must be reachable from sandbox containers")
+		t.Fatal("CAUTEM_E2E_GATEWAY_URL must be reachable from sandbox containers")
 	}
-	helperDir := strings.TrimSpace(os.Getenv("CAUTEUM_HELPERS_DIR"))
-	for _, name := range []string{"cauteum", "cauteum-init", "cauteum-sshd", "cauteum-supervisor"} {
+	helperDir := strings.TrimSpace(os.Getenv("CAUTEM_HELPERS_DIR"))
+	for _, name := range []string{"cautem", "cautem-init", "cautem-sshd", "cautem-supervisor"} {
 		if st, err := os.Stat(filepath.Join(helperDir, name)); err != nil || st.IsDir() {
 			t.Fatalf("Linux helper %s missing in %s: %v", name, helperDir, err)
 		}
@@ -191,14 +191,14 @@ func TestEngineGatewayConnectE2E(t *testing.T) {
 	if err != nil || url.Scheme != "http" || url.Host == "" {
 		t.Fatalf("invalid E2E gateway URL %q", endpoint)
 	}
-	relayEndpoint := strings.TrimSpace(os.Getenv("CAUTEUM_E2E_RELAY_ENDPOINT"))
+	relayEndpoint := strings.TrimSpace(os.Getenv("CAUTEM_E2E_RELAY_ENDPOINT"))
 	if relayEndpoint == "" {
 		relayEndpoint = endpoint
 	}
 	if relayURL, parseErr := url.Parse(relayEndpoint); parseErr != nil || relayURL.Scheme != "http" || relayURL.Host == "" {
 		t.Fatalf("invalid E2E relay URL %q", relayEndpoint)
 	}
-	listenAddr := strings.TrimSpace(os.Getenv("CAUTEUM_E2E_LISTEN_ADDR"))
+	listenAddr := strings.TrimSpace(os.Getenv("CAUTEM_E2E_LISTEN_ADDR"))
 	if listenAddr == "" {
 		listenAddr = url.Host
 	}
@@ -218,7 +218,7 @@ func TestEngineGatewayConnectE2E(t *testing.T) {
 		_ = credentialListener.Close()
 	})
 	runtime := httpapi.NewE2ERuntime()
-	networkName := "cauteum-" + driverName + "-connect-e2e"
+	networkName := "cautem-" + driverName + "-connect-e2e"
 	opt := httpapi.Options{
 		Listen: listenAddr, DataDir: t.TempDir(),
 		ComputeDriverNames:      []string{driverName},
@@ -289,9 +289,9 @@ func TestEngineGatewayConnectE2E(t *testing.T) {
 	}
 
 	name := driverName + "-connect-e2e"
-	image := strings.TrimSpace(os.Getenv("CAUTEUM_E2E_SANDBOX_IMAGE"))
+	image := strings.TrimSpace(os.Getenv("CAUTEM_E2E_SANDBOX_IMAGE"))
 	if image == "" {
-		image = "localhost/cauteum-connect-e2e:latest"
+		image = "localhost/cautem-connect-e2e:latest"
 	}
 	defer func() {
 		cleanupCtx, cleanupCancel := context.WithTimeout(context.Background(), 45*time.Second)
@@ -332,7 +332,7 @@ func TestEngineGatewayConnectE2E(t *testing.T) {
 		Global: true,
 		Policy: &sandboxv1.SandboxPolicy{Version: 1, NetworkPolicies: map[string]*sandboxv1.NetworkPolicyRule{
 			"live-proxy-probe": {Name: "live-proxy-probe", Endpoints: []*sandboxv1.NetworkEndpoint{{
-				Host: "cauteum-" + name, Port: 17777, AllowedIps: []string{"10.0.0.0/8", "172.16.0.0/12"},
+				Host: "cautem-" + name, Port: 17777, AllowedIps: []string{"10.0.0.0/8", "172.16.0.0/12"},
 			}}},
 		}},
 	})
@@ -465,7 +465,7 @@ func TestEngineGatewayConnectE2E(t *testing.T) {
 		cancelExec()
 		t.Fatalf("open cancellable interactive ExecSandbox: %v", err)
 	}
-	cancelPIDFile := "/tmp/cauteum-cancel-child-" + strconv.FormatInt(time.Now().UnixNano(), 10)
+	cancelPIDFile := "/tmp/cautem-cancel-child-" + strconv.FormatInt(time.Now().UnixNano(), 10)
 	if err := cancelStream.Send(&openshellv1.ExecSandboxInput{Payload: &openshellv1.ExecSandboxInput_Start{Start: &openshellv1.ExecSandboxRequest{
 		SandboxId: name, Command: []string{"sh", "-c", "sleep 30 & echo $! > " + cancelPIDFile + "; test -s " + cancelPIDFile + " || exit 99; echo ready; wait"}, NoLoginShell: true, TimeoutSeconds: 60,
 	}}}); err != nil {
@@ -619,7 +619,7 @@ func TestEngineGatewayConnectE2E(t *testing.T) {
 	if interactiveTimeoutExit == nil || interactiveTimeoutExit.GetExitCode() != 124 {
 		t.Fatalf("interactive ExecSandbox timeout exit=%v; want exit code 124", interactiveTimeoutExit)
 	}
-	if os.Getenv("CAUTEUM_E2E_FORWARD_TCP") == "1" {
+	if os.Getenv("CAUTEM_E2E_FORWARD_TCP") == "1" {
 		forwardEchoCtx, forwardEchoCancel := context.WithCancel(userCtx)
 		forwardEcho, err := grpcClient.ExecSandboxInteractive(forwardEchoCtx)
 		if err != nil {
@@ -627,7 +627,7 @@ func TestEngineGatewayConnectE2E(t *testing.T) {
 			t.Fatalf("open TCP echo server ExecSandbox: %v", err)
 		}
 		if err := forwardEcho.Send(&openshellv1.ExecSandboxInput{Payload: &openshellv1.ExecSandboxInput_Start{Start: &openshellv1.ExecSandboxRequest{
-			SandboxId: name, Command: []string{"/usr/local/bin/cauteum-tcp-echo", "127.0.0.1:17777"}, NoLoginShell: true, TimeoutSeconds: 90,
+			SandboxId: name, Command: []string{"/usr/local/bin/cautem-tcp-echo", "127.0.0.1:17777"}, NoLoginShell: true, TimeoutSeconds: 90,
 		}}}); err != nil {
 			forwardEchoCancel()
 			t.Fatalf("start TCP echo server in sandbox: %v", err)
@@ -771,8 +771,8 @@ func TestEngineGatewayConnectE2E(t *testing.T) {
 	}
 	defer supervisorSession.Close()
 	supervisorOutput, err := supervisorSession.Output("tr '\\0' ' ' </proc/1/cmdline")
-	if err != nil || !strings.Contains(string(supervisorOutput), "/cautem/cauteum-supervisor") {
-		if os.Getenv("CAUTEUM_E2E_ROOTLESS_PODMAN") != "1" {
+	if err != nil || !strings.Contains(string(supervisorOutput), "/cautem/cautem-supervisor") {
+		if os.Getenv("CAUTEM_E2E_ROOTLESS_PODMAN") != "1" {
 			t.Fatalf("PID 1=%q err=%v, want Go sandbox supervisor", supervisorOutput, err)
 		}
 		t.Logf("rootless Podman-in-Docker does not provide an isolated PID namespace: PID 1=%q err=%v", supervisorOutput, err)
@@ -876,7 +876,7 @@ func TestEngineGatewayConnectE2E(t *testing.T) {
 	}
 	stopPolicyProbeServer := startPolicyProbeServer(t, userCtx, grpcClient, name)
 	defer stopPolicyProbeServer()
-	runPolicyConnectProbe(t, userCtx, grpcClient, name, "cauteum-"+name+":17777", "200")
+	runPolicyConnectProbe(t, userCtx, grpcClient, name, "cautem-"+name+":17777", "200")
 	runPolicyConnectProbe(t, userCtx, grpcClient, name, "blocked.invalid:443", "403")
 	stopPolicyProbeServer()
 	refreshCtx := metadata.AppendToOutgoingContext(ctx, "authorization", "Bearer "+supervisorToken)

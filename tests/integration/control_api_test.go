@@ -11,10 +11,10 @@ import (
 	"time"
 
 	"connectrpc.com/connect"
-	controlv1 "github.com/cautem/cauteum-gateway/api/gen/cauteum/control/v1"
-	"github.com/cautem/cauteum-gateway/api/gen/cauteum/control/v1/controlv1connect"
-	"github.com/cautem/cauteum-gateway/internal/httpapi"
-	"github.com/cautem/cauteum-gateway/internal/storage/store"
+	controlv1 "github.com/cautem/cautem-gateway/api/gen/cautem/control/v1"
+	"github.com/cautem/cautem-gateway/api/gen/cautem/control/v1/controlv1connect"
+	"github.com/cautem/cautem-gateway/internal/httpapi"
+	"github.com/cautem/cautem-gateway/internal/storage/store"
 	"google.golang.org/protobuf/encoding/protojson"
 )
 

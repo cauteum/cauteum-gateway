@@ -8,7 +8,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/cautem/cauteum-runtime/idp"
+	"github.com/cautem/cautem-runtime/idp"
 )
 
 // OIDCOptions configure issuer-backed JWT auth (optional).
@@ -30,16 +30,16 @@ type OIDCOptions struct {
 
 func oidcFromEnvAndFlags(opt *Options) {
 	if opt.OIDC.Issuer == "" {
-		opt.OIDC.Issuer = strings.TrimSpace(os.Getenv("CAUTEUM_OIDC_ISSUER"))
+		opt.OIDC.Issuer = strings.TrimSpace(os.Getenv("CAUTEM_OIDC_ISSUER"))
 	}
 	if opt.OIDC.Audience == "" {
-		opt.OIDC.Audience = strings.TrimSpace(os.Getenv("CAUTEUM_OIDC_AUDIENCE"))
+		opt.OIDC.Audience = strings.TrimSpace(os.Getenv("CAUTEM_OIDC_AUDIENCE"))
 	}
 	if opt.OIDC.ClientID == "" {
-		opt.OIDC.ClientID = strings.TrimSpace(firstNonEmptyEnv("CAUTEUM_OIDC_CLIENT_ID", "OPENSHELL_OIDC_CLIENT_ID"))
+		opt.OIDC.ClientID = strings.TrimSpace(firstNonEmptyEnv("CAUTEM_OIDC_CLIENT_ID", "OPENSHELL_OIDC_CLIENT_ID"))
 	}
 	if !opt.OIDC.AllowInsecureHTTP {
-		v := strings.ToLower(strings.TrimSpace(os.Getenv("CAUTEUM_OIDC_ALLOW_INSECURE_HTTP")))
+		v := strings.ToLower(strings.TrimSpace(os.Getenv("CAUTEM_OIDC_ALLOW_INSECURE_HTTP")))
 		opt.OIDC.AllowInsecureHTTP = v == "1" || v == "true" || v == "yes"
 	}
 	if !opt.OIDC.JWKSTTLSecsSet && opt.OIDC.JWKSTTLSecs == 0 {

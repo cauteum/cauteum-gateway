@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2026 cauteum
+// SPDX-FileCopyrightText: Copyright (c) 2026 cautem
 // SPDX-License-Identifier: Apache-2.0
 
 package httpapi
@@ -8,8 +8,8 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/cautem/cauteum-core/policy"
-	"github.com/cautem/cauteum-gateway/internal/storage/store"
+	"github.com/cautem/cautem-core/policy"
+	"github.com/cautem/cautem-gateway/internal/storage/store"
 	"gopkg.in/yaml.v3"
 )
 

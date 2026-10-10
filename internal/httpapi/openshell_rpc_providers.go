@@ -8,8 +8,8 @@ import (
 
 	datamodelv1 "github.com/NVIDIA/OpenShell/sdk/go/proto/datamodelv1"
 	openshellv1 "github.com/NVIDIA/OpenShell/sdk/go/proto/openshellv1"
-	"github.com/cautem/cauteum-gateway/internal/storage/store"
-	"github.com/cautem/cauteum-runtime/secrets"
+	"github.com/cautem/cautem-gateway/internal/storage/store"
+	"github.com/cautem/cautem-runtime/secrets"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -187,7 +187,7 @@ func (s *openShellRPC) persistProvider(ctx context.Context, name, workspace stri
 	if hasOld {
 		record.RuntimeCredentials = old.RuntimeCredentials
 	}
-	if raw := p.GetMetadata().GetAnnotations()["cauteum.io/runtime-credentials"]; raw != "" {
+	if raw := p.GetMetadata().GetAnnotations()["cautem.io/runtime-credentials"]; raw != "" {
 		value, err := strconv.ParseBool(raw)
 		if err != nil {
 			return status.Error(codes.InvalidArgument, "runtime credential annotation must be boolean")

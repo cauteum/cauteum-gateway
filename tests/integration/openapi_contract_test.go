@@ -15,7 +15,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/cautem/cauteum-gateway/internal/httpapi"
+	"github.com/cautem/cautem-gateway/internal/httpapi"
 	"gopkg.in/yaml.v3"
 )
 

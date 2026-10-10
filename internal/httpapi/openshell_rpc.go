@@ -18,15 +18,15 @@ import (
 	datamodelv1 "github.com/NVIDIA/OpenShell/sdk/go/proto/datamodelv1"
 	openshellv1 "github.com/NVIDIA/OpenShell/sdk/go/proto/openshellv1"
 	sandboxv1 "github.com/NVIDIA/OpenShell/sdk/go/proto/sandboxv1"
-	"github.com/cautem/cauteum-core"
-	"github.com/cautem/cauteum-driver/driver"
-	_ "github.com/cautem/cauteum-driver/driver/all"
-	"github.com/cautem/cauteum-gateway/internal/logbuf"
-	"github.com/cautem/cauteum-gateway/internal/sshrelay"
-	"github.com/cautem/cauteum-gateway/internal/storage/store"
-	"github.com/cautem/cauteum-providers/provider"
-	"github.com/cautem/cauteum-runtime/idp"
-	"github.com/cautem/cauteum-runtime/secrets"
+	"github.com/cautem/cautem-core"
+	"github.com/cautem/cautem-driver/driver"
+	_ "github.com/cautem/cautem-driver/driver/all"
+	"github.com/cautem/cautem-gateway/internal/logbuf"
+	"github.com/cautem/cautem-gateway/internal/sshrelay"
+	"github.com/cautem/cautem-gateway/internal/storage/store"
+	"github.com/cautem/cautem-providers/provider"
+	"github.com/cautem/cautem-runtime/idp"
+	"github.com/cautem/cautem-runtime/secrets"
 	"github.com/spiffe/go-spiffe/v2/svid/jwtsvid"
 	"github.com/spiffe/go-spiffe/v2/workloadapi"
 	"google.golang.org/grpc"
@@ -134,7 +134,7 @@ func (r *computeRegistry) isRemote(name string) bool {
 }
 
 func (s *openShellRPC) Health(context.Context, *openshellv1.HealthRequest) (*openshellv1.HealthResponse, error) {
-	return &openshellv1.HealthResponse{Status: openshellv1.ServiceStatus_SERVICE_STATUS_HEALTHY, Version: "cauteum-alpha"}, nil
+	return &openshellv1.HealthResponse{Status: openshellv1.ServiceStatus_SERVICE_STATUS_HEALTHY, Version: "cautem-alpha"}, nil
 }
 
 // ConnectSupervisor accepts the pinned OpenShell supervisor control protocol.
@@ -594,7 +594,7 @@ func (l *sandboxLifecycle) Create(ctx context.Context, req *openshellv1.CreateSa
 		_ = os.RemoveAll(filepath.Join(s.runtime.opt.DataDir, "sandboxes", name))
 		return nil, status.Error(codes.Internal, "sandbox lifecycle transition failed")
 	}
-	driverSpec.ProxyEnv = append(driverSpec.ProxyEnv, "CAUTEUM_GATEWAY_URL="+runtimeInputs.gatewayURL, "CAUTEUM_SANDBOX="+name, "CAUTEUM_SANDBOX_TOKEN="+token, "CAUTEUM_LOG_DIR=/var/log")
+	driverSpec.ProxyEnv = append(driverSpec.ProxyEnv, "CAUTEM_GATEWAY_URL="+runtimeInputs.gatewayURL, "CAUTEM_SANDBOX="+name, "CAUTEM_SANDBOX_TOKEN="+token, "CAUTEM_LOG_DIR=/var/log")
 	h, err := engine.Create(ctx, driverSpec)
 	if err != nil {
 		_ = s.runtime.st.DeleteSandbox(name)
@@ -689,7 +689,7 @@ func awaitProxySidecar(ctx context.Context, engine driver.Engine, sandbox string
 	ticker := time.NewTicker(100 * time.Millisecond)
 	defer ticker.Stop()
 	for {
-		info, err := engine.Inspect(ctx, "cauteum-proxy-"+sandbox)
+		info, err := engine.Inspect(ctx, "cautem-proxy-"+sandbox)
 		if err == nil {
 			state := strings.ToLower(strings.TrimSpace(info.Status))
 			if strings.Contains(state, "running") || strings.HasPrefix(state, "up ") {
@@ -987,7 +987,7 @@ func (s *openShellRPC) GetCurrentUser(ctx context.Context, _ *openshellv1.GetCur
 func (s *openShellRPC) GetGatewayInfo(context.Context, *openshellv1.GetGatewayInfoRequest) (*openshellv1.GetGatewayInfoResponse, error) {
 	return &openshellv1.GetGatewayInfoResponse{
 		Status:         openshellv1.ServiceStatus_SERVICE_STATUS_DEGRADED,
-		GatewayVersion: "cauteum-alpha",
+		GatewayVersion: "cautem-alpha",
 		ComputeDrivers: rpcComputeDriverInfo(s.options),
 	}, nil
 }
@@ -1108,7 +1108,7 @@ func (s *openShellRPC) ExchangeProviderSubjectToken(ctx context.Context, req *op
 	}
 	socket := strings.TrimSpace(os.Getenv("OPENSHELL_GATEWAY_SPIFFE_WORKLOAD_API_SOCKET"))
 	if socket == "" {
-		socket = strings.TrimSpace(os.Getenv("CAUTEUM_GATEWAY_SPIFFE_WORKLOAD_API_SOCKET"))
+		socket = strings.TrimSpace(os.Getenv("CAUTEM_GATEWAY_SPIFFE_WORKLOAD_API_SOCKET"))
 	}
 	if socket == "" {
 		return nil, status.Error(codes.FailedPrecondition, "SPIFFE Workload API socket is not configured")

@@ -1,5 +1,5 @@
 {
-  "name": "@cauteum/control-ui",
+  "name": "@cautem/control-ui",
   "version": "0.0.0-dev",
   "private": true,
   "type": "module",
@@ -14,7 +14,7 @@
     "@fontsource/ibm-plex-mono": "5.3.0",
     "@fontsource-variable/manrope": "5.3.0",
     "@fontsource-variable/space-grotesk": "5.3.0",
-    "@cauteum/control-client": "file:../api/typescript",
+    "@cautem/control-client": "file:../api/typescript",
     "oidc-client-ts": "3.5.0",
     "react": "19.3.0",
     "react-dom": "19.3.0"

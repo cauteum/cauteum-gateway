@@ -1,4 +1,4 @@
-// Package logger wraps slogx for the cauteum-gateway process.
+// Package logger wraps slogx for the cautem-gateway process.
 package logger
 
 import (
@@ -12,9 +12,9 @@ import (
 )
 
 const (
-	EnvLogLevel     = "CAUTEUM_LOG_LEVEL"
-	EnvLogFormat    = "CAUTEUM_LOG_FORMAT"
-	EnvLogLevelAddr = "CAUTEUM_LOG_LEVEL_ADDR"
+	EnvLogLevel     = "CAUTEM_LOG_LEVEL"
+	EnvLogFormat    = "CAUTEM_LOG_FORMAT"
+	EnvLogLevelAddr = "CAUTEM_LOG_LEVEL_ADDR"
 )
 
 // Options tweak Setup.

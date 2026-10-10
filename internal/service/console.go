@@ -7,7 +7,7 @@ import (
 	"maps"
 	"strings"
 
-	"github.com/cautem/cauteum-gateway/internal/storage/store"
+	"github.com/cautem/cautem-gateway/internal/storage/store"
 )
 
 const (

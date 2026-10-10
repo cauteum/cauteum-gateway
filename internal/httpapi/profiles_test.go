@@ -6,7 +6,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/cautem/cauteum-gateway/internal/storage/store"
+	"github.com/cautem/cautem-gateway/internal/storage/store"
 )
 
 func TestConfiguredProfileSourcesSelectBuiltinAndUserCatalogs(t *testing.T) {

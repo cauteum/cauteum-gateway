@@ -3,7 +3,7 @@ package store_test
 import (
 	"testing"
 
-	"github.com/cautem/cauteum-gateway/internal/storage/store"
+	"github.com/cautem/cautem-gateway/internal/storage/store"
 )
 
 func TestAuditEventsPersistWithMonotonicIDs(t *testing.T) {

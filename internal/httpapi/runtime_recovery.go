@@ -6,8 +6,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/cautem/cauteum-driver/driver"
-	"github.com/cautem/cauteum-gateway/internal/storage/store"
+	"github.com/cautem/cautem-driver/driver"
+	"github.com/cautem/cautem-gateway/internal/storage/store"
 	"github.com/cautem/slogx"
 )
 

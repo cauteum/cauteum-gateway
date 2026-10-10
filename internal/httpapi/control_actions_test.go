@@ -11,11 +11,11 @@ import (
 	"testing"
 
 	"connectrpc.com/connect"
-	controlv1 "github.com/cautem/cauteum-gateway/api/gen/cauteum/control/v1"
-	"github.com/cautem/cauteum-gateway/api/gen/cauteum/control/v1/controlv1connect"
-	"github.com/cautem/cauteum-gateway/internal/logbuf"
-	"github.com/cautem/cauteum-gateway/internal/service"
-	"github.com/cautem/cauteum-gateway/internal/storage/store"
+	controlv1 "github.com/cautem/cautem-gateway/api/gen/cautem/control/v1"
+	"github.com/cautem/cautem-gateway/api/gen/cautem/control/v1/controlv1connect"
+	"github.com/cautem/cautem-gateway/internal/logbuf"
+	"github.com/cautem/cautem-gateway/internal/service"
+	"github.com/cautem/cautem-gateway/internal/storage/store"
 )
 
 func TestControlActionsUseRuntimeAndResourceVersions(t *testing.T) {
@@ -83,12 +83,12 @@ func TestControlActionsUseRuntimeAndResourceVersions(t *testing.T) {
 
 func TestControlCreateUsesRuntimeAndAudits(t *testing.T) {
 	helperDir := t.TempDir()
-	for _, name := range []string{"cauteum", "cauteum-init", "cauteum-sshd", "cauteum-supervisor"} {
+	for _, name := range []string{"cautem", "cautem-init", "cautem-sshd", "cautem-supervisor"} {
 		if err := os.WriteFile(filepath.Join(helperDir, name), []byte("test"), 0o755); err != nil {
 			t.Fatal(err)
 		}
 	}
-	t.Setenv("CAUTEUM_HELPERS_DIR", helperDir)
+	t.Setenv("CAUTEM_HELPERS_DIR", helperDir)
 	st, err := store.Open(t.TempDir(), "control-create")
 	if err != nil {
 		t.Fatal(err)
